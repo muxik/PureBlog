@@ -25,12 +25,7 @@
 
     <div class="layui-row">
         <div class="layui-col-lg8">
-            <a href="?/admin/user/index/connect/qq.html" class="layui-btn">QQ</a>
-
-            <a href="?/admin/user/index/connect/weibo.html" class="layui-btn">微博</a>
-            <a href="?/admin/user/index/connect/weixin.html" class="layui-btn">微信</a>
-            <a href="?/admin/user/index/connect/alipay.html" class="layui-btn">支付宝</a>
-            <a href="?/admin/user/index/connect/xcx.html" class="layui-btn">小程序</a>
+            <h2>管理员列表</h2>
         </div>
 
         <div class="layui-col-lg4" style="text-align: right">
@@ -47,41 +42,27 @@
         <thead>
         <tr>
             <th><a href="?/admin/user/index/order/uid.html">UID</a></th>
-            <th>手机</th>
             <th>用户名</th>
-            <th>昵称</th>
-            <th>qq</th>
-            <th>邮箱</th>
-            <th>注册时间</th>
-            <th>登录时间</th>
-            <th>登录次数</th>
+            <th>超级管理员</th>
             <th>状态</th>
-            <th>认证</th>
-            <th>关联</th>
+            <th>创建时间</th>
             <th>操作</th>
         </tr>
         </thead>
         <tbody>
-        <tr class="id36567">
-            <td>36567</td>
-            <td>15912345678</td>
-            <td>YY187919</td>
-            <td></td>
-            <td></td>
-            <td>YY187919@flash127.com</td>
-            <td>2019-04-01 11:44:20</td>
-            <td>2019-04-01 11:44:20</td>
-            <td>7</td>
+        {foreach $admins as $key=>$vo }
+        <tr>
+            <td>{$vo.id}</td>
+            <td>{$vo.username}</td>
+            <td>{if $vo.super eq 1} 是 {else /} 否 {/if}</td>
             <td>
-                <input type="checkbox" lay-filter="state" data-uid="36567" lay-text="正常|封禁" name="switch" checked
+                <input type="checkbox" lay-filter="state"  lay-text="正常|封禁" name="switch" {if $vo.status eq 1/} checked {else/} disabled {/if}
                        lay-skin="switch">
             </td>
-            <td>0</td>
-            <td>
-                xcx
-            </td>
+            <td>{$vo.create_time}</td>
             <td><a href="?/admin/user/update/uid/36567.html">修改</a></td>
         </tr>
+        {/foreach}
         </tbody>
     </table>
 

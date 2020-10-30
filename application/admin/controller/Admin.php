@@ -14,7 +14,8 @@ class Admin extends Controller
      */
     public function index()
     {
-        return view();
+        $admins = model('Admin')->select();
+        return view()->assign(['admins' => $admins]);
 
     }
 

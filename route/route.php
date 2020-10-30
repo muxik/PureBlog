@@ -16,6 +16,7 @@ Route::group('admin', function () {
 
 Route::group('admin',function (){
     Route::rule('index', 'admin/index/index', 'get');
+    Route::rule('out', 'admin/index/out', 'get');
 
     // 管理员资源路由
     Route::resource('user','admin/admin');
