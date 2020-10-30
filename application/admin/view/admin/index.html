@@ -1,0 +1,108 @@
+{extend name="layout/base"}
+{block name="main"}
+<div class="left">
+    <ul class="cl">
+        <!--顶级分类-->
+        <li v-for="vo,index in menu" :class="{hidden:vo.hidden}">
+            <a href="javascript:;" :class="{active:vo.active}" @click="onActive(index)">
+                <i class="layui-icon" v-html="vo.icon"></i>
+                <span v-text="vo.name"></span>
+                <i class="layui-icon arrow" v-show="vo.url.length==0">&#xe61a;</i> <i v-show="vo.active"
+                                                                                      class="layui-icon active">&#xe623;</i>
+            </a>
+            <!--子级分类-->
+            <div v-for="vo2,index2 in vo.list">
+                <a href="javascript:;" :class="{active:vo2.active}" @click="onActive(index,index2)"
+                   v-text="vo2.name"></a>
+                <i v-show="vo2.active" class="layui-icon active">&#xe623;</i>
+            </div>
+        </li>
+    </ul>
+</div>
+<!--右侧-->
+<div class="right">
+
+
+    <div class="layui-row">
+        <div class="layui-col-lg8">
+            <a href="?/admin/user/index/connect/qq.html" class="layui-btn">QQ</a>
+
+            <a href="?/admin/user/index/connect/weibo.html" class="layui-btn">微博</a>
+            <a href="?/admin/user/index/connect/weixin.html" class="layui-btn">微信</a>
+            <a href="?/admin/user/index/connect/alipay.html" class="layui-btn">支付宝</a>
+            <a href="?/admin/user/index/connect/xcx.html" class="layui-btn">小程序</a>
+        </div>
+
+        <div class="layui-col-lg4" style="text-align: right">
+
+            <div class="layui-input-inline" style="width: 300px">
+                <input type="text" name="k" value="" placeholder="手机/用户名/邮箱/昵称" class="layui-input key">
+            </div>
+            <button type="button" class="layui-btn sou">搜索</button>
+        </div>
+    </div>
+
+    <table class="layui-table layui-form">
+
+        <thead>
+        <tr>
+            <th><a href="?/admin/user/index/order/uid.html">UID</a></th>
+            <th>手机</th>
+            <th>用户名</th>
+            <th>昵称</th>
+            <th>qq</th>
+            <th>邮箱</th>
+            <th>注册时间</th>
+            <th>登录时间</th>
+            <th>登录次数</th>
+            <th>状态</th>
+            <th>认证</th>
+            <th>关联</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr class="id36567">
+            <td>36567</td>
+            <td>15912345678</td>
+            <td>YY187919</td>
+            <td></td>
+            <td></td>
+            <td>YY187919@flash127.com</td>
+            <td>2019-04-01 11:44:20</td>
+            <td>2019-04-01 11:44:20</td>
+            <td>7</td>
+            <td>
+                <input type="checkbox" lay-filter="state" data-uid="36567" lay-text="正常|封禁" name="switch" checked
+                       lay-skin="switch">
+            </td>
+            <td>0</td>
+            <td>
+                xcx
+            </td>
+            <td><a href="?/admin/user/update/uid/36567.html">修改</a></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div class="page">
+        <ul class="pagination">
+            <li class="disabled"><span>&laquo;</span></li>
+            <li class="active"><span>1</span></li>
+            <li><a href="?/admin/user/index.html?page=2">2</a></li>
+            <li><a href="?/admin/user/index.html?page=3">3</a></li>
+            <li><a href="?/admin/user/index.html?page=4">4</a></li>
+            <li><a href="?/admin/user/index.html?page=5">5</a></li>
+            <li><a href="?/admin/user/index.html?page=6">6</a></li>
+            <li><a href="?/admin/user/index.html?page=7">7</a></li>
+            <li><a href="?/admin/user/index.html?page=8">8</a></li>
+            <li class="disabled"><span>...</span></li>
+            <li><a href="?/admin/user/index.html?page=109">109</a></li>
+            <li><a href="?/admin/user/index.html?page=110">110</a></li>
+            <li><a href="?/admin/user/index.html?page=2">&raquo;</a></li>
+        </ul>
+    </div>
+
+
+</div>
+{/block}

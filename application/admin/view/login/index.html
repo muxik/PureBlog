@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>管理员登陆 - QAdmin后台模板</title>
+    <link rel="stylesheet" href="/static/common/layui/css/layui.css">
+    <link rel="stylesheet" href="/static/admin/css/login.css">
+    <script src="/static/common/layui/layui.js"></script>
+    {js href="/static/common/layui/layui.js" /}
+</head>
+
+<body id="login">
+<div class="login">
+    <h2>QAdmin后台模板</h2>
+    <form class="layui-form" method="post" target="_blank" action="">
+        <div class="layui-form-item">
+            <input type="username" name="username" placeholder="用户名" class="layui-input">
+            <i class="layui-icon input-icon">&#xe66f;</i>
+        </div>
+        <div class="layui-form-item">
+            <input type="password" name="password"  placeholder="密码" class="layui-input">
+            <i class="layui-icon input-icon">&#xe673;</i>
+        </div>
+        <div class="layui-form-item">
+            <input type="text" name="code" placeholder="验证码" class="layui-input">
+            <i class="layui-icon input-icon">&#xe673;</i>
+
+        </div>
+
+        <div class="layui-form-item">
+            <img style="border: #b6b9b5 solid 1px" height="37" src="{:captcha_src()}" id="captcha" alt="captcha"
+                 onclick="this.src = this.src +'?' + Math.random()"/>
+            <button style="margin-left:18px" onclick="
+document.getElementById('captcha').src = document.getElementById('captcha').src + '?' + Math.random()" type="button"
+                    class="layui-btn layui-btn-primary">换一张
+            </button>
+        </div>
+
+        <!--        <div class="layui-form-item">-->
+        <!--            <input type="checkbox" name="box" lay-skin="primary" title="记住密码" checked=""> <a class="back" style="margin-top: 10px">忘记密码</a>-->
+        <!--        </div>-->
+        <div class="layui-form-item">
+            <button style="width: 100%;margin-top: 10px" class="layui-btn" lay-submit lay-filter="login">立即登录</button>
+
+        </div>
+    </form>
+
+    <script>
+
+
+        layui.use('form', function () {
+            var form = layui.form,
+                layer = layui.layer,
+                $ = layui.jquery;
+            form.on('submit(login)', function (data) {
+                $.post('/admin/login', data.field, function (res) {
+
+                    if (res.code === 1) {
+                        layer.msg(res.msg, {icon: 6, time: 1500}, () => {
+                            layer.load({
+                                shade: 0.5,
+                                time: 0,
+                            });
+                            location.href = res.url
+                        })
+                    } else {
+                        layer.msg(res.msg, {icon: 5, anim: 2, time: 1500}, () => {
+                            // location.reload()
+                        })
+                    }
+                })
+                return false;
+            });
+        });
+    </script>
+</div>
+</body>
+
+</html>

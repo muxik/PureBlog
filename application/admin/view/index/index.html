@@ -1,0 +1,143 @@
+
+{extend name="layout/base"}
+{block name="main"}
+<div class="left">
+    <ul class="cl" >
+        <!--顶级分类-->
+        <li v-for="vo,index in menu" :class="{hidden:vo.hidden}">
+            <a href="javascript:;" :class="{active:vo.active}" @click="onActive(index)">
+                <i class="layui-icon" v-html="vo.icon"></i>
+                <span v-text="vo.name"></span>
+                <i class="layui-icon arrow" v-show="vo.url.length==0">&#xe61a;</i> <i v-show="vo.active" class="layui-icon active">&#xe623;</i>
+            </a>
+            <!--子级分类-->
+            <div v-for="vo2,index2 in vo.list">
+                <a href="javascript:;" :class="{active:vo2.active}" @click="onActive(index,index2)" v-text="vo2.name"></a>
+                <i v-show="vo2.active" class="layui-icon active">&#xe623;</i>
+            </div>
+        </li>
+    </ul>
+</div>
+<!--右侧-->
+<div class="right">
+    <div class="layui-row">
+        <div class="layui-col-md9" style="padding-right: 20px">
+            <h2>最新会员</h2>
+
+            <table class="layui-table layui-form">
+
+                <thead>
+                <tr>
+                    <th><a href="?/admin/user/index/order/uid.html">UID</a></th>
+                    <th>手机</th>
+                    <th>用户名</th>
+                    <th>昵称</th>
+                    <th>邮箱</th>
+                    <th><a href="?/admin/user/index/order/reg_time.html">注册时间</a></th>
+                    <th><a href="?/admin/user/index/order/login_time.html">登录时间</a></th>
+                    <th><a href="?/admin/user/index/order/login.html">登录次数</a></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr class="id36567">
+                    <td>36567</td>
+                    <td>15912345678</td>
+                    <td>YY187919</td>
+                    <td></td>
+                    <td>YY187919@flash127.com</td>
+                    <td>2019-04-01 11:44:20</td>
+                    <td>2019-04-01 11:44:20</td>
+                    <td>7</td>
+                </tr>
+                <tr class="id36567">
+                    <td>36567</td>
+                    <td>15912345678</td>
+                    <td>YY187919</td>
+                    <td></td>
+                    <td>YY187919@flash127.com</td>
+                    <td>2019-04-01 11:44:20</td>
+                    <td>2019-04-01 11:44:20</td>
+                    <td>7</td>
+                </tr>
+                <tr class="id36567">
+                    <td>36567</td>
+                    <td>15912345678</td>
+                    <td>YY187919</td>
+                    <td></td>
+                    <td>YY187919@flash127.com</td>
+                    <td>2019-04-01 11:44:20</td>
+                    <td>2019-04-01 11:44:20</td>
+                    <td>7</td>
+                </tr>
+                <tr class="id36567">
+                    <td>36567</td>
+                    <td>15912345678</td>
+                    <td>YY187919</td>
+                    <td></td>
+                    <td>YY187919@flash127.com</td>
+                    <td>2019-04-01 11:44:20</td>
+                    <td>2019-04-01 11:44:20</td>
+                    <td>7</td>
+                </tr>
+                <tr class="id36567">
+                    <td>36567</td>
+                    <td>15912345678</td>
+                    <td>YY187919</td>
+                    <td></td>
+                    <td>YY187919@flash127.com</td>
+                    <td>2019-04-01 11:44:20</td>
+                    <td>2019-04-01 11:44:20</td>
+                    <td>7</td>
+                </tr>
+                <tr class="id36567">
+                    <td>36567</td>
+                    <td>15912345678</td>
+                    <td>YY187919</td>
+                    <td></td>
+                    <td>YY187919@flash127.com</td>
+                    <td>2019-04-01 11:44:20</td>
+                    <td>2019-04-01 11:44:20</td>
+                    <td>7</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="layui-col-md3">
+            <h2>会员统计</h2>
+
+            <table class="layui-table layui-form">
+                <tr>
+                    <th>今天登录</th>
+                    <td>555</td>
+                </tr>
+                <tr>
+                    <th>昨天登录</th>
+                    <td>5552</td>
+                </tr>
+                <tr>
+                    <th>会员总数</th>
+                    <td>224555</td>
+                </tr>
+                <tr>
+                    <th>月活跃数</th>
+                    <td>55885</td>
+                </tr>
+                <tr>
+                    <th>季活跃数</th>
+                    <td>5485885</td>
+                </tr>
+                <tr>
+                    <th>vip用户</th>
+                    <td>65885</td>
+                </tr>
+                <tr>
+                    <th>过期vip</th>
+                    <td>525885</td>
+                </tr>
+
+            </table>
+        </div>
+    </div>
+
+</div>
+{/block}
