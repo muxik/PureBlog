@@ -14,7 +14,13 @@ class Admin extends Controller
      */
     public function index()
     {
-        $admins = model('Admin')->select();
+        // 搜索实现
+        if (input('username')){
+            $admins = model('Admin')->searchNameAttr(input('username'), 'username')->paginate(5);
+            return view()->assign(['admins' => $admins]);
+        }
+
+        $admins = model('Admin')->paginate(5);
         return view()->assign(['admins' => $admins]);
 
     }

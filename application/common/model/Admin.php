@@ -11,8 +11,16 @@ class Admin extends Model
 
     protected $name = "admin";
 
-    function login()
+    /**
+     * 搜索
+     * @param $keyword
+     * @param $value
+     */
+    public function searchNameAttr($keyword, $value)
     {
-
+        $where[] = [
+            $value, 'like', '%' . $keyword . '%'
+        ];
+        return $this->where($where);
     }
 }

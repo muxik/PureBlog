@@ -31,9 +31,10 @@
         <div class="layui-col-lg4" style="text-align: right">
 
             <div class="layui-input-inline" style="width: 300px">
-                <input type="text" name="k" value="" placeholder="手机/用户名/邮箱/昵称" class="layui-input key">
+                <input type="text" name="k" value="" id="keyword" placeholder="用户名" class="layui-input key">
             </div>
-            <button type="button" class="layui-btn sou">搜索</button>
+            <button type="button" class="layui-btn sou" onclick="location.href = '/admin/user?username=' + document.getElementById('keyword').value">搜索</button>
+            <button type="button" class="layui-btn sou" onclick="location.href = '/admin/user'">刷新</button>
         </div>
     </div>
 
@@ -67,21 +68,7 @@
     </table>
 
     <div class="page">
-        <ul class="pagination">
-            <li class="disabled"><span>&laquo;</span></li>
-            <li class="active"><span>1</span></li>
-            <li><a href="?/admin/user/index.html?page=2">2</a></li>
-            <li><a href="?/admin/user/index.html?page=3">3</a></li>
-            <li><a href="?/admin/user/index.html?page=4">4</a></li>
-            <li><a href="?/admin/user/index.html?page=5">5</a></li>
-            <li><a href="?/admin/user/index.html?page=6">6</a></li>
-            <li><a href="?/admin/user/index.html?page=7">7</a></li>
-            <li><a href="?/admin/user/index.html?page=8">8</a></li>
-            <li class="disabled"><span>...</span></li>
-            <li><a href="?/admin/user/index.html?page=109">109</a></li>
-            <li><a href="?/admin/user/index.html?page=110">110</a></li>
-            <li><a href="?/admin/user/index.html?page=2">&raquo;</a></li>
-        </ul>
+        {$admins|raw}
     </div>
 
 
