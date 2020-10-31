@@ -57,4 +57,19 @@ class Category extends Model
         if ($result) return '修改成功';
         else return '修改失败，请稍后再试！';
     }
+
+    /**
+     * 栏目显示/隐藏 模型
+     * @param $id
+     * @param $state
+     * @return bool|string
+     */
+    public function updateState($id, $state)
+    {
+        $admin = $this->find($id);
+        $admin->state = $state;
+        $result = $admin->save();
+        if ($result) return true;
+        else return "更新状态失败";
+    }
 }

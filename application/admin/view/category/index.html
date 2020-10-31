@@ -88,11 +88,15 @@
     }
 
     layui.use('form', function () {
-        var form = layui.form, layer = layui.layer, $ = layui.jquery;
+        const form = layui.form, layer = layui.layer, $ = layui.jquery;
 
         form.on('switch(state)', function (data) {
-            var id = $(data.elem).attr("data-id");
-            //TODO 栏目显示/隐藏
+            const id = $(data.elem).attr("data-id");
+            const value = $(data.elem).attr("value") === '1' ? 0 : 1;
+            $.post('/admin/cate/up_state/' + id, {status: value}, res => {
+                if (res.code === 1) layer.msg(res.msg, {icon: 6, time: 900, anim: 2})
+                else layer.msg(res.msg, {icon: 5, time: 1000, anim: 6})
+            })
         });
     });
 

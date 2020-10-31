@@ -71,6 +71,18 @@ class Category extends Controller
     }
 
     /**
+     * 栏目 显示/隐藏
+     * @param Request $request
+     * @param $id
+     */
+    public function updateState(Request $request, $id)
+    {
+        $result = model('Category')->updateState($id, $request->param('status'));
+        if ($result === true) $this->success('状态更新完成', '/admin/user');
+        else $this->error($result);
+    }
+
+    /**
      * 保存更新的资源
      *
      * @param \think\Request $request
