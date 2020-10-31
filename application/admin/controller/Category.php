@@ -36,7 +36,15 @@ class Category extends Controller
      */
     public function save(Request $request)
     {
-        //
+        $data = [
+            'name' => $request->param('name'),
+            'sort' => $request->param('sort' ,1 ),
+            'state' => $request->param('state',0)
+        ];
+
+        $result = model('Category')->add($data);
+        if ($result === true) $this->success('添加成功！');
+        else $this->error($result);
     }
 
     /**
@@ -70,7 +78,7 @@ class Category extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+
     }
 
     /**
