@@ -14,7 +14,10 @@ class Article extends Controller
      */
     public function index()
     {
-        $article = model('Article')->order('create_time', 'asc')->paginate(10);
+        $article = model('Article')
+            ->order('create_time', 'asc')
+            ->with(['category', 'admin'])
+            ->paginate(10);
         return view()->assign(['articles' => $article]);
     }
 
@@ -25,7 +28,7 @@ class Article extends Controller
      */
     public function create()
     {
-        //
+        return  view();
     }
 
     /**
@@ -82,5 +85,10 @@ class Article extends Controller
     public function delete($id)
     {
         //
+    }
+
+    public function upload()
+    {
+
     }
 }

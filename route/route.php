@@ -29,6 +29,7 @@ Route::group('admin',function (){
 
     // 文章管理 资源路由
     Route::resource('article','admin/article');
+    Route::post('upload','admin/article/upload');
 
 })->middleware('CheckLogin');
 

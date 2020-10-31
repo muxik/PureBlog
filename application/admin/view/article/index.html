@@ -46,6 +46,7 @@
             <th>缩略图</th>
             <th>分类</th>
             <th>标题</th>
+            <th>作者</th>
             <th>浏览</th>
             <th>显示</th>
             <th>置顶</th>
@@ -58,10 +59,12 @@
         <tr class="id84">
             <td>{$vo.id}</td>
             <td><img src="{$vo.pic}" height="50px"/></td>
-            <td>{$vo.category_id}</td>
+            <td>{$vo.category.name}</td>
             <td>{$vo.title}</td>
+            <td>{$vo.admin.username}</td>
             <td>{$vo.read}</td>
             <td><input data-id="84" lay-filter="state" type="checkbox" checked lay-text="开启|关闭" lay-skin="switch"></td>
+            <td><input data-id="84" lay-filter="top" type="checkbox" checked lay-text="开启|关闭" lay-skin="switch"></td>
             <td>{$vo.create_time}</td>
             <td><a href="/admin/article/update/id/84.html">修改</a> | <a class="del" data-id=".id84"
                                                                        href="/admin/article/del/id/84.html">删除</a></td>
