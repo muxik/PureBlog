@@ -39,7 +39,15 @@ class Article extends Controller
      */
     public function save(Request $request)
     {
-        //
+        $data = [
+            'title' => $request->param('title'),
+            'top' => $request->param('title'),
+            'u_id' => $request->param('title'),
+            'tag' => $request->param('title'),
+            'pic' => $request->param('title'),
+            'content' => $request->param('title'),
+            'state' => $request->param('title'),
+        ];
     }
 
     /**
@@ -73,7 +81,7 @@ class Article extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+
     }
 
     /**
@@ -87,8 +95,16 @@ class Article extends Controller
         //
     }
 
-    public function upload()
+    /**
+     * 文件上传
+     * @param Request $request
+     */
+    public function upload(Request $request)
     {
-
+        $file = $request->file('file');
+        $info = $file->move('./static/upload');
+        if ($info){
+            $this->success('上传成功','/static/upload/'. $info->getSaveName());
+        }
     }
 }
