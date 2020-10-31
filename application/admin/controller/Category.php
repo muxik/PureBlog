@@ -14,7 +14,7 @@ class Category extends Controller
      */
     public function index()
     {
-        $categorys = model('Category')->select();
+        $categorys = model('Category')->order('sort','asc')->select();
         return view()->assign(['categorys' => $categorys]);
     }
 
