@@ -59,8 +59,9 @@
             <td>{$vo.username}</td>
             <td>{if $vo.super eq 1} 是 {else /} 否 {/if}</td>
             <td>
-                <input type="checkbox" lay-filter="state" lay-text="正常|封禁" name="switch" {if $vo.status eq 1/} checked
-                {/if} {if session('admin.super') neq true} disabled {/if}
+                <input type="checkbox" data-id="{$vo.id}" lay-filter="status" lay-text="正常|封禁" name="switch"
+                       {if $vo.status eq 1/} checked value="1" {else/} value="0" {/if}
+                {if session('admin.super') neq true} disabled {/if}
                 lay-skin="switch">
             </td>
             <td>{$vo.create_time}</td>
@@ -93,7 +94,7 @@
                     layer.msg(res.msg, {icon: 6, time: 1500}, () => {
                         location.href = res.url
                     })
-                }else {
+                } else {
                     layer.msg(res.msg, {icon: 5, time: 1500}, () => {
                         location.href = res.url
                     })
@@ -103,5 +104,15 @@
         });
         return false;
     }
+
+    layui.use('form', function () {
+        var form = layui.form, layer = layui.layer, $ = layui.jquery;
+
+        form.on('switch(status)', function (data) {
+            var id = $(data.elem).attr("data-id");
+            var value = $(data.elem).attr("value") === '1' ? 0:1;
+            //TODO 管理员状态修改
+        });
+    });
 </script>
 {/block}

@@ -48,12 +48,15 @@
         {foreach $categorys as $key=>$vo }
         <tr class="id9">
             <td>{$vo.id}</td>
-            <td><input type="text" style="width: 4em" value="{$vo.sort}" name="" id="" class="layui-input"></td>
+            <td><input onblur="updateSort({$vo.id},this.value)" type="text" style="width: 4em" value="{$vo.sort}" name="" id="" class="layui-input"></td>
             <td>{$vo.name}</td>
-            <td><input data-id="9" lay-filter="state" type="checkbox" {if $vo.state eq 1} checked {/if} lay-text="开启|关闭" lay-skin="switch"></td>
+            <td><input data-id="{$vo.id}" lay-filter="state" type="checkbox" {if $vo.state eq 1} checked {/if}
+                lay-text="开启|关闭" lay-skin="switch">
+            </td>
             <td>{$vo.create_time}</td>
-            <td><a href="/admin/cate/{$vo.id}/edit">修改</a> | <a class="del" data-id=".id9"
-                                                                       href="/admin/category/del/id/9.html">删除</a></td>
+            <td>
+                <a href="/admin/cate/{$vo.id}/edit">修改</a> |
+                <a class="" href="javascript:;" onclick="deleteCate({$vo.id})">删除</a></td>
         </tr>
         {/foreach}
         </tbody>
@@ -62,35 +65,37 @@
 {/block}
 {block name="script"}
 <script>
+    function deleteCate(id) {
+        layer.alert('确认删除？', function (index) {
+            $.post('/admin/cate/' + id, {_method: 'DELETE'}, res => {
+                if (res.code === 1) {
+                    layer.msg(res.msg, {icon: 6, time: 1500}, () => {
+                        location.href = res.url
+                    })
+                } else {
+                    layer.msg(res.msg, {icon: 5, time: 1500}, () => {
+                        location.href = res.url
+                    })
+                }
+            })
+            layer.close(index);
+        });
+        return false;
+    }
+
+    function updateSort(id,value) {
+        // TODO 排序更新
+    }
+
     layui.use('form', function () {
         var form = layui.form, layer = layui.layer, $ = layui.jquery;
 
         form.on('switch(state)', function (data) {
             var id = $(data.elem).attr("data-id");
-            $.ajax({
-                url: "/admin/category/state/type/state.html",
-                data: {
-                    id: id,
-                },
-                type: "get",
-                dataType: "json",
-                success: function (e) {
-                    if (e.code == 1) {
-                        layer.msg(e.msg, {
-                            icon: 1
-                        });
-                    } else {
-                        layer.msg(e.msg, {
-                            icon: 2,
-                            shade: 0.5,
-                            time: 2000,
-                            shadeClose: true
-                        });
-                    }
-                }
-            });
+            //TODO 栏目显示/隐藏
         });
-
     });
+
+
 </script>
 {/block}

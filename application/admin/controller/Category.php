@@ -14,7 +14,7 @@ class Category extends Controller
      */
     public function index()
     {
-        $categorys = model('Category')->order('sort','asc')->select();
+        $categorys = model('Category')->order('sort', 'asc')->select();
         return view()->assign(['categorys' => $categorys]);
     }
 
@@ -31,15 +31,15 @@ class Category extends Controller
     /**
      * 保存新建的资源
      *
-     * @param  \think\Request  $request
+     * @param \think\Request $request
      * @return \think\Response
      */
     public function save(Request $request)
     {
         $data = [
             'name' => $request->param('name'),
-            'sort' => $request->param('sort' ,1 ),
-            'state' => $request->param('state',0)
+            'sort' => $request->param('sort', 1),
+            'state' => $request->param('state', 0)
         ];
 
         $result = model('Category')->add($data);
@@ -50,7 +50,7 @@ class Category extends Controller
     /**
      * 显示指定的资源
      *
-     * @param  int  $id
+     * @param int $id
      * @return \think\Response
      */
     public function read($id)
@@ -61,7 +61,7 @@ class Category extends Controller
     /**
      * 显示编辑资源表单页.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \think\Response
      */
     public function edit($id)
@@ -73,16 +73,16 @@ class Category extends Controller
     /**
      * 保存更新的资源
      *
-     * @param  \think\Request  $request
-     * @param  int  $id
+     * @param \think\Request $request
+     * @param int $id
      * @return \think\Response
      */
     public function update(Request $request, $id)
     {
-        $data= [
+        $data = [
             'state' => $request->param('state'),
-            'name'  => $request->param('name'),
-            'sort'  => $request->param('sort'),
+            'name' => $request->param('name'),
+            'sort' => $request->param('sort'),
         ];
 
         $result = model('Category')->edit($id, $data);
@@ -94,11 +94,13 @@ class Category extends Controller
     /**
      * 删除指定资源
      *
-     * @param  int  $id
+     * @param int $id
      * @return \think\Response
      */
     public function delete($id)
     {
-        //
+        if (model('Category')->find($id)->delete())
+            $this->success('删除成功！');
+        else $this->error('删除失败，请稍后再试！');
     }
 }
