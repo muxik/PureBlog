@@ -25,6 +25,8 @@ class Login extends Controller
         // 获取前台提交的数据进行调整
         $data = $request->post();
         $data['password'] = md5($data['password']);
+
+        // 空字符串也可以被md5加密
         if ($data['password'] == 'd41d8cd98f00b204e9800998ecf8427e') $data['password'] = '';
 
         // 验证数据

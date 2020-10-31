@@ -33,7 +33,9 @@
             <div class="layui-input-inline" style="width: 300px">
                 <input type="text" name="k" value="" id="keyword" placeholder="用户名" class="layui-input key">
             </div>
-            <button type="button" class="layui-btn sou" onclick="location.href = '/admin/user?username=' + document.getElementById('keyword').value">搜索</button>
+            <button type="button" class="layui-btn sou"
+                    onclick="location.href = '/admin/user?username=' + document.getElementById('keyword').value">搜索
+            </button>
             <button type="button" class="layui-btn sou" onclick="location.href = '/admin/user'">刷新</button>
         </div>
     </div>
@@ -57,11 +59,19 @@
             <td>{$vo.username}</td>
             <td>{if $vo.super eq 1} 是 {else /} 否 {/if}</td>
             <td>
-                <input type="checkbox" lay-filter="state"  lay-text="正常|封禁" name="switch" {if $vo.status eq 1/} checked {else/} disabled {/if}
-                       lay-skin="switch">
+                <input type="checkbox" lay-filter="state" lay-text="正常|封禁" name="switch" {if $vo.status eq 1/} checked
+                {/if} {if session('admin.super') neq true} disabled {/if}
+                lay-skin="switch">
             </td>
             <td>{$vo.create_time}</td>
-            <td><a href="?/admin/user/update/uid/36567.html">修改</a></td>
+            <td>
+                {if session('admin.super') eq true}
+                <a href="/admin/user/{$vo.id}/edit" class="layui-btn layui-btn-sm">修改</a>
+                <a href=""class="layui-btn-danger layui-btn-sm layui-btn">删除</a>
+                {else/}
+                无权限
+                {/if}
+            </td>
         </tr>
         {/foreach}
         </tbody>
@@ -70,7 +80,5 @@
     <div class="page">
         {$admins|raw}
     </div>
-
-
 </div>
 {/block}
