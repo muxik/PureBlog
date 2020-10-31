@@ -45,12 +45,12 @@
     "hidden": false,
     "list": [
       {
-        "name": "栏目管理",
-        "url": "type_index.html"
+        "name": "文章列表",
+        "url": "/admin/article"
       },
       {
-        "name": "文章管理",
-        "url": "article_index.html"
+        "name": "添加文章",
+        "url": "/admin/article/create"
       }
     ]
   },

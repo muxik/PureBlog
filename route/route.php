@@ -27,6 +27,9 @@ Route::group('admin',function (){
     Route::post('cate/up_state/:id','admin/category/updateState');
     Route::post('cate/up_sort/:id','admin/category/updateSort');
 
+    // 文章管理 资源路由
+    Route::resource('article','admin/article');
+
 })->middleware('CheckLogin');
 
 

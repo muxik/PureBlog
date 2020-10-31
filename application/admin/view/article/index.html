@@ -1,0 +1,191 @@
+{extend name="layout/base"}
+{block name="main"}
+<!--左栏-->
+<div class="left">
+    <ul class="cl">
+        <!--顶级分类-->
+        <li v-for="vo,index in menu" :class="{hidden:vo.hidden}">
+            <a href="javascript:;" :class="{active:vo.active}" @click="onActive(index)">
+                <i class="layui-icon" v-html="vo.icon"></i>
+                <span v-text="vo.name"></span>
+                <i class="layui-icon arrow" v-show="vo.url.length==0">&#xe61a;</i> <i v-show="vo.active"
+                                                                                      class="layui-icon active">&#xe623;</i>
+            </a>
+            <!--子级分类-->
+            <div v-for="vo2,index2 in vo.list">
+                <a href="javascript:;" :class="{active:vo2.active}" @click="onActive(index,index2)"
+                   v-text="vo2.name"></a>
+                <i v-show="vo2.active" class="layui-icon active">&#xe623;</i>
+            </div>
+        </li>
+    </ul>
+</div>
+<!--右侧-->
+<div class="right">
+
+
+    <a href="article_add.html" class="layui-btn"><i class="layui-icon">&#xe654;</i>添加文章</a>
+
+    <table class="layui-table layui-form">
+        <colgroup>
+            <col width="80">
+            <col width="100">
+            <col width="100">
+            <col width="130">
+            <col width="90">
+            <col width="90">
+            <col width="90">
+            <col width="90">
+            <col width="90">
+            <col width="200">
+            <col width="150">
+        </colgroup>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>缩略图</th>
+            <th>分类</th>
+            <th>标题</th>
+            <th>浏览</th>
+            <th>显示</th>
+            <th>置顶</th>
+            <th>时间</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        {foreach $articles as $key=>$vo}
+        <tr class="id84">
+            <td>{$vo.id}</td>
+            <td><img src="{$vo.pic}" height="50px"/></td>
+            <td>{$vo.category_id}</td>
+            <td>{$vo.title}</td>
+            <td>{$vo.read}</td>
+            <td><input data-id="84" lay-filter="state" type="checkbox" checked lay-text="开启|关闭" lay-skin="switch"></td>
+            <td>{$vo.create_time}</td>
+            <td><a href="/admin/article/update/id/84.html">修改</a> | <a class="del" data-id=".id84"
+                                                                       href="/admin/article/del/id/84.html">删除</a></td>
+        </tr>
+        {/foreach}
+        </tbody>
+    </table>
+
+
+    <div class="page">
+
+    </div>
+
+
+</div>
+{/block}
+{block name="script"}
+<script>
+    layui.use('form', function () {
+        var form = layui.form, layer = layui.layer, $ = layui.jquery;
+
+        form.on('switch(state)', function (data) {
+            var id = $(data.elem).attr("data-id");
+            $.ajax({
+                url: "/admin/article/state.html",
+                data: {
+                    id: id,
+                },
+                type: "get",
+                dataType: "json",
+                success: function (e) {
+                    if (e.code == 1) {
+                        layer.msg(e.msg, {
+                            icon: 1
+                        });
+                    } else {
+                        layer.msg(e.msg, {
+                            icon: 2,
+                            shade: 0.5,
+                            time: 2000,
+                            shadeClose: true
+                        });
+                    }
+                }
+            });
+        });
+
+        form.on('switch(top)', function (data) {
+            var id = $(data.elem).attr("data-id");
+            $.ajax({
+                url: "/admin/article/top.html",
+                data: {
+                    id: id,
+                },
+                type: "get",
+                dataType: "json",
+                success: function (e) {
+                    if (e.code == 1) {
+                        layer.msg(e.msg, {
+                            icon: 1
+                        });
+                    } else {
+                        layer.msg(e.msg, {
+                            icon: 2,
+                            shade: 0.5,
+                            time: 2000,
+                            shadeClose: true
+                        });
+                    }
+                }
+            });
+        });
+
+        form.on('switch(experiment)', function (data) {
+            var id = $(data.elem).attr("data-id");
+            $.ajax({
+                url: "/admin/article/experiment.html",
+                data: {
+                    id: id,
+                },
+                type: "get",
+                dataType: "json",
+                success: function (e) {
+                    if (e.code == 1) {
+                        layer.msg(e.msg, {
+                            icon: 1
+                        });
+                    } else {
+                        layer.msg(e.msg, {
+                            icon: 2,
+                            shade: 0.5,
+                            time: 2000,
+                            shadeClose: true
+                        });
+                    }
+                }
+            });
+        });
+
+        form.on('switch(works)', function (data) {
+            var id = $(data.elem).attr("data-id");
+            $.ajax({
+                url: "/admin/article/works.html",
+                data: {
+                    id: id,
+                },
+                type: "get",
+                dataType: "json",
+                success: function (e) {
+                    if (e.code == 1) {
+                        layer.msg(e.msg, {
+                            icon: 1
+                        });
+                    } else {
+                        layer.msg(e.msg, {
+                            icon: 2,
+                            shade: 0.5,
+                            time: 2000,
+                            shadeClose: true
+                        });
+                    }
+                }
+            });
+        });
+    });
+</script>
+{/block}
