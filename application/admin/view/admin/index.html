@@ -106,12 +106,15 @@
     }
 
     layui.use('form', function () {
-        var form = layui.form, layer = layui.layer, $ = layui.jquery;
+        let form = layui.form, layer = layui.layer, $ = layui.jquery;
 
         form.on('switch(status)', function (data) {
-            var id = $(data.elem).attr("data-id");
-            var value = $(data.elem).attr("value") === '1' ? 0:1;
-            //TODO 管理员状态修改
+            let id = $(data.elem).attr("data-id");
+            let value = $(data.elem).attr("value") === '1' ? 0 : 1;
+            $.post('/admin/user/up_state/' + id, {status: value}, res => {
+                if (res.code === 1) layer.msg(res.msg, {icon: 6, time: 900, anim: 2})
+                else layer.msg(res.msg, {icon: 5, time: 1000, anim: 6})
+            })
         });
     });
 </script>

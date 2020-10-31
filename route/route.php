@@ -20,6 +20,7 @@ Route::group('admin',function (){
 
     // 管理员管理 资源路由
     Route::resource('user','admin/admin');
+    Route::post('user/up_state/:id','admin/admin/updateState');
 
     // 栏目管理 资源路由
     Route::resource('cate','admin/category');

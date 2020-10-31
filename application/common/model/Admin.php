@@ -61,11 +61,20 @@ class Admin extends Model
         $admin->status = $data['status'];
         $admin->super = $data['super'];
         $result = $admin->save();
-        if ($result) {
-            return true;
-        } else {
-            return "修改失败";
-        }
+
+        if ($result) return true;
+        else return "修改失败";
+
+    }
+
+
+    public function updateState($id, $state)
+    {
+        $admin = $this->find($id);
+        $admin->status = $state;
+        $result = $admin->save();
+        if ($result) return true;
+        else return "更新状态失败";
     }
 
     /**

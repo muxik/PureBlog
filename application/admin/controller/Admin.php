@@ -108,6 +108,13 @@ class Admin extends Controller
         else $this->error($result);
     }
 
+    public function updateState(Request $request, $id)
+    {
+        $result = model('Admin')->updateState($id, $request->param('status'));
+        if ($result === true) $this->success('状态更新完成', '/admin/user');
+        else $this->error($result);
+    }
+
     /**
      * 删除指定资源
      *
