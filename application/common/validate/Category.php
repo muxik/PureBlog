@@ -25,4 +25,14 @@ class Category extends Validate
     {
         return $this->only(['name','sort']);
     }
+
+    /**
+     * 修改栏目验证场景
+     * @return Category
+     */
+    public function sceneEdit()
+    {
+        return $this->only(['name','sort']);
+    }
+
 }

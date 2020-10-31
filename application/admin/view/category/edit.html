@@ -23,63 +23,48 @@
 <!--右侧-->
 <div class="right">
     <fieldset class="layui-elem-field layui-field-title">
-        <legend>添加用户</legend>
+        <legend>栏目修改</legend>
     </fieldset>
 
 
-    <form class="layui-form ">
+    <form class="layui-form " action="">
         <div class="layui-form-item">
-            <label class="layui-form-label">用户名</label>
+            <label class="layui-form-label">栏目名称</label>
             <div class="layui-input-block">
-                <input type="text" name="username" required lay-verify="required" placeholder="" autocomplete="off"
+                <input type="text" name="name" value="{$cate.name}" required lay-verify="required" placeholder="" autocomplete="off"
                        class="layui-input">
             </div>
         </div>
         <div class="layui-form-item">
-            <label class="layui-form-label">密码</label>
-            <div class="layui-input-block">
-                <input type="password" name="password" required lay-verify="required" placeholder="" autocomplete="off"
-                       class="layui-input">
-            </div>
-        </div>
-
-
-        <div class="layui-form-item">
-            <label class="layui-form-label">是否禁用</label>
-            <div class="layui-input-block">
-                <input type="checkbox" value="0" name="status" lay-text="开启|关闭" lay-skin="switch">
+            <label class="layui-form-label">导航排序</label>
+            <div class="layui-input-inline">
+                <input value="{$cate.sort}" type="text" name="sort" placeholder="数小靠前 不填为1" autocomplete="off" class="layui-input">
             </div>
         </div>
         <div class="layui-form-item">
-            <label class="layui-form-label">超级管理员权限</label>
+            <label class="layui-form-label">是否显示</label>
             <div class="layui-input-block">
-                <input type="checkbox" value="1" name="super" lay-text="开启|关闭" lay-skin="switch">
+                <input type="checkbox" value="1" name="state" lay-text="开启|关闭" lay-skin="switch" {if $cate.state eq 1} checked {/if}>
             </div>
         </div>
         <div class="layui-form-item">
             <div class="layui-input-block">
-                <button class="layui-btn" lay-submit lay-filter="submit">立即提交</button>
+                <button class="layui-btn" lay-submit lay-filter="submit">立即修改</button>
             </div>
         </div>
+        <input type="hidden" name="_method" value="PUT">
     </form>
 
 </div>
 {/block}
 {block name="script"}
 <script>
-    layui.use('form', function () {
-        var form = layui.form,
-            layer = layui.layer,
-            $ = layui.jquery;
-        form.on('submit(submit)', function (data) {
-            $.post('/admin/user', data.field, function (res) {
-
+    layui.use('form', () => {
+        var form = layui.form, layer = layui.layer, $ = layui.jquery;
+        form.on('submit(submit)', data => {
+            $.post('/admin/cate/{$cate.id}', data.field, res => {
                 if (res.code === 1) {
                     layer.msg(res.msg, {icon: 5, time: 1500}, () => {
-                        layer.load({
-                            shade: 0.5,
-                            time: 0,
-                        });
                         location.href = res.url
                     })
                 } else {
@@ -89,7 +74,7 @@
                 }
             })
             return false;
-        });
-    });
+        })
+    })
 </script>
 {/block}

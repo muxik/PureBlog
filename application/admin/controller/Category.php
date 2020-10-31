@@ -66,7 +66,8 @@ class Category extends Controller
      */
     public function edit($id)
     {
-        //
+        $category = model('Category')->find($id);
+        return view()->assign(['cate' => $category]);
     }
 
     /**
@@ -78,7 +79,16 @@ class Category extends Controller
      */
     public function update(Request $request, $id)
     {
+        $data= [
+            'state' => $request->param('state'),
+            'name'  => $request->param('name'),
+            'sort'  => $request->param('sort'),
+        ];
 
+        $result = model('Category')->edit($id, $data);
+
+        if ($result === true) $this->success('添加成功');
+        else $this->error($result);
     }
 
     /**

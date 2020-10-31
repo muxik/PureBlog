@@ -52,7 +52,7 @@
             <td>{$vo.name}</td>
             <td><input data-id="9" lay-filter="state" type="checkbox" {if $vo.state eq 1} checked {/if} lay-text="开启|关闭" lay-skin="switch"></td>
             <td>{$vo.create_time}</td>
-            <td><a href="/admin/category/update/id/9.html">修改</a> | <a class="del" data-id=".id9"
+            <td><a href="/admin/cate/{$vo.id}/edit">修改</a> | <a class="del" data-id=".id9"
                                                                        href="/admin/category/del/id/9.html">删除</a></td>
         </tr>
         {/foreach}
