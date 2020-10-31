@@ -35,7 +35,7 @@ class Admin extends Validate
     public function sceneAdd()
     {
         return $this->only(['username','password'])
-            ->append(['username' => 'unique:admin']);
+            ->append(['username|用户名' => 'unique:admin']);
     }
 
     /**

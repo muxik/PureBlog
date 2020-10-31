@@ -6,7 +6,7 @@ var config = {
     debug: true,
 
     //网站名称 (左上角显示的文字LOGO)
-    webname: 'QAdmin',
+    webname: 'Pure博客',
 
     //菜单列表路径 (可以是本地json,也可以是api接口)
     menuUrl: '/static/data/menu.json',

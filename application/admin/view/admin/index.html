@@ -67,7 +67,7 @@
             <td>
                 {if session('admin.super') eq true}
                 <a href="/admin/user/{$vo.id}/edit" class="layui-btn layui-btn-sm">修改</a>
-                <a href=""class="layui-btn-danger layui-btn-sm layui-btn">删除</a>
+                <a href="javascript:;" class="layui-btn-danger layui-btn-sm layui-btn" onclick="deleteAdmin({$vo.id})">删除</a>
                 {else/}
                 无权限
                 {/if}
@@ -81,4 +81,27 @@
         {$admins|raw}
     </div>
 </div>
+{/block}
+
+{block name="script"}
+
+<script>
+    function deleteAdmin(uid) {
+        layer.alert('确认删除？', function (index) {
+            $.post('/admin/user/' + uid, {_method: 'DELETE'}, res => {
+                if (res.code === 1) {
+                    layer.msg(res.msg, {icon: 6, time: 1500}, () => {
+                        location.href = res.url
+                    })
+                }else {
+                    layer.msg(res.msg, {icon: 5, time: 1500}, () => {
+                        location.href = res.url
+                    })
+                }
+            })
+            layer.close(index);
+        });
+        return false;
+    }
+</script>
 {/block}

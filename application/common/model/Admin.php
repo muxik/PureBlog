@@ -52,7 +52,7 @@ class Admin extends Model
 
         // 更新数据
         $admin = $this->find($id);
-        $admin->password = $data['password'];
+        $admin->password = md5($data['password']);
         $admin->status = $data['status'];
         $admin->super = $data['super'];
         $result = $admin->save();

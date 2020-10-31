@@ -113,9 +113,15 @@ class Admin extends Controller
      *
      * @param int $id
      * @return \think\Response
+     * @throws \Exception
      */
     public function delete($id)
     {
-        //
+        if (!session('admin.super') == true) $this->error("你不是超级管理员");
+
+
+        $result = model('Admin')->find($id)->delete();
+        if ($result === true) $this->success('删除成功！', '/admin/user');
+        else $this->error('删除失败，请重试！', '/admin/user');
     }
 }
