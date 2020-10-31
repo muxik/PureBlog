@@ -48,7 +48,8 @@
         {foreach $categorys as $key=>$vo }
         <tr class="id9">
             <td>{$vo.id}</td>
-            <td><input onblur="updateSort({$vo.id},this.value)" type="text" style="width: 4em" value="{$vo.sort}" name="" id="" class="layui-input"></td>
+            <td><input onblur="updateSort({$vo.id},this.value)" type="text" style="width: 4em" value="{$vo.sort}"
+                       name="" id="" class="layui-input"></td>
             <td>{$vo.name}</td>
             <td><input data-id="{$vo.id}" lay-filter="state" type="checkbox" {if $vo.state eq 1} checked {/if}
                 lay-text="开启|关闭" lay-skin="switch">
@@ -61,6 +62,9 @@
         {/foreach}
         </tbody>
     </table>
+    <div class="page">
+        {$categorys|raw}
+    </div>
 </div>
 {/block}
 {block name="script"}
@@ -83,8 +87,13 @@
         return false;
     }
 
-    function updateSort(id,value) {
-        // TODO 排序更新
+    function updateSort(id, value) {
+        $.post('/admin/cate/up_sort/' + id, {sort: value}, res => {
+            if (res.code === 1) layer.msg(res.msg, {icon: 6, time: 900, anim: 2}, () => {
+                location.href = res.url
+            })
+            else layer.msg(res.msg, {icon: 5, time: 1000, anim: 6})
+        })
     }
 
     layui.use('form', function () {

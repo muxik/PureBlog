@@ -14,7 +14,7 @@ class Category extends Controller
      */
     public function index()
     {
-        $categorys = model('Category')->order('sort', 'asc')->select();
+        $categorys = model('Category')->order('sort', 'asc')->paginate(5);
         return view()->assign(['categorys' => $categorys]);
     }
 
@@ -79,6 +79,18 @@ class Category extends Controller
     {
         $result = model('Category')->updateState($id, $request->param('status'));
         if ($result === true) $this->success('状态更新完成', '/admin/user');
+        else $this->error($result);
+    }
+
+    /**
+     * 栏目排序
+     * @param Request $request
+     * @param $id
+     */
+    public function updateSort(Request $request, $id)
+    {
+        $result = model('Category')->updateSort($id, $request->param('sort'));
+        if ($result === true) $this->success('排序成功', '/admin/cate');
         else $this->error($result);
     }
 

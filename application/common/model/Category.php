@@ -66,10 +66,25 @@ class Category extends Model
      */
     public function updateState($id, $state)
     {
-        $admin = $this->find($id);
-        $admin->state = $state;
-        $result = $admin->save();
+        $cate = $this->find($id);
+        $cate->state = $state;
+        $result = $cate->save();
         if ($result) return true;
         else return "更新状态失败";
+    }
+
+    /**
+     * 排序更新模型
+     * @param $id
+     * @param $sort
+     * @return bool|string
+     */
+    public function updateSort($id, $sort)
+    {
+        $cate = $this->find($id);
+        $cate->sort = $sort;
+        $result =$cate->save();
+        if ($result) return true;
+        else return  "更新排序失败";
     }
 }

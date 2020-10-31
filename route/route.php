@@ -25,6 +25,7 @@ Route::group('admin',function (){
     // 栏目管理 资源路由
     Route::resource('cate','admin/category');
     Route::post('cate/up_state/:id','admin/category/updateState');
+    Route::post('cate/up_sort/:id','admin/category/updateSort');
 
 })->middleware('CheckLogin');
 
