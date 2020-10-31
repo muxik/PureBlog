@@ -18,15 +18,18 @@ Route::group('admin',function (){
     Route::rule('index', 'admin/index/index', 'get');
     Route::rule('out', 'admin/index/out', 'get');
 
-    // 管理员资源路由
+    // 管理员管理 资源路由
     Route::resource('user','admin/admin');
+
+    // 栏目管理 资源路由
+    Route::resource('cate','admin/category');
 
 })->middleware('CheckLogin');
 
 
 Route::get('test', function (){
     try {
-        return json(\think\Db::name("admin")->select());
+        return json(\think\Db::name("category")->select());
     } catch (Exception $e) {
     }
 });

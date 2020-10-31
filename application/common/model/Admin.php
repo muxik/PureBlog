@@ -12,9 +12,14 @@ use think\model\concern\SoftDelete;
  */
 class Admin extends Model
 {
+    // 软删除
     use SoftDelete;
 
+    // 表名
     protected $name = "admin";
+
+    // 只读字段
+    protected $readonly = ['username'];
 
     /**
      * 添加管理员
