@@ -55,6 +55,12 @@ class Article extends Model
     }
 
 
+    /**
+     * 文章更新
+     * @param $id
+     * @param $data
+     * @return array|bool|string
+     */
     public function edit($id, $data)
     {
         $validate = new \app\common\validate\Article();
@@ -67,4 +73,28 @@ class Article extends Model
         else return "服务器错误请稍后再试";
     }
 
+
+    /**
+     * 文章状态更新
+     * @param $id
+     * @param $state
+     * @return bool|string
+     */
+    public function updateState($id, $state)
+    {
+        $article = $this->find($id);
+        $article->state = $state;
+        $result = $article->save();
+        if ($result) return true;
+        else return "更新状态失败";
+    }
+
+    public function updateTop($id, $top)
+    {
+        $article = $this->find($id);
+        $article->top = $top;
+        $result = $article->save();
+        if ($result) return true;
+        else return "更新状态失败";
+    }
 }

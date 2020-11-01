@@ -103,7 +103,7 @@
         <div class="layui-form-item">
             <label class="layui-form-label">是否显示</label>
             <div class="layui-input-block">
-                <input type="checkbox" value="1" name="state" lay-text="开启|关闭" lay-skin="switch" {if $article.top eq 1}
+                <input type="checkbox" value="1" name="state" lay-text="开启|关闭" lay-skin="switch" {if $article.state eq 1}
                        checked {/if}>
             </div>
         </div>
@@ -167,6 +167,7 @@
             })
             return false;
         });
+
     });
 </script>
 {/block}

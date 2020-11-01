@@ -87,6 +87,28 @@ class Article extends Controller
     }
 
     /**
+     * 文章状态更新
+     * @param Request $request
+     * @param $id
+     */
+    public function updateState(Request $request, $id){
+        $result = model('Article')->updateState($id, $request->param('status'));
+        if ($result === true) $this->success('状态更新完成', '/admin/user');
+        else $this->error($result);
+    }
+
+    /**
+     * 文章置顶更新
+     * @param Request $request
+     * @param $id
+     */
+    public function updateTop(Request $request, $id){
+        $result = model('Article')->updateTop($id, $request->param('status'));
+        if ($result === true) $this->success('操作成功！', '/admin/user');
+        else $this->error($result);
+    }
+
+    /**
      * 保存更新的资源
      *
      * @param \think\Request $request

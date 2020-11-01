@@ -9,6 +9,12 @@
 // | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
 
+Route::group('/',function (){
+    Route::rule('', 'index/index/index', 'get');
+});
+
+
+
 Route::group('admin', function () {
     Route::rule('/', 'admin/login/index', 'get');
     Route::rule('login', 'admin/login/login', 'post');
@@ -30,6 +36,8 @@ Route::group('admin',function (){
     // 文章管理 资源路由
     Route::resource('article','admin/article');
     Route::post('upload','admin/article/upload');
+    Route::post('article/up_state/:id','admin/article/updateState');
+    Route::post('article/up_top/:id','admin/article/updateTop');
 
 })->middleware('CheckLogin');
 
