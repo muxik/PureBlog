@@ -43,6 +43,12 @@
             </div>
         </div>
 
+        <div class="layui-form-item">
+            <label class="layui-form-label">简介</label>
+            <div class="layui-input-block" style="width:1000px;">
+                <textarea name="desc" class="layui-textarea ">{$article.desc}</textarea>
+            </div>
+        </div>
 
         <div class="layui-form-item">
             <label class="layui-form-label">缩略图</label>
@@ -71,8 +77,7 @@
             <div class="layui-input-inline" style="width: 200px">
                 <select name="category_id">
                     {foreach $categorys as $key=>$vo}
-                    <option value="{$vo.id}" >{if $vo.id eq $article.id}selected{
-                    /if}>{$vo.name}</option>
+                    <option value="{$vo.id}"{if $vo.id eq $article.id}selected{/if}>{$vo.name}</option>
                     {/foreach}
                 </select>
             </div>
