@@ -39,6 +39,12 @@ Route::group('admin',function (){
     Route::post('article/up_state/:id','admin/article/updateState');
     Route::post('article/up_top/:id','admin/article/updateTop');
 
+    // 网站设置
+    Route::get('web','admin/web/index');
+    Route::post('update','admin/web/update');
+
+
+
 })->middleware('CheckLogin');
 
 

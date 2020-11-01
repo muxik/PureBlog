@@ -62,7 +62,7 @@
     "list": [
       {
         "name": "网站设置",
-        "url": "web_index.html"
+        "url": "/admin/web"
       },
       {
         "name": "友情连接",
