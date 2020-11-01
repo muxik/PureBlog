@@ -46,7 +46,8 @@
         <div class="header__top">
             <div class="header__logo">
                 <a class="site-logo" href="index.html">
-                    <img src="/static/index/images/logo.svg" alt="Homepage">
+                    <!--                    <img src="/static/index/images/logo.svg" alt="Homepage">-->
+                    <p style="font-size: 2em; margin: -4px;padding:0;color: white;">PureBlog.</p>
                 </a>
             </div>
 
@@ -83,18 +84,8 @@
                         {/foreach}
                     </ul>
                 </li>
-                <li class="has-children">
-                    <a href="#0" title="">Blog Posts</a>
-                    <ul class="sub-menu">
-                        <li><a href="single-video.html">Video Post</a></li>
-                        <li><a href="single-audio.html">Audio Post</a></li>
-                        <li><a href="single-gallery.html">Gallery Post</a></li>
-                        <li><a href="single-standard.html">Standard Post</a></li>
-                    </ul>
-                </li>
-                <li><a href="styles.html" title="">Styles</a></li>
-                <li><a href="page-about.html" title="">About</a></li>
-                <li><a href="page-contact.html" title="">Contact</a></li>
+                <li><a href="page-about.html" title="">关于</a></li>
+                <li><a href="page-contact.html" title="">联系</a></li>
             </ul> <!-- end header__nav -->
 
             <ul class="header__social">
@@ -392,22 +383,24 @@
             <div class="column large-full">
                 <nav class="pgn">
                     <ul>
-                        <li><a class="pgn__prev" href="#0">Prev</a></li>
-                        <li><a class="pgn__num" href="#0">1</a></li>
-                        <li><span class="pgn__num current">2</span></li>
-                        <li><a class="pgn__num" href="#0">3</a></li>
-                        <li><a class="pgn__num" href="#0">4</a></li>
-                        <li><a class="pgn__num" href="#0">5</a></li>
-                        <li><span class="pgn__num dots">…</span></li>
-                        <li><a class="pgn__num" href="#0">8</a></li>
-                        <li><a class="pgn__next" href="#0">Next</a></li>
+
+                        <li><a class="pgn__prev" href="/?page={$page.current -1}">Prev</a> 上一页</li>
+<!--                        <li><a class="pgn__num" href="#0">1</a></li>-->
+<!--                        <li><span class="pgn__num current">2</span></li>-->
+<!--                        <li><a class="pgn__num" href="#0">3</a></li>-->
+<!--                        <li><a class="pgn__num" href="#0">4</a></li>-->
+<!--                        <li><a class="pgn__num" href="#0">5</a></li>-->
+<!--                        <li><span class="pgn__num dots">…</span></li>-->
+                        <li>--|--</li>
+                        <li> 下一页<a class="pgn__next" href="/?page={$page.last}">Next</a></li>
                     </ul>
                 </nav>
             </div>
+
         </div>
 
     </div> <!-- end s-content -->
-
+<!--    {"total":3,"per_page":2,"current_page":"1","last_page":2,-->
 
     <!-- footer
     ================================================== -->
@@ -432,6 +425,6 @@
 <script src="/static/index/js/plugins.js"></script>
 <script src="/static/index/js/main.js"></script>
 <!--<script src="/static/common/editormd/editormd.js"></script>-->
-<script></script>
+
 
 </body>
