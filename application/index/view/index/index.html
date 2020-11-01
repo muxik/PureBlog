@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+
+    <!--- basic page needs
+    ================================================== -->
+    <meta charset="utf-8">
+    <title>Home</title>
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- mobile specific metas
+    ================================================== -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- CSS
+    ================================================== -->
+    <link rel="stylesheet" href="/static/index/css/base.css">
+    <link rel="stylesheet" href="/static/index/css/vendor.css">
+    <link rel="stylesheet" href="/static/index/css/main.css">
+
+    <!-- script
+    ================================================== -->
+    <script src="/static/index/js/modernizr.js"></script>
+
+</head>
+
+<body>
+
+<!-- preloader
+================================================== -->
+<div id="preloader">
+    <div id="loader" class="dots-fade">
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+</div>
+
+<div id="top" class="s-wrap site-wrapper">
+
+    <!-- site header
+    ================================================== -->
+    <header class="s-header">
+
+        <div class="header__top">
+            <div class="header__logo">
+                <a class="site-logo" href="index.html">
+                    <img src="/static/index/images/logo.svg" alt="Homepage">
+                </a>
+            </div>
+
+            <div class="header__search">
+
+                <form role="search" method="get" class="header__search-form" action="#">
+                    <label>
+                        <span class="hide-content">Search for:</span>
+                        <input type="search" class="header__search-field" placeholder="Type Keywords" value="" name="s"
+                               title="Search for:" autocomplete="off">
+                    </label>
+                    <input type="submit" class="header__search-submit" value="Search">
+                </form>
+
+                <a href="#0" title="Close Search" class="header__search-close">Close</a>
+
+            </div>  <!-- end header__search -->
+
+            <!-- toggles -->
+            <a href="#0" class="header__search-trigger"></a>
+            <a href="#0" class="header__menu-toggle"><span>Menu</span></a>
+
+        </div> <!-- end header__top -->
+
+        <nav class="header__nav-wrap">
+
+            <ul class="header__nav">
+                <li class="current"><a href="index.html" title="">Home</a></li>
+                <li class="has-children">
+                    <a href="#0" title="">Categories</a>
+                    <ul class="sub-menu">
+                        <li><a href="category.html">Lifestyle</a></li>
+                        <li><a href="category.html">Health</a></li>
+                        <li><a href="category.html">Family</a></li>
+                        <li><a href="category.html">Management</a></li>
+                        <li><a href="category.html">Travel</a></li>
+                        <li><a href="category.html">Work</a></li>
+                    </ul>
+                </li>
+                <li class="has-children">
+                    <a href="#0" title="">Blog Posts</a>
+                    <ul class="sub-menu">
+                        <li><a href="single-video.html">Video Post</a></li>
+                        <li><a href="single-audio.html">Audio Post</a></li>
+                        <li><a href="single-gallery.html">Gallery Post</a></li>
+                        <li><a href="single-standard.html">Standard Post</a></li>
+                    </ul>
+                </li>
+                <li><a href="styles.html" title="">Styles</a></li>
+                <li><a href="page-about.html" title="">About</a></li>
+                <li><a href="page-contact.html" title="">Contact</a></li>
+            </ul> <!-- end header__nav -->
+
+            <ul class="header__social">
+                <li class="ss-facebook">
+                    <a href="">
+                        <span class="screen-reader-text">Facebook</span>
+                    </a>
+                </li>
+                <li class="ss-twitter">
+                    <a href="#0">
+                        <span class="screen-reader-text">Twitter</span>
+                    </a>
+                </li>
+                <li class="ss-dribbble">
+                    <a href="#0">
+                        <span class="screen-reader-text">Dribbble</span>
+                    </a>
+                </li>
+                <li class="ss-pinterest">
+                    <a href="#0">
+                        <span class="screen-reader-text">Behance</span>
+                    </a>
+                </li>
+            </ul>
+
+        </nav> <!-- end header__nav-wrap -->
+
+
+    </header> <!-- end s-header -->
+
+    <div class="s-content">
+
+        <div class="masonry-wrap">
+
+            <div class="masonry">
+
+                <div class="grid-sizer"></div>
+                {foreach $articles as $key=>$vo}
+                <article class="masonry__brick entry format-standard animate-this">
+
+                    <div class="entry__thumb">
+                        <a href="single-standard.html" class="entry__thumb-link">
+                            <img src="{$vo.pic}"
+                                 srcset="{$vo.pic} 2x" alt="">
+                        </a>
+                    </div>
+
+                    <div class="entry__text">
+                        <div class="entry__header">
+
+                            <h2 class="entry__title"><a href="single-standard.html">{$vo.title}</a></h2>
+                            <div class="entry__meta">
+                                    <span class="entry__meta-cat">
+                                        <a href="category.html">Design</a> 
+                                        <a href="category.html">Photography</a>
+                                    </span>
+                                <span class="entry__meta-date">
+                                        <a href="single-standard.html">Apr 29, 2020</a>
+                                    </span>
+                            </div>
+
+                        </div>
+<!--                        <div class="entry__excerpt">-->
+<!--                            <p id="text">-->
+<!--                                {$vo.content}-->
+<!--                            </p>-->
+<!--                        </div>-->
+                    </div>
+
+                </article>
+                {/foreach}
+                <!--
+                                <article class="masonry__brick entry format-quote animate-this">
+
+                                    <div class="entry__thumb">
+                                        <blockquote>
+                                            <p>Good design is making something intelligible and memorable. Great design is making something memorable and meaningful.</p>
+
+                                            <cite>Dieter Rams</cite>
+                                        </blockquote>
+                                    </div>
+
+                                </article>
+
+                                <article class="masonry__brick entry format-audio animate-this">
+
+                                    <div class="entry__thumb">
+                                        <a href="single-audio.html" class="entry__thumb-link">
+                                            <img src="/static/index/images/thumbs/masonry/guitarist-600.jpg"
+                                                 srcset="/static/index/images/thumbs/masonry/guitarist-600.jp/static/index/imagesimages/thumbs/masonry/guitarist-1200.jpg 2x" alt="">
+                                        </a>
+                                    </div>
+
+                                    <div class="entry__text">
+                                        <div class="entry__header">
+                                            <h2 class="entry__title"><a href="single-audio.html">What Your Music Preference Says About You and Your Personality.</a></h2>
+                                            <div class="entry__meta">
+                                                <span class="entry__meta-cat">
+                                                    <a href="category.html">Lifestyle</a>
+                                                </span>
+                                                <span class="entry__meta-date">
+                                                    <a href="single-standard.html">Apr 24, 2020</a>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="entry__excerpt">
+                                            <p>
+                                                Lorem ipsum Sed eiusmod esse aliqua sed incididunt aliqua incididunt mollit id et sit proident dolor nulla sed commodo est ad minim elit reprehenderit nisi officia aute incididunt velit sint in aliqua...
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                </article>
+
+                                <article class="masonry__brick entry format-standard animate-this">
+
+                                    <div class="entry__thumb">
+                                        <a href="single-standard.html" class="entry__thumb-link">
+                                            <img src="/static/index/images/thumbs/masonry/beetle-600.jpg"
+                                                 srcset="/static/index/images/thumbs/masonry/beetle-600.jp/static/index/imagesimages/thumbs/masonry/beetle-1200.jpg 2x" alt="">
+                                        </a>
+                                    </div>
+
+                                    <div class="entry__text">
+                                        <div class="entry__header">
+                                            <h2 class="entry__title"><a href="single-standard.html">Throwback To The Good Old Days.</a></h2>
+                                            <div class="entry__meta">
+                                                <span class="entry__meta-cat">
+                                                    <a href="category.html">Lifestyle</a>
+                                                </span>
+                                                <span class="entry__meta-date">
+                                                    <a href="single-standard.html">Apr 24, 2020</a>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="entry__excerpt">
+                                            <p>
+                                            Lorem ipsum Sed eiusmod esse aliqua sed incididunt aliqua incididunt mollit id et sit proident dolor nulla sed commodo est ad minim elit reprehenderit nisi officia aute incididunt velit sint in aliqua...
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                </article>
+
+                                <article class="masonry__brick entry format-video animate-this">
+
+                                    <div class="entry__thumb video-image">
+                                        <a href="" data-lity class="entry__thumb-link">
+                                            <img src="/static/index/images/thumbs/masonry/cookies-600.jpg"
+                                                 srcset="/static/index/images/thumbs/masonry/cookies-600.jp/static/index/imagesimages/thumbs/masonry/cookies-1200.jpg 2x" alt="">
+                                        </a>
+                                    </div>
+
+                                    <div class="entry__text">
+                                        <div class="entry__header">
+                                            <h2 class="entry__title"><a href="single-video.html">No Sugar Oatmeal Cookies.</a></h2>
+                                            <div class="entry__meta">
+                                                <span class="entry__meta-cat">
+                                                    <a href="category.html">Lifestyle</a>
+                                                    <a href="category.html">Health</a>
+                                                </span>
+                                                <span class="entry__meta-date">
+                                                    <a href="single-standard.html">Apr 24, 2020</a>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="entry__excerpt">
+                                            <p>
+                                            Lorem ipsum Sed eiusmod esse aliqua sed incididunt aliqua incididunt mollit id et sit proident dolor nulla sed commodo est ad minim elit reprehenderit nisi officia aute incididunt velit sint in aliqua...
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                </article>
+
+                                <article class="masonry__brick entry format-link animate-this">
+
+                                    <div class="entry__thumb">
+                                        <div class="link-wrap">
+                                            <h2>Powerful web & Wordpress hosting. Guaranteed. Starting at $2.59/mo!</h2>
+                                            <cite>
+                                                <a target="_blank" href="#">http://sc.chinaz.com</a>
+                                            </cite>
+                                        </div>
+                                    </div>
+
+                                </article>
+
+                                <article class="masonry__brick entry format-gallery animate-this">
+
+                                    <div class="entry__thumb slider">
+                                        <div class="slider__slides">
+                                            <div class="slider__slide">
+                                                <img src="/static/index/images/thumbs/masonry/gallery/slide-1-600.jpg"
+                                                     srcset="/static/index/images/thumbs/masonry/gallery/slide-1-600.jp/static/index/imagesimages/thumbs/masonry/gallery/slide-1-1200.jpg 2x" alt="">
+                                            </div>
+                                            <div class="slider__slide">
+                                                <img src="/static/index/images/thumbs/masonry/gallery/slide-2-600.jpg"
+                                                     srcset="/static/index/images/thumbs/masonry/gallery/slide-2-600.jp/static/index/imagesimages/thumbs/masonry/gallery/slide-2-1200.jpg 2x" alt="">
+                                            </div>
+                                            <div class="slider__slide">
+                                                <img src="/static/index/images/thumbs/masonry/gallery/slide-3-600.jpg"
+                                                     srcset="/static/index/images/thumbs/masonry/gallery/slide-3-600.jp/static/index/imagesimages/thumbs/masonry/gallery/slide-3-1200.jpg 2x" alt="">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="entry__text">
+                                        <div class="entry__header">
+                                            <h2 class="entry__title"><a href="single-gallery.html">The Best Tropical Leaves Images.</a></h2>
+                                            <div class="entry__meta">
+                                                <span class="entry__meta-cat">
+                                                    <a href="category.html">Vacation</a>
+                                                </span>
+                                                <span class="entry__meta-date">
+                                                    <a href="single-standard.html">Apr 23, 2020</a>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="entry__excerpt">
+                                            <p>
+                                                Lorem ipsum Sed eiusmod esse aliqua sed incididunt aliqua incididunt mollit id et sit proident dolor nulla sed commodo est ad minim elit reprehenderit nisi officia aute incididunt velit sint in aliqua...
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                </article>
+
+                                <article class="masonry__brick entry format-standard animate-this">
+
+                                    <div class="entry__thumb">
+                                        <a href="single-standard.html" class="entry__thumb-link">
+                                            <img src="/static/index/images/thumbs/masonry/walk-600.jpg"
+                                                 srcset="/static/index/images/thumbs/masonry/walk-600.jp/static/index/imagesimages/thumbs/masonry/walk-1200.jpg 2x" alt="">
+                                        </a>
+                                    </div>
+
+                                    <div class="entry__text">
+                                        <div class="entry__header">
+                                            <h2 class="entry__title"><a href="single-standard.html">Using Repetition and Patterns in Photography.</a></h2>
+                                            <div class="entry__meta">
+                                                <span class="entry__meta-cat">
+                                                    <a href="category.html">Work</a>
+                                                </span>
+                                                <span class="entry__meta-date">
+                                                    <a href="single-standard.html">Apr 23, 2020</a>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="entry__excerpt">
+                                            <p>
+                                                Lorem ipsum Sed eiusmod esse aliqua sed incididunt aliqua incididunt mollit id et sit proident dolor nulla sed commodo est ad minim elit reprehenderit nisi officia aute incididunt velit sint in aliqua...
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                </article>
+
+                                <article class="masonry__brick entry format-standard animate-this">
+
+                                    <div class="entry__thumb">
+                                        <a href="single-standard.html" class="entry__thumb-link">
+                                            <img src="/static/index/images/thumbs/masonry/real-600.jpg"
+                                                 srcset="/static/index/images/thumbs/masonry/real-600.jp/static/index/imagesimages/thumbs/masonry/real-1200.jpg 2x" alt="">
+                                        </a>
+                                    </div>
+
+                                    <div class="entry__text">
+                                        <div class="entry__header">
+                                            <h2 class="entry__title"><a href="single-standard.html">How We Live Is What Makes Us Real.</a></h2>
+                                            <div class="entry__meta">
+                                                <span class="entry__meta-cat">
+                                                    <a href="category.html">Travel</a>
+                                                    <a href="category.html">Vacation</a>
+                                                </span>
+                                                <span class="entry__meta-date">
+                                                    <a href="single-standard.html">Apr 23, 2020</a>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="entry__excerpt">
+                                            <p>
+                                                Lorem ipsum Sed eiusmod esse aliqua sed incididunt aliqua incididunt mollit id et sit proident dolor nulla sed commodo est ad minim elit reprehenderit nisi officia aute incididunt velit sint in aliqua...
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                </article>
+                -->
+            </div> <!-- end masonry -->
+
+        </div> <!-- end masonry-wrap -->
+
+        <div class="row">
+            <div class="column large-full">
+                <nav class="pgn">
+                    <ul>
+                        <li><a class="pgn__prev" href="#0">Prev</a></li>
+                        <li><a class="pgn__num" href="#0">1</a></li>
+                        <li><span class="pgn__num current">2</span></li>
+                        <li><a class="pgn__num" href="#0">3</a></li>
+                        <li><a class="pgn__num" href="#0">4</a></li>
+                        <li><a class="pgn__num" href="#0">5</a></li>
+                        <li><span class="pgn__num dots">…</span></li>
+                        <li><a class="pgn__num" href="#0">8</a></li>
+                        <li><a class="pgn__next" href="#0">Next</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+
+    </div> <!-- end s-content -->
+
+
+    <!-- footer
+    ================================================== -->
+    <footer class="s-footer">
+        <div class="row">
+            <div class="column large-full footer__content">
+                <div class="footer__copyright">Copyright &copy; 2020.Company name All rights reserved.</div>
+            </div>
+        </div>
+
+        <div class="go-top">
+            <a class="smoothscroll" title="Back to Top" href="#top"></a>
+        </div>
+    </footer>
+
+</div> <!-- end s-wrap -->
+
+
+<!-- Java Script
+================================================== -->
+<script src="/static/index/js/jquery-3.2.1.min.js"></script>
+<script src="/static/index/js/plugins.js"></script>
+<script src="/static/index/js/main.js"></script>
+<!--<script src="/static/common/editormd/editormd.js"></script>-->
+<script></script>
+
+</body>

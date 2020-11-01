@@ -44,6 +44,7 @@ class Article extends Controller
     {
         $data = [
             'title' => $request->param('title'),
+            'desc' => $request->param('desc'),
             'top' => $request->param('top', 0),
             'u_id' => session('admin.id'),
             'tag' => $request->param('tag'),
