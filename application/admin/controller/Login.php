@@ -44,7 +44,8 @@ class Login extends Controller
         // 保存session
         $seData = [
             'username' => $admin['username'],
-            'super' => $admin['super'] == 1
+            'super' => $admin['super'] == 1,
+            'id'    => $admin['id'],
         ];
         session('admin', $seData);
         $this->success('登陆成功', '/admin/index');

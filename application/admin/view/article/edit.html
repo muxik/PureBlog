@@ -1,7 +1,9 @@
 {extend name="layout/base"}
+
 {block name="link"}
 <link rel="stylesheet" href="/static/common/editormd/css/editormd.css"/>
 {/block}
+
 {block name="main"}
 <!--左栏-->
 <div class="left">
@@ -27,7 +29,7 @@
 <div class="right">
 
     <fieldset class="layui-elem-field layui-field-title">
-        <legend>添加文章</legend>
+        <legend>修改文章</legend>
     </fieldset>
 
 
@@ -37,7 +39,7 @@
         <div class="layui-form-item">
             <label class="layui-form-label"></label>
             <div class="layui-input-block">
-                <img class="pic_url" src="/static/common/image/pic.png" height="200px"/>
+                <img class="pic_url" src="{$article.pic}" height="200px"/>
             </div>
         </div>
 
@@ -45,7 +47,8 @@
         <div class="layui-form-item">
             <label class="layui-form-label">缩略图</label>
             <div class="layui-input-inline">
-                <input type="text" name="pic" id="pic_url" placeholder="可以使用http外链" autocomplete="off"
+                <input value="{$article.pic}" type="text" name="pic" id="pic_url" placeholder="可以使用http外链"
+                       autocomplete="off"
                        class="layui-input">
             </div>
             <div class="layui-word-aux">
@@ -59,7 +62,8 @@
         <div class="layui-form-item">
             <label class="layui-form-label">标题</label>
             <div class="layui-input-inline">
-                <input type="text" name="title" placeholder="" autocomplete="off" class="layui-input">
+                <input value="{$article.title}" type="text" name="title" placeholder="" autocomplete="off"
+                       class="layui-input">
             </div>
         </div>
         <div class="layui-form-item">
@@ -67,7 +71,8 @@
             <div class="layui-input-inline" style="width: 200px">
                 <select name="category_id">
                     {foreach $categorys as $key=>$vo}
-                    <option value="{$vo.id}">{$vo.name}</option>
+                    <option value="{$vo.id}" >{if $vo.id eq $article.id}selected{
+                    /if}>{$vo.name}</option>
                     {/foreach}
                 </select>
             </div>
@@ -75,7 +80,7 @@
         <div class="layui-form-item">
             <label class="layui-form-label">内容</label>
             <div id="editor" class="layui-input-block" style="width:1000px;">
-                <textarea style="display:none;" name="content">
+                <textarea style="display:none;" name="content">{$article.content}
                 </textarea>
             </div>
         </div>
@@ -83,36 +88,41 @@
         <div class="layui-form-item">
             <label class="layui-form-label">Tag</label>
             <div class="layui-input-inline">
-                <input type="text" name="tag" placeholder="用 | 隔开" autocomplete="off" class="layui-input">
+                <input value="{$article.tag}" type="text" name="tag" placeholder="用 | 隔开" autocomplete="off"
+                       class="layui-input">
             </div>
         </div>
 
         <div class="layui-form-item">
             <label class="layui-form-label">是否置顶</label>
             <div class="layui-input-block">
-                <input type="checkbox" value="1" name="top" lay-text="开启|关闭" lay-skin="switch">
+                <input type="checkbox" value="1" name="top"
+                       lay-text="开启|关闭" lay-skin="switch" {if $article.top eq 1} checked {/if}>
             </div>
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label">是否显示</label>
             <div class="layui-input-block">
-                <input type="checkbox" value="1" name="state" lay-text="开启|关闭" checked lay-skin="switch">
+                <input type="checkbox" value="1" name="state" lay-text="开启|关闭" lay-skin="switch" {if $article.top eq 1}
+                       checked {/if}>
             </div>
         </div>
         <div class="layui-form-item">
             <div class="layui-input-block">
                 <button class="layui-btn" lay-submit lay-filter="submit">立即提交</button>
-
             </div>
         </div>
+        <input type="hidden" name="_method" value="PUT">
     </form>
 
 
 </div>
 {/block}
 {block name="script"}
+
 <script src="/static/common/editormd/editormd.js"></script>
 <script>
+
     $(function () {
         var editor = editormd("editor", {
             width: "92%",
@@ -144,9 +154,9 @@
         });
 
         form.on('submit(submit)', function (data) {
-            layer.load({time: 0});
-            $.post('/admin/article', data.field, function (res) {
-                layer.closeAll('loading');
+            // layer.load({time: 0});
+            $.post('/admin/article/{$article.id}', data.field, function (res) {
+                // layer.closeAll('loading');
                 if (res.code === 1) {
                     layer.msg(res.msg, {icon: 1, shade: 0.5,}, () => {
                         location.href = res.url

@@ -24,7 +24,7 @@
 <div class="right">
 
 
-    <a href="article_add.html" class="layui-btn"><i class="layui-icon">&#xe654;</i>添加文章</a>
+    <a href="/admin/article/create" class="layui-btn"><i class="layui-icon">&#xe654;</i>添加文章</a>
 
     <table class="layui-table layui-form">
         <colgroup>
@@ -66,8 +66,8 @@
             <td><input data-id="84" lay-filter="state" type="checkbox" checked lay-text="开启|关闭" lay-skin="switch"></td>
             <td><input data-id="84" lay-filter="top" type="checkbox" checked lay-text="开启|关闭" lay-skin="switch"></td>
             <td>{$vo.create_time}</td>
-            <td><a href="/admin/article/update/id/84.html">修改</a> | <a class="del" data-id=".id84"
-                                                                       href="/admin/article/del/id/84.html">删除</a></td>
+            <td><a href="/admin/article/{$vo.id}/edit">修改</a> | <a data-id=".id84"
+                                                                       href="javascript:deleteArticle({$vo.id})">删除</a></td>
         </tr>
         {/foreach}
         </tbody>
@@ -83,6 +83,26 @@
 {/block}
 {block name="script"}
 <script>
+
+    function deleteArticle(id) {
+        layer.alert('确认删除？', function (index) {
+            $.post('/admin/article/' + id, {_method: 'DELETE'}, res => {
+                if (res.code === 1) {
+                    layer.msg(res.msg, {icon: 6, time: 1500}, () => {
+                        location.href = res.url
+                    })
+                } else {
+                    layer.msg(res.msg, {icon: 5, time: 1500}, () => {
+                        location.href = res.url
+                    })
+                }
+            })
+            layer.close(index);
+        });
+        return false;
+    }
+
+
     layui.use('form', function () {
         var form = layui.form, layer = layui.layer, $ = layui.jquery;
 

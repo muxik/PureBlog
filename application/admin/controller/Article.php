@@ -28,71 +28,93 @@ class Article extends Controller
      */
     public function create()
     {
-        return  view();
+        $categorys = model('Category')->select();
+        return view()->assign(
+            ['categorys' => $categorys]
+        );
     }
 
     /**
      * 保存新建的资源
      *
-     * @param  \think\Request  $request
+     * @param \think\Request $request
      * @return \think\Response
      */
     public function save(Request $request)
     {
         $data = [
             'title' => $request->param('title'),
-            'top' => $request->param('title'),
-            'u_id' => $request->param('title'),
-            'tag' => $request->param('title'),
-            'pic' => $request->param('title'),
-            'content' => $request->param('title'),
-            'state' => $request->param('title'),
+            'top' => $request->param('top', 0),
+            'u_id' => session('admin.id'),
+            'tag' => $request->param('tag'),
+            'pic' => $request->param('pic'),
+            'content' => $request->param('content'),
+            'state' => $request->param('state', 1),
+            'category_id' => $request->param('category_id'),
         ];
+
+        $result = model('Article')->add($data);
+        if ($result === true) $this->success('文章添加成功!', '/admin/article');
+        else $this->error($result);
+
     }
 
     /**
      * 显示指定的资源
      *
-     * @param  int  $id
+     * @param int $id
      * @return \think\Response
      */
     public function read($id)
     {
-        //
     }
 
     /**
      * 显示编辑资源表单页.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \think\Response
      */
     public function edit($id)
     {
-        //
+        $article = model('Article')->find($id);
+        $categorys = model('Category')->select();
+
+        return view()->assign([
+            'article' => $article,
+            'categorys' => $categorys
+        ]);
     }
 
     /**
      * 保存更新的资源
      *
-     * @param  \think\Request  $request
-     * @param  int  $id
+     * @param \think\Request $request
+     * @param int $id
      * @return \think\Response
      */
     public function update(Request $request, $id)
     {
+        $data = $request->except(['_method', 'file']);
+        $data['state'] = $request->param('state', 0);
+        $data['top'] = $request->param('top', 0);
+        $result = model('Article')->edit($id, $data);
 
+        if ($result) $this->success('修改完成');
+        else $this->error($result);
     }
 
     /**
      * 删除指定资源
      *
-     * @param  int  $id
+     * @param int $id
      * @return \think\Response
      */
     public function delete($id)
     {
-        //
+        $result = model('Article')->find($id)->delete();
+        if ($result === true) $this->success('删除成功！', '/admin/article');
+        else $this->error('删除失败，请重试！', '/admin/article');
     }
 
     /**
@@ -103,8 +125,8 @@ class Article extends Controller
     {
         $file = $request->file('file');
         $info = $file->move('./static/upload');
-        if ($info){
-            $this->success('上传成功','/static/upload/'. $info->getSaveName());
+        if ($info) {
+            $this->success('上传成功', '/static/upload/' . $info->getSaveName());
         }
     }
 }
