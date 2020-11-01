@@ -24,6 +24,11 @@ class Web extends Controller
      */
     public function update(Request $request)
     {
+        $data = $request->post();
+        $data['state'] = $request->param('state', 0);
 
+        $result = model('Web')->edit($data);
+        if ($result === true) $this->success('数据更新成功!');
+        else $this->error($result);
     }
 }

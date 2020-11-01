@@ -41,7 +41,7 @@ Route::group('admin',function (){
 
     // 网站设置
     Route::get('web','admin/web/index');
-    Route::post('update','admin/web/update');
+    Route::post('web/update','admin/web/update');
 
 
 

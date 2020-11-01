@@ -42,7 +42,7 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label">关键词</label>
                     <div class="layui-input-block">
-                        <input type="text" name="keywords" value="{$web.keyword}" placeholder="" class="layui-input">
+                        <input type="text" name="keyword" value="{$web.keyword}" placeholder="" class="layui-input">
                     </div>
                 </div>
 
@@ -77,7 +77,7 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label">闭站提示</label>
                     <div class="layui-input-block">
-                        <textarea name="state_desc" placeholder="" class="layui-textarea">{$web.message}</textarea>
+                        <textarea name="message" placeholder="" class="layui-textarea">{$web.message}</textarea>
                     </div>
                 </div>
                 <div class="layui-form-item">
@@ -91,4 +91,21 @@
         </div>
 {/block}
 {block name="script"}
+<script>
+    layui.use(['form'], () => {
+        var form = layui.form;
+        form.on('submit(submit)', data => {
+            $.post('/admin/web/update', data.field, res => {
+                if (res.code === 1)
+                    layer.msg(res.msg, {icon:6,time:2000}, ()=>{
+                        // location.reload()
+                    })
+                else
+                    layer.msg(res.msg, {icon:5,time:1500})
+            })
+            return false
+        })
+    })
+</script>
+
 {/block}
