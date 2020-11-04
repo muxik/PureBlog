@@ -1,123 +1,5 @@
-<!DOCTYPE html>
-<html class="no-js" lang="en">
-<head>
-
-    <!--- basic page needs
-    ================================================== -->
-    <meta charset="utf-8">
-    <title>Home</title>
-    <meta name="description" content="">
-    <meta name="author" content="">
-
-    <!-- mobile specific metas
-    ================================================== -->
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <!-- CSS
-    ================================================== -->
-    <link rel="stylesheet" href="/static/index/css/base.css">
-    <link rel="stylesheet" href="/static/index/css/vendor.css">
-    <link rel="stylesheet" href="/static/index/css/main.css">
-
-    <!-- script
-    ================================================== -->
-    <script src="/static/index/js/modernizr.js"></script>
-
-</head>
-
-<body>
-
-<!-- preloader
-================================================== -->
-<div id="preloader">
-    <div id="loader" class="dots-fade">
-        <div></div>
-        <div></div>
-        <div></div>
-    </div>
-</div>
-
-<div id="top" class="s-wrap site-wrapper">
-
-    <!-- site header
-    ================================================== -->
-    <header class="s-header">
-
-        <div class="header__top">
-            <div class="header__logo">
-                <a class="site-logo" href="index.html">
-                    <!--                    <img src="/static/index/images/logo.svg" alt="Homepage">-->
-                    <p style="font-size: 2em; margin: -4px;padding:0;color: white;">PureBlog.</p>
-                </a>
-            </div>
-
-            <div class="header__search">
-
-                <form role="search" method="get" class="header__search-form" action="#">
-                    <label>
-                        <span class="hide-content">Search for:</span>
-                        <input type="search" class="header__search-field" placeholder="Type Keywords" value="" name="s"
-                               title="Search for:" autocomplete="off">
-                    </label>
-                    <input type="submit" class="header__search-submit" value="Search">
-                </form>
-
-                <a href="#0" title="Close Search" class="header__search-close">Close</a>
-
-            </div>  <!-- end header__search -->
-
-            <!-- toggles -->
-            <a href="#0" class="header__search-trigger"></a>
-            <a href="#0" class="header__menu-toggle"><span>Menu</span></a>
-
-        </div> <!-- end header__top -->
-
-        <nav class="header__nav-wrap">
-
-            <ul class="header__nav">
-                <li class="current"><a href="index.html" title="">主页</a></li>
-                <li class="has-children">
-                    <a href="#0" title="">分类</a>
-                    <ul class="sub-menu">
-                        {foreach $categorys as $key=>$vo}
-                        <li><a href="category.html">{$vo.name}</a></li>
-                        {/foreach}
-                    </ul>
-                </li>
-                <li><a href="page-about.html" title="">关于</a></li>
-                <li><a href="page-contact.html" title="">联系</a></li>
-            </ul> <!-- end header__nav -->
-
-            <ul class="header__social">
-                <li class="ss-facebook">
-                    <a href="">
-                        <span class="screen-reader-text">Facebook</span>
-                    </a>
-                </li>
-                <li class="ss-twitter">
-                    <a href="#0">
-                        <span class="screen-reader-text">Twitter</span>
-                    </a>
-                </li>
-                <li class="ss-dribbble">
-                    <a href="#0">
-                        <span class="screen-reader-text">Dribbble</span>
-                    </a>
-                </li>
-                <li class="ss-pinterest">
-                    <a href="#0">
-                        <span class="screen-reader-text">Behance</span>
-                    </a>
-                </li>
-            </ul>
-
-        </nav> <!-- end header__nav-wrap -->
-
-
-    </header> <!-- end s-header -->
-
-    <div class="s-content">
-
+{extend name="layout/base"}
+{block name="content"}
         <div class="masonry-wrap">
 
             <div class="masonry">
@@ -385,12 +267,6 @@
                     <ul>
 
                         <li><a class="pgn__prev" href="/?page={$page.current -1}">Prev</a> 上一页</li>
-<!--                        <li><a class="pgn__num" href="#0">1</a></li>-->
-<!--                        <li><span class="pgn__num current">2</span></li>-->
-<!--                        <li><a class="pgn__num" href="#0">3</a></li>-->
-<!--                        <li><a class="pgn__num" href="#0">4</a></li>-->
-<!--                        <li><a class="pgn__num" href="#0">5</a></li>-->
-<!--                        <li><span class="pgn__num dots">…</span></li>-->
                         <li>--|--</li>
                         <li> 下一页<a class="pgn__next" href="/?page={$page.last}">Next</a></li>
                     </ul>
@@ -399,32 +275,4 @@
 
         </div>
 
-    </div> <!-- end s-content -->
-<!--    {"total":3,"per_page":2,"current_page":"1","last_page":2,-->
-
-    <!-- footer
-    ================================================== -->
-    <footer class="s-footer">
-        <div class="row">
-            <div class="column large-full footer__content">
-                <div class="footer__copyright">Copyright &copy; 2020.Company name All rights reserved.</div>
-            </div>
-        </div>
-
-        <div class="go-top">
-            <a class="smoothscroll" title="Back to Top" href="#top"></a>
-        </div>
-    </footer>
-
-</div> <!-- end s-wrap -->
-
-
-<!-- Java Script
-================================================== -->
-<script src="/static/index/js/jquery-3.2.1.min.js"></script>
-<script src="/static/index/js/plugins.js"></script>
-<script src="/static/index/js/main.js"></script>
-<!--<script src="/static/common/editormd/editormd.js"></script>-->
-
-
-</body>
+{/block}
