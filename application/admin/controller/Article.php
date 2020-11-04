@@ -147,7 +147,7 @@ class Article extends Controller
     public function upload(Request $request)
     {
         $file = $request->file('file');
-        $info = $file->move('./static/upload');
+        $info = $file->validate(['size'=>15678888888])->move('./static/upload');
         if ($info) {
             $this->success('上传成功', '/static/upload/' . $info->getSaveName());
         }

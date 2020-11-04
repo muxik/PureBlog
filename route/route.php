@@ -11,6 +11,7 @@
 
 Route::group('/',function (){
     Route::rule('', 'index/index/index', 'get');
+    Route::rule('index/article/:id', 'index/article/index', 'get');
 });
 
 

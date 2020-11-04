@@ -1,0 +1,80 @@
+{extend name="layout/base"}
+{block name="content"}
+<main class="row content__page">
+
+
+    <article class="column large-full entry format-standard">
+
+        <div class="media-wrap entry__media">
+            <div class="entry__post-thumb">
+                <img src="index/images/thumbs/single/standard/standard-1000.jpg"
+                     srcset="index/images/thumbs/single/standard/standard-2000.jpg 2000w,
+                                   index/imagesimages/thumbs/single/standard/standard-1000.jpg 1000w,
+                             index/images      images/thumbs/single/standard/standard-500.jpg 500w"
+                     sizes="(max-width: 2000px) 100vw, 2000px" alt="">
+            </div>
+        </div>
+
+        <div class="content__page-header entry__header">
+            <h1 class="display-1 entry__title">
+                {$art.title}
+            </h1>
+            <ul class="entry__header-meta">
+                <li class="author">By <a href="#0">{$art.admin.username}</a></li>
+                <li class="date">{$art.create_time}</li>
+                <li class="cat-links">
+                    {foreach $tag as $k=>$vo}
+                    <a href="#0">{$vo}</a>
+                    {/foreach}
+                </li>
+            </ul>
+        </div> <!-- end entry__header -->
+
+        <div class="entry__content">
+            <div class="content-view" id="content-view">
+                <textarea id="append"></textarea>
+            </div>
+
+            <p class="entry__tags">
+                <span>Post Tags</span>
+                <span class="entry__tag-list">
+                    {foreach $tag as $k=>$vo}
+                        <a href="#0">{$vo}</a>
+                    {/foreach}
+                </span>
+            </p>
+        </div> <!-- end entry content -->
+
+    </article> <!-- end column large-full entry-->
+</main>
+
+{/block}
+
+{block name="script"}
+<script src="/static/common/editormd/editormd.js"></script>
+<script src="/static/common/editormd/lib/marked.min.js"></script>
+<script src="/static/common/editormd/lib/prettify.min.js"></script>
+<script src="/static/common/editormd/lib/raphael.min.js"></script>
+<script src="/static/common/editormd/lib/underscore.min.js"></script>
+<script src="/static/common/editormd/lib/sequence-diagram.min.js"></script>
+<script src="/static/common/editormd/lib/flowchart.min.js"></script>
+<script src="/static/common/editormd/lib/jquery.flowchart.min.js"></script>
+<script>
+    //先对容器初始化，在需要展示的容器中创建textarea隐藏标签，
+    // $("#testEditorMdview").html('<textarea id="appendTest" style="display:none;"></textarea>');
+    // var content=$("#demo1").val();//获取需要转换的内容
+    content = `{$art.content}`;
+    $("#append").val(content);//将需要转换的内容加到转换后展示容器的textarea隐藏标签中
+
+    //转换开始,第一个参数是上面的div的id
+    editormd.markdownToHTML("content-view", {
+        htmlDecode: "style,script,iframe", //可以过滤标签解码
+        emoji: true,
+        taskList:true,
+        tex: true,               // 默认不解析
+        flowChart:true,         // 默认不解析
+        sequenceDiagram:true,  // 默认不解析
+    });
+
+</script>
+{/block}
