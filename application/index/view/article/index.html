@@ -7,10 +7,10 @@
 
         <div class="media-wrap entry__media">
             <div class="entry__post-thumb">
-                <img src="index/images/thumbs/single/standard/standard-1000.jpg"
-                     srcset="index/images/thumbs/single/standard/standard-2000.jpg 2000w,
-                                   index/imagesimages/thumbs/single/standard/standard-1000.jpg 1000w,
-                             index/images      images/thumbs/single/standard/standard-500.jpg 500w"
+                <img src="{$art.pic}"
+                     srcset="{$art.pic} 2000w,
+                                   {$art.pic} 1000w,
+                                  {$art.pic} 500w"
                      sizes="(max-width: 2000px) 100vw, 2000px" alt="">
             </div>
         </div>
@@ -60,9 +60,6 @@
 <script src="/static/common/editormd/lib/flowchart.min.js"></script>
 <script src="/static/common/editormd/lib/jquery.flowchart.min.js"></script>
 <script>
-    //先对容器初始化，在需要展示的容器中创建textarea隐藏标签，
-    // $("#testEditorMdview").html('<textarea id="appendTest" style="display:none;"></textarea>');
-    // var content=$("#demo1").val();//获取需要转换的内容
     content = `{$art.content}`;
     $("#append").val(content);//将需要转换的内容加到转换后展示容器的textarea隐藏标签中
 

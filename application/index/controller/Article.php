@@ -13,7 +13,13 @@ class Article extends Controller
      */
     public function index(Request $request, $id)
     {
+        // 阅读量+1
+
         $articles = model('Article')->with(['admin'])->find($id);
+        $articles->setInc('read');
+
+        $articles->save();
+
         $categorys = model('Category')->select();
         $web = model('Web')->find();
 

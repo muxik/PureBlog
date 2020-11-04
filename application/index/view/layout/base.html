@@ -29,8 +29,7 @@
 
 <body>
 
-<!-- preloader
-================================================== -->
+<!-- preloader ================================================== -->
 <div id="preloader">
     <div id="loader" class="dots-fade">
         <div></div>
@@ -47,8 +46,7 @@
 
         <div class="header__top">
             <div class="header__logo">
-                <a class="site-logo" href="index.html">
-                    <!--                    <img src="/static/index/images/logo.svg" alt="Homepage">-->
+                <a class="site-logo" href="/">
                     <p style="font-size: 2em; margin: -4px;padding:0;color: white;">{$web.name}</p>
                 </a>
             </div>
@@ -78,12 +76,12 @@
         <nav class="header__nav-wrap">
 
             <ul class="header__nav">
-                <li class="current"><a href="index.html" title="">主页</a></li>
+                <li class="current"><a href="/" title="">主页</a></li>
                 <li class="has-children">
                     <a href="#0" title="">分类</a>
                     <ul class="sub-menu">
                         {foreach $categorys as $key=>$vo}
-                        <li><a href="category.html">{$vo.name}</a></li>
+                        <li><a href="/?cate={$vo.id}">{$vo.name}</a></li>
                         {/foreach}
                     </ul>
                 </li>
