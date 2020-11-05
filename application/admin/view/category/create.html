@@ -1,61 +1,36 @@
 {extend name="layout/base"}
 {block name="main"}
-<!--左栏-->
-<div class="left">
-    <ul class="cl">
-        <!--顶级分类-->
-        <li v-for="vo,index in menu" :class="{hidden:vo.hidden}">
-            <a href="javascript:;" :class="{active:vo.active}" @click="onActive(index)">
-                <i class="layui-icon" v-html="vo.icon"></i>
-                <span v-text="vo.name"></span>
-                <i class="layui-icon arrow" v-show="vo.url.length==0">&#xe61a;</i> <i v-show="vo.active"
-                                                                                      class="layui-icon active">&#xe623;</i>
-            </a>
-            <!--子级分类-->
-            <div v-for="vo2,index2 in vo.list">
-                <a href="javascript:;" :class="{active:vo2.active}" @click="onActive(index,index2)"
-                   v-text="vo2.name"></a>
-                <i v-show="vo2.active" class="layui-icon active">&#xe623;</i>
-            </div>
-        </li>
-    </ul>
+
+<div class="right-main">
+    <div class="mdui-card border-1 mdui-shadow-0 mdui-m-b-2 ">
+        <div class="mdui-card-primary">
+            <h3>添加分类</h3>
+        </div>
+        <div class="mdui-divider "></div>
+        <div class="mdui-card-content">
+            <form action="" class="layui-form ">
+                <div class="mdui-textfield mdui-p-l-2">
+                    <div class="mdui-textfield-label">名称</div>
+                    <input name="name" class="mdui-textfield-input" type="text" />
+                </div>
+                <div class="mdui-textfield mdui-p-l-2">
+                    <div class="mdui-textfield-label">排序</div>
+                    <input name="sort" placeholder="数小靠前 不填为1" class="mdui-textfield-input" type="text" >
+                </div>
+                <div class="mdui-textfield mdui-p-l-2">
+                    <div class="mdui-textfield-label mdui-m-b-1">是否显示</div>
+                    <input type="checkbox" value="1" name="state" lay-text="开启|关闭" lay-skin="switch">
+
+                </div>
+                <div class="mdui-textfield mdui-p-l-2">
+                    <button class="mdui-btn border-1" lay-submit lay-filter="submit">提交</button>
+                </div>
+            </form>
+        </div>
+
+    </div>
 </div>
-<!--右侧-->
-<div class="right">
-    <fieldset class="layui-elem-field layui-field-title">
-        <legend>添加栏目</legend>
-    </fieldset>
 
-
-    <form class="layui-form " action="">
-        <div class="layui-form-item">
-            <label class="layui-form-label">栏目名称</label>
-            <div class="layui-input-block">
-                <input type="text" name="name" required lay-verify="required" placeholder="" autocomplete="off"
-                       class="layui-input">
-            </div>
-        </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label">导航排序</label>
-            <div class="layui-input-inline">
-                <input type="text" name="sort" placeholder="数小靠前 不填为1" autocomplete="off" class="layui-input">
-            </div>
-        </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label">是否显示</label>
-            <div class="layui-input-block">
-                <input type="checkbox" value="1" name="state" lay-text="开启|关闭" lay-skin="switch">
-            </div>
-        </div>
-        <div class="layui-form-item">
-            <div class="layui-input-block">
-                <button class="layui-btn" lay-submit lay-filter="submit">立即提交</button>
-
-            </div>
-        </div>
-    </form>
-
-</div>
 {/block}
 {block name="script"}
 <script>
