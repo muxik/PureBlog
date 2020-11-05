@@ -1,78 +1,87 @@
-# PureBlog TODO
+# PureBlog
 
+基于thinkphp5.1风格简约功能丰富的php博客系统
 
+## 我的运行环境
 
-## 后台
+> PHP >= 5.6
 
-#### 基本模板
-
-- [x] 博客模板
-- [x] 后台模板
-
----
-
-#### 登录模块
-
-- [x] 后台登录
-- [x] 后台主页
-- [x] 后台退出登录
-
----
-
-#### 管理员模块
-
-- [x] 管理员列表
-- [x] 管理员权限修饰
-- [x] 管理员添加
-- [x] 管理员修改
-- [x] 管理员分页
-- [x] 管理员搜索
-- [x] 管理员删除
-- [x] 管理员状态修改
+- 环境
+  - ArchLinux
+  - PHP/7.4
+  - Nginx/1.18
+- Composer/1.10.16
+- PHP扩展
+  - PDO PHP Extension
+  - MBstring PHP Extension
+  - GD PHP Extension
 
 ---
 
-#### 栏目模块
 
-- [x] 栏目列表
-- [x] 栏目添加
-- [x] 栏目修改
-- [x] 栏目删除
-- [x] 栏目分页
-- [x] 栏目排序
-- [x] 栏目状态修改
 
----
+## MySQL 配置
 
-#### 文章模块
+####  连接MySQL
 
-- [x] 文章列表
-- [x] 文章添加
-- [x] 文章修改
-- [x] 文章删除
-- [x] 文章分页
-- [x] 文章 显示/隐藏
-- [x] 文章置顶
+修改 `config/database.php`
+
+#### 导入数据库文件
+
+`blog.sql`
+
+
 
 ---
 
-#### 网站设置
 
-- [x] 页面显示
-- [x] 数据更新
-- [ ] 网站状态更新
 
-- **属性**
-  -  网站名称
-  -  网站标题
-  -  关键词
-  -  网站描述
-  -  版版所有
-  -  备案号
-  -  是否闭站
-  -  闭站提示
+## URL重写
 
-## 前台
+#### 1、[Apache]
 
-- [x] 文章列表
-- [ ] 
+1. `httpd.conf`配置文件中加载了`mod_rewrite.so`模块
+2. `AllowOverride None` 将`None`改为 `All`
+3. 把下面的内容保存为`.htaccess`文件放到应用入口文件的同级目录下
+
+```
+<IfModule mod_rewrite.c>
+  Options +FollowSymlinks -Multiviews
+  RewriteEngine On
+
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteRule ^(.*)$ index.php/$1 [QSA,PT,L]
+</IfModule>
+```
+
+#### 2、[Nginx]
+
+```
+try_files $uri $uri/ /index.php?s=$uri&$args;  
+```
+
+Nginx低版本
+
+```
+location / { // …..省略部分代码
+   if (!-e $request_filename) {
+   		rewrite  ^(.*)$  /index.php?s=/$1  last;
+    }
+}
+```
+
+> 注意: 设置url重写后静态资源路径会失效，可以通过一下方式设置
+
+
+```
+location /static/ {
+	root /srv/nginx/blog/public/;
+	# 请根据实际情况修改
+}
+
+```
+
+## LICENSE
+
+Apache
