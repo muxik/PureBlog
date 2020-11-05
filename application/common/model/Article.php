@@ -97,4 +97,17 @@ class Article extends Model
         if ($result) return true;
         else return "更新状态失败";
     }
+
+    /**
+     * @param $keyword
+     * @param $value
+     * @return Article
+     */
+    public function searchArticle($keyword, $value)
+    {
+        $where[] = [
+            $value, 'like', '%' . $keyword . '%'
+        ];
+        return $this->where($where);
+    }
 }
