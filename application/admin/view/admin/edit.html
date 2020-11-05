@@ -1,27 +1,24 @@
 {extend name="layout/base"}
 {block name="main"}
-
-<!--右侧-->
-
 <div class="right-main">
     <div class="mdui-card border-1 mdui-shadow-0 mdui-m-b-2 ">
         <div class="mdui-card-primary">
-            <h3>添加用户</h3>
+            <h3>用户修改</h3>
         </div>
         <div class="mdui-divider "></div>
         <div class="mdui-card-content">
             <form action="" class="layui-form ">
                 <div class="mdui-textfield mdui-p-l-2">
                     <div class="mdui-textfield-label">用户名</div>
-                    <input disabled value="{$admin.username}" name="username" class="mdui-textfield-input" type="text" />
+                    <input disabled value="{$admin.username}" name="username" class="mdui-textfield-input" type="text"/>
                 </div>
                 <div class="mdui-textfield mdui-p-l-2">
                     <div class="mdui-textfield-label">密码</div>
-                    <input name="password" class="mdui-textfield-input" type="password" >
+                    <input name="password" class="mdui-textfield-input" type="password">
                 </div>
                 <div class="mdui-textfield mdui-p-l-2">
                     <div class="mdui-textfield-label mdui-m-b-1">是否禁用</div>
-                    <input type="checkbox" value="0" name="status" lay-text="开启|关闭" lay-skin="switch" {if $admin.status eq 0}checked{/if}>
+                    <input type="checkbox" value="0" name="status" lay-text="开启|关闭" lay-skin="switch" {if $admin.status eq 0} checked {/if}>
                 </div>
                 <div class="mdui-textfield mdui-p-l-2">
                     <div class="mdui-textfield-label mdui-m-b-1">超级管理员权限</div>
@@ -30,14 +27,12 @@
                 <div class="mdui-textfield mdui-p-l-2">
                     <button class="mdui-btn border-1" lay-submit lay-filter="submit">提交</button>
                 </div>
-                <input type="hidden" name="_method" value="PUT" >
+                <input type="hidden" name="_method" value="PUT">
             </form>
         </div>
 
     </div>
 </div>
-
-
 {/block}
 {block name="script"}
 <script>

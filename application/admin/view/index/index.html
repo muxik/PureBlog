@@ -9,7 +9,7 @@
         <div class="mdui-card-content">
             <div class="mdui-typo">
                 <blockquote>
-                    <p>欢迎登录 MuxAdmin 后台管理系统 当前时间:2020-011-12 19:34:12</p>
+                    <p>欢迎登录 {:session('admin.username')}  登录MuxAdmin后台管理系统</p>
                 </blockquote>
             </div>
         </div>
@@ -30,15 +30,6 @@
             <div class="card-box border-1">
                 <p>分类数: {$cate}</p>
             </div>
-<!--            <div class="card-box border-1">-->
-<!--                <p>用户: 15</p>-->
-<!--            </div>-->
-<!--            <div class="card-box border-1">-->
-<!--                <p>用户: 15</p>-->
-<!--            </div>-->
-<!--            <div class="card-box border-1">-->
-<!--                <p>用户: 15</p>-->
-<!--            </div>-->
         </div>
     </div>
     <div class="mdui-card border-1 mdui-shadow-0 mdui-m-b-2 ">
