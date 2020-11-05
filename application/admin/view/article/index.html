@@ -1,84 +1,65 @@
 {extend name="layout/base"}
 {block name="main"}
-<!--左栏-->
-<div class="left">
-    <ul class="cl">
-        <!--顶级分类-->
-        <li v-for="vo,index in menu" :class="{hidden:vo.hidden}">
-            <a href="javascript:;" :class="{active:vo.active}" @click="onActive(index)">
-                <i class="layui-icon" v-html="vo.icon"></i>
-                <span v-text="vo.name"></span>
-                <i class="layui-icon arrow" v-show="vo.url.length==0">&#xe61a;</i> <i v-show="vo.active"
-                                                                                      class="layui-icon active">&#xe623;</i>
-            </a>
-            <!--子级分类-->
-            <div v-for="vo2,index2 in vo.list">
-                <a href="javascript:;" :class="{active:vo2.active}" @click="onActive(index,index2)"
-                   v-text="vo2.name"></a>
-                <i v-show="vo2.active" class="layui-icon active">&#xe623;</i>
+    <div class="right-main">
+        <div class="mdui-card border-1 mdui-shadow-0 mdui-m-b-2 layui-form">
+            <div class="mdui-card-primary">
+                <div class="mdui-toolbar mdui-p-a-0">
+                    <a href="cate_add.html"><button class="mdui-btn border-1">添加文章</button></a>
+                    <div class="mdui-toolbar-spacer"></div>
+                    <div class="mdui-textfield">
+                        <i class="mdui-icon material-icons">search</i>
+                        <input class="mdui-textfield-input" type="email" placeholder="search"/>
+                    </div>
+                    <button class="mdui-btn border-1">搜索</button>
+                    <button class="mdui-btn border-1">刷新</button>
+                </div>
             </div>
-        </li>
-    </ul>
-</div>
-<!--右侧-->
-<div class="right">
-
-
-    <a href="/admin/article/create" class="layui-btn"><i class="layui-icon">&#xe654;</i>添加文章</a>
-
-    <table class="layui-table layui-form">
-        <colgroup>
-            <col width="80">
-            <col width="100">
-            <col width="100">
-            <col width="130">
-            <col width="90">
-            <col width="90">
-            <col width="90">
-            <col width="90">
-            <col width="90">
-            <col width="200">
-            <col width="150">
-        </colgroup>
-        <thead>
-        <tr>
-            <th>ID</th>
-            <th>缩略图</th>
-            <th>分类</th>
-            <th>标题</th>
-            <th>作者</th>
-            <th>浏览</th>
-            <th>显示</th>
-            <th>置顶</th>
-            <th>时间</th>
-            <th>操作</th>
-        </tr>
-        </thead>
-        <tbody>
-        {foreach $articles as $key=>$vo}
-        <tr class="id84">
-            <td>{$vo.id}</td>
-            <td><img src="{$vo.pic}" height="50px"/></td>
-            <td>{$vo.category.name}</td>
-            <td>{$vo.title}</td>
-            <td>{$vo.admin.username}</td>
-            <td>{$vo.read}</td>
-            <td><input data-id="{$vo.id}" lay-filter="state" type="checkbox" {eq name="vo['state']" value="1"}checked{/eq} lay-text="开启|关闭" lay-skin="switch"></td>
-            <td><input data-id="{$vo.id}" lay-filter="top" type="checkbox" {eq name="vo['top']" value="1"}checked{/eq} lay-text="开启|关闭" lay-skin="switch"></td>
-            <td>{$vo.create_time}</td>
-            <td><a href="/admin/article/{$vo.id}/edit">修改</a> | <a data-id=".id84"
-                                                                       href="javascript:deleteArticle({$vo.id})">删除</a></td>
-        </tr>
-        {/foreach}
-        </tbody>
-    </table>
-
-
-    <div class="page">
-        {$articles|raw}
+            <div class="mdui-divider "></div>
+            <div class="mdui-table-fluid mdui-m-t-1 mdui-m-a-1 mdui-shadow-0 ">
+                <table class="mdui-table mdui-table-hoverable">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>缩略图</th>
+                        <th>分类</th>
+                        <th>标题</th>
+                        <th>作者</th>
+                        <th>浏览</th>
+                        <th>显示</th>
+                        <th>置顶</th>
+                        <th>时间</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {foreach $articles as $key=>$vo}
+                    <tr>
+                        <td>{$vo.id}</td>
+                        <td><img src="{$vo.pic}" height="50px"/></td>
+                        <td>{$vo.category.name}</td>
+                        <td>{$vo.title}</td>
+                        <td>{$vo.admin.username}</td>
+                        <td>{$vo.read}</td>
+                        <td><input data-id="{$vo.id}" lay-filter="state" type="checkbox" {eq name="vo['state']" value="1"}checked{/eq} lay-text="开启|关闭" lay-skin="switch"></td>
+                        <td><input data-id="{$vo.id}" lay-filter="top" type="checkbox" {eq name="vo['top']" value="1"}checked{/eq} lay-text="开启|关闭" lay-skin="switch"></td>
+                        <td>{$vo.create_time}</td>
+                        <td>
+                            <a href="/admin/article/{$vo.id}/edit" class="link"><i class="mdui-icon material-icons">&#xe3c9;</i></a>
+                            |
+                            <a  href="javascript:deleteArticle({$vo.id})"><i class="mdui-icon material-icons">&#xe872;</i></a>
+                        </td>
+                    </tr>
+                    {/foreach}
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
-
-
+    <div class="mws-panel-content">
+        <div class="list-page">
+            {$articles|raw}
+        </div>
+    </div>
 </div>
 {/block}
 {block name="script"}
