@@ -1,81 +1,81 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <title>管理员登陆 - QAdmin后台模板</title>
-    <link rel="stylesheet" href="/static/common/layui/css/layui.css">
-    <link rel="stylesheet" href="/static/admin/css/login.css">
-    <script src="/static/common/layui/layui.js"></script>
-    {js href="/static/common/layui/layui.js" /}
+    <meta charset="UTF-8">
+    <title>后台登录</title>
+    <!-- MDUI -->
+    <link rel="stylesheet" href="/static/common/mdui/css/mdui.css">
+    <script src="/static/common/mdui/js/mdui.js"></script>
+    <link rel="stylesheet" href="/static/admin/css/main.css">
+
+    <style>
+    </style>
 </head>
+<body id="loin">
 
-<body id="login">
-<div class="login">
-    <h2>QAdmin后台模板</h2>
-    <form class="layui-form" method="post" target="_blank" action="">
-        <div class="layui-form-item">
-            <input type="username" name="username" placeholder="用户名" class="layui-input">
-            <i class="layui-icon input-icon">&#xe66f;</i>
+<div class="login border-1 mdui-p-a-3" style="height: 25rem">
+    <h2>MuxAdmin后台</h2>
+    <form action="" class="layui-form">
+        <div class="mdui-textfield ">
+            <i class="mdui-icon material-icons">&#xe853;</i>
+            <label class="mdui-textfield-label">用户名</label>
+            <input type="text" class="mdui-textfield-input mdui-shadow-0" name="username">
         </div>
-        <div class="layui-form-item">
-            <input type="password" name="password"  placeholder="密码" class="layui-input">
-            <i class="layui-icon input-icon">&#xe673;</i>
+        <div class="mdui-textfield ">
+            <i class="mdui-icon material-icons">&#xe897;</i>
+            <label class="mdui-textfield-label">密码</label>
+            <input type="password" class="mdui-textfield-input mdui-shadow-0" name="password">
         </div>
-        <div class="layui-form-item">
-            <input type="text" name="code" placeholder="验证码" class="layui-input">
-            <i class="layui-icon input-icon">&#xe673;</i>
-
+        <div class="mdui-textfield ">
+            <i class="mdui-icon material-icons">&#xe86f;</i>
+            <label class="mdui-textfield-label">验证码</label>
+            <input  style="width: 13em" type="text" class="mdui-textfield-input mdui-shadow-0" name="code">
+            <img onclick="this.src = this.src+Math.random()" style="position: absolute; bottom: .5em;right: 0" class="border-1" src="{:captcha_src()}" title="点击刷新" alt="验证码">
         </div>
+        <div class="mdui-clearfix"></div>
 
-        <div class="layui-form-item">
-            <img style="border: #b6b9b5 solid 1px" height="37" src="{:captcha_src()}" id="captcha" alt="captcha"
-                 onclick="this.src = this.src +'?' + Math.random()"/>
-            <button style="margin-left:18px" onclick="
-document.getElementById('captcha').src = document.getElementById('captcha').src + '?' + Math.random()" type="button"
-                    class="layui-btn layui-btn-primary">换一张
-            </button>
+        <div class="mdui-textfield ">
+            <div class="mdui-toolbar">
+                <input type="checkbox" style="" id="t">
+                <label class="login-checkbox-title" for="t">记住密码</label>
+                <div class="mdui-toolbar-spacer"></div>
+                <a href="" style="font-size: .82em;">忘记密码</a>
+            </div>
         </div>
-
-        <!--        <div class="layui-form-item">-->
-        <!--            <input type="checkbox" name="box" lay-skin="primary" title="记住密码" checked=""> <a class="back" style="margin-top: 10px">忘记密码</a>-->
-        <!--        </div>-->
-        <div class="layui-form-item">
-            <button style="width: 100%;margin-top: 10px" class="layui-btn" lay-submit lay-filter="login">立即登录</button>
-
+        <div class="mdui-textfield mdui-textfield-has-bottom ">
+            <button lay-submit lay-filter="login" class=" mdui-ripple mdui-btn mdui-center border-1 ">登录</button>
         </div>
     </form>
 
-    <script>
-
-
-        layui.use('form', function () {
-            var form = layui.form,
-                layer = layui.layer,
-                $ = layui.jquery;
-            form.on('submit(login)', function (data) {
-                $.post('/admin/login', data.field, function (res) {
-
-                    if (res.code === 1) {
-                        layer.msg(res.msg, {icon: 6, time: 1500}, () => {
-                            layer.load({
-                                shade: 0.5,
-                                time: 0,
-                            });
-                            location.href = res.url
-                        })
-                    } else {
-                        layer.msg(res.msg, {icon: 5, anim: 2, time: 1500}, () => {
-                            // location.reload()
-                        })
-                    }
-                })
-                return false;
-            });
-        });
-    </script>
 </div>
-</body>
 
+<script src="static/common/layui/layui.js"></script>
+<script>
+    layui.use('form', function () {
+        var form = layui.form,
+            layer = layui.layer,
+            $ = layui.jquery;
+        form.on('submit(login)', function (data) {
+            $.post('/admin/login', data.field, function (res) {
+
+                if (res.code === 1) {
+                    layer.msg(res.msg, {icon: 6, time: 1500}, () => {
+                        layer.load({
+                            shade: 0.5,
+                            time: 0,
+                        });
+                        location.href = res.url
+                    })
+                } else {
+                    layer.msg(res.msg, {icon: 5, anim: 2, time: 1500}, () => {
+                        // location.reload()
+                    })
+                }
+            })
+            return false;
+        });
+    });
+</script>
+</body>
 </html>
+
