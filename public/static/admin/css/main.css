@@ -27,8 +27,10 @@ body {
     transform: translate(-50%, -50%);
 }
 
-.login-checkbox-title{
-    position: absolute; left: 1.8em; font-size: .82em;
+.login-checkbox-title {
+    position: absolute;
+    left: 1.8em;
+    font-size: .82em;
 }
 
 .login h2 {
@@ -71,19 +73,19 @@ body {
     justify-content: space-around;
 }
 
-.flex-layout{
+.flex-layout {
     display: flex;
 }
 
-.flex-right{
+.flex-right {
     justify-content: flex-end;
 }
 
-.layui-btn{
+.layui-btn {
     background: white !important;
 }
 
-.layui-form-select dl dd.layui-this{
+.layui-form-select dl dd.layui-this {
     background: white !important;
 }
 
@@ -97,12 +99,12 @@ body {
 
 }
 
-.card-box p{
+.card-box p {
     font-size: .5rem;
 }
 
 
-.bottom{
+.bottom {
     padding: 1em;
     text-align: center;
 }
@@ -111,3 +113,38 @@ body {
 /*    box-shadow: none;*/
 /*    margin: 1em 0;*/
 /*}*/
+
+/*page*/
+
+.list-page {
+    text-align: center;
+    padding: 15px 15px;
+}
+
+.mws-panel-content {
+    background: #fff;
+    border: 1px solid #dedede;
+}
+
+.pagination {
+    margin: 0 !important;
+    padding: 10px 10px;
+    /*box-shadow: 0px 1px 2px 0px #E2E2E2;*/
+    background: #fff;
+}
+
+.pagination li {
+    margin: 0px 10px;
+    border: 1px solid #e6e6e6;
+    padding: 3px 8px;
+    display: inline-block;
+}
+
+.pagination .active {
+    background-color: #46A3FF;
+    color: #fff;
+}
+
+.pagination .disabled {
+    color: #aaa;
+}

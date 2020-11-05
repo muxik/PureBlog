@@ -21,7 +21,7 @@ class Bootstrap extends Paginator
      * @param string $text
      * @return string
      */
-    protected function getPreviousButton($text = "&laquo;")
+    protected function getPreviousButton($text = "上一页")
     {
 
         if ($this->currentPage() <= 1) {
@@ -40,7 +40,7 @@ class Bootstrap extends Paginator
      * @param string $text
      * @return string
      */
-    protected function getNextButton($text = '&raquo;')
+    protected function getNextButton($text = '下一页')
     {
         if (!$this->hasMore) {
             return $this->getDisabledTextWrapper($text);
@@ -50,6 +50,39 @@ class Bootstrap extends Paginator
 
         return $this->getPageLinkWrapper($url, $text);
     }
+
+    /**
+     * 首页按钮
+     * @param string $text
+     * @return string
+     */
+    protected function getFirstButton($text = '首页')
+    {
+        if ($this->currentPage() <= 1) {
+            return $this->getDisabledTextWrapper($text);
+        }
+
+        $url = $this->url(1);
+
+        return $this->getPageLinkWrapper($url, $text);
+    }
+
+    /**
+     * 末页按钮
+     * @param string $text
+     * @return string
+     */
+    protected function getLastButton($text = '末页')
+    {
+        if (!$this->hasMore) {
+            return $this->getDisabledTextWrapper($text);
+        }
+
+        $url = $this->url($this->lastPage());
+
+        return $this->getPageLinkWrapper($url, $text);
+    }
+
 
     /**
      * 页码按钮
@@ -112,19 +145,25 @@ class Bootstrap extends Paginator
         if ($this->hasPages()) {
             if ($this->simple) {
                 return sprintf(
-                    '<ul class="pager">%s %s</ul>',
+                    '<ul class="pager">%s %s %s %s</ul>',
+                    $this->getFirstButton(),
                     $this->getPreviousButton(),
-                    $this->getNextButton()
+                    $this->getNextButton(),
+                    $this->getLastButton()
                 );
-            } else {
+            }
+            else {
                 return sprintf(
-                    '<ul class="pagination">%s %s %s</ul>',
+                    '<ul class="pagination">%s %s %s %s %s</ul>',
+                    $this->getFirstButton(),
                     $this->getPreviousButton(),
                     $this->getLinks(),
-                    $this->getNextButton()
+                    $this->getNextButton(),
+                    $this->getLastButton()
                 );
             }
         }
+
     }
 
     /**
