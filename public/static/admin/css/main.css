@@ -141,8 +141,8 @@ body {
 }
 
 .pagination .active {
-    background-color: #46A3FF;
-    color: #fff;
+    border: 1px solid #5fb777;
+
 }
 
 .pagination .disabled {
