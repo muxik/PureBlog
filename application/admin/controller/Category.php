@@ -18,7 +18,6 @@ class Category extends Controller
             ->order('sort', 'asc')
             ->with('article')
             ->paginate(5);
-//        return  json(count($categorys[0]['article']));
         return view()->assign(['categorys' => $categorys]);
     }
 
@@ -127,8 +126,14 @@ class Category extends Controller
      */
     public function delete($id)
     {
-        if (model('Category')->find($id)->delete())
+        $cate = model('Category')
+            ->with('article')
+            ->find($id);
+
+        $result = $cate->together('article')->delete();
+        if ($result)
             $this->success('删除成功！');
-        else $this->error('删除失败，请稍后再试！');
+        else
+            $this->error('删除失败，请稍后再试！');
     }
 }
