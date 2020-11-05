@@ -83,8 +83,17 @@ class Category extends Model
     {
         $cate = $this->find($id);
         $cate->sort = $sort;
-        $result =$cate->save();
+        $result = $cate->save();
         if ($result) return true;
-        else return  "更新排序失败";
+        else return "更新排序失败";
+    }
+
+    /**
+     * 关联文章
+     * @return \think\model\relation\HasMany
+     */
+    public function article()
+    {
+        return $this->hasMany('Article', 'category_id', 'id');
     }
 }

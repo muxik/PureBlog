@@ -27,6 +27,7 @@
         <colgroup>
             <col width="80">
             <col width="80">
+            <col width="80">
             <col width="150">
             <col width="80">
             <col width="80">
@@ -38,6 +39,7 @@
         <tr>
             <th>ID</th>
             <th>排序</th>
+            <th>文章数量</th>
             <th>名称</th>
             <th>显示</th>
             <th>创建时间</th>
@@ -50,6 +52,7 @@
             <td>{$vo.id}</td>
             <td><input onblur="updateSort({$vo.id},this.value)" type="text" style="width: 4em" value="{$vo.sort}"
                        name="" id="" class="layui-input"></td>
+            <td>{$vo.article|count}</td>
             <td>{$vo.name}</td>
             <td><input data-id="{$vo.id}" lay-filter="state" type="checkbox" {if $vo.state eq 1} checked {/if}
                 lay-text="开启|关闭" lay-skin="switch">

@@ -14,7 +14,11 @@ class Category extends Controller
      */
     public function index()
     {
-        $categorys = model('Category')->order('sort', 'asc')->paginate(5);
+        $categorys = model('Category')
+            ->order('sort', 'asc')
+            ->with('article')
+            ->paginate(5);
+//        return  json(count($categorys[0]['article']));
         return view()->assign(['categorys' => $categorys]);
     }
 
