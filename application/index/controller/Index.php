@@ -57,13 +57,25 @@ class Index
 
 
         $title = input('title');
-        $articles = model('Article')->searchArticle($title,'title')->paginate(10);
+        $articles = model('Article')->searchArticle($title, 'title')->paginate(10);
         return view('index')->assign([
             'articles' => $articles,
             'page' => [
                 'last' => $articles->lastPage(),
                 'current' => $articles->currentPage(),
             ],
+            'web' => $web,
+            'categorys' => $categorys,
+        ]);
+    }
+
+    public function about()
+    {
+        $web = model('Web')->find();
+        $categorys = model('Category')->select();
+        // 分类查询
+
+        return view()->assign([
             'web' => $web,
             'categorys' => $categorys,
         ]);
