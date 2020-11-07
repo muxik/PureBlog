@@ -1,11 +1,11 @@
 {extend name="layout/base"}
 
 {block name="link"}
-<link rel="stylesheet" href="/static/common/editormd/css/editormd.css"/>
+<link rel="stylesheet" href="/static/common/editormd/css/editormd.css" />
 {/block}
 
-{block name="main"}
 {block name="title"}文章修改{/block}
+{block name="main"}
 <div class="right-main">
     <div class="mdui-card border-1 mdui-shadow-0 mdui-m-b-2 ">
         <div class="mdui-card-primary">
@@ -17,7 +17,7 @@
                 <div class="mdui-textfield">
                     <label class="mdui-textfield-label">预览</label>
                     <div>
-                        <img class="pic_url" src="{$article.pic}" height="200px"/>
+                        <img class="pic_url" src="{$article.pic}" height="200px" />
                     </div>
                 </div>
 
@@ -25,7 +25,7 @@
                     <label class="mdui-textfield-label">缩略图</label>
                     <div class="layui-inline">
                         <input type="text" name="pic" id="pic_url" placeholder="不上传就留空" autocomplete="off"
-                               class="mdui-textfield-input">
+                            class="mdui-textfield-input">
                     </div>
                     <button type="button" class="mdui-btn border-1" id="pic">
                         <i class="layui-icon">&#xe67c;</i>上传图片
@@ -34,20 +34,21 @@
 
                 <div class="mdui-textfield">
                     <label class="mdui-textfield-label">简介</label>
-                    <textarea class="mdui-textfield-input" name="desc" rows="4" placeholder="请输入文章简介">{$article.desc}</textarea>
+                    <textarea class="mdui-textfield-input" name="desc" rows="4"
+                        placeholder="请输入文章简介">{$article.desc}</textarea>
                 </div>
 
                 <div class="mdui-textfield">
                     <label class="mdui-textfield-label">标题</label>
                     <input value="{$article.title}" type="text" name="title" placeholder="" autocomplete="off"
-                           class="mdui-textfield-input">
+                        class="mdui-textfield-input">
                 </div>
 
                 <div>
                     <label class="mdui-textfield-label">分类</label>
                     <select class="" name="category_id" id="select">
                         {foreach $categorys as $key=>$vo}
-                        <option value="{$vo.id}"{if $vo.id eq $article.id}selected{/if}>{$vo.name}</option>
+                        <option value="{$vo.id}" {if $vo.id eq $article.id}selected{/if}>{$vo.name}</option>
                         {/foreach}
                     </select>
                 </div>
@@ -63,17 +64,15 @@
                 <div class="mdui-textfield">
                     <label class="mdui-textfield-label">Tag</label>
                     <input value="{$article.tag}" type="text" name="tag" placeholder="用 | 隔开" autocomplete="off"
-                           class="mdui-textfield-input">
+                        class="mdui-textfield-input">
                 </div>
                 <div class="mdui-textfield">
                     <label class="mdui-textfield-label">是否置顶</label>
-                    <input type="checkbox" value="1" name="top"
-                           lay-text="开启|关闭" lay-skin="switch" {if $article.top eq 1} checked {/if}>
+                    <input type="checkbox" value="1" name="top" lay-text="开启|关闭" lay-skin="switch" {if $article.top eq 1} checked {/if}>
                 </div>
                 <div class="mdui-textfield">
                     <label class="mdui-textfield-label">是否显示</label>
-                    <input type="checkbox" value="1" name="state" lay-text="开启|关闭" lay-skin="switch" {if $article.state eq 1}
-                           checked {/if}>
+                    <input type="checkbox" value="1" name="state" lay-text="开启|关闭" lay-skin="switch" {if $article.state eq 1} checked {/if}>
                 </div>
                 <div class="mdui-textfield">
                     <button class="mdui-btn border-1" lay-submit lay-filter="submit">立即提交</button>
@@ -127,7 +126,7 @@
             $.post('/admin/article/{$article.id}', data.field, function (res) {
                 // layer.closeAll('loading');
                 if (res.code === 1) {
-                    layer.msg(res.msg, {icon: 1, shade: 0.5,}, () => {
+                    layer.msg(res.msg, {icon: 1, shade: 0.5, }, () => {
                         location.href = res.url
                     });
                 } else {
