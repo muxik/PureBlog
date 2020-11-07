@@ -107,7 +107,7 @@ class Category extends Controller
     public function update(Request $request, $id)
     {
         $data = [
-            'state' => $request->param('state'),
+            'state' => $request->param('state',1),
             'name' => $request->param('name'),
             'sort' => $request->param('sort'),
         ];

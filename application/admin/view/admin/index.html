@@ -1,87 +1,77 @@
 {extend name="layout/base"}
+{block name="title"}管理员列表{/block}
 {block name="main"}
-<div class="left">
-    <ul class="cl">
-        <!--顶级分类-->
-        <li v-for="vo,index in menu" :class="{hidden:vo.hidden}">
-            <a href="javascript:;" :class="{active:vo.active}" @click="onActive(index)">
-                <i class="layui-icon" v-html="vo.icon"></i>
-                <span v-text="vo.name"></span>
-                <i class="layui-icon arrow" v-show="vo.url.length==0">&#xe61a;</i> <i v-show="vo.active"
-                                                                                      class="layui-icon active">&#xe623;</i>
-            </a>
-            <!--子级分类-->
-            <div v-for="vo2,index2 in vo.list">
-                <a href="javascript:;" :class="{active:vo2.active}" @click="onActive(index,index2)"
-                   v-text="vo2.name"></a>
-                <i v-show="vo2.active" class="layui-icon active">&#xe623;</i>
+<div class="right-main">
+    <div class="mdui-card border-1 mdui-shadow-0 mdui-m-b-2 ">
+        <div class="mdui-card-primary">
+            <div class="mdui-toolbar mdui-p-a-0">
+                <a href="#">
+                    <button class="mdui-btn border-1"><a href="/admin/user/create">添加用户</a></button>
+                </a>
+                <div class="mdui-toolbar-spacer"></div>
+                <div class="mdui-textfield">
+                    <i class="mdui-icon material-icons">search</i>
+                    <input id="keyword" class="mdui-textfield-input" type="email" placeholder="search"/>
+                </div>
+                <button class="mdui-btn border-1"
+                        onclick="location.href = '/admin/user?username=' + document.getElementById('keyword').value">搜索
+                </button>
+                <button class="mdui-btn border-1" onclick="location.href = '/admin/user'">刷新</button>
             </div>
-        </li>
-    </ul>
-</div>
-<!--右侧-->
-<div class="right">
-
-
-    <div class="layui-row">
-        <div class="layui-col-lg8">
-            <h2>管理员列表</h2>
         </div>
+        <div class="mdui-divider "></div>
+        <div class="mdui-table-fluid mdui-m-t-1 mdui-m-a-1 mdui-shadow-0 layui-form">
+            <table class="mdui-table mdui-table-hoverable">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>用户名</th>
+                    <th>超级管理员</th>
+                    <th>状态</th>
+                    <th>时间</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                {foreach $admins as $key=>$vo }
+                <tr>
+                    <td>{$vo.id}</td>
+                    <td>{$vo.username}</td>
+                    <td>{if $vo.super eq 1} 是 {else /} 否 {/if}</td>
+                    <td>
+                        <input type="checkbox" data-id="{$vo.id}" lay-filter="status" lay-text="正常|封禁" name="switch"
+                               {if $vo.status eq 1/} checked value="1" {else/} value="0" {/if}
+                        {if session('admin.super') neq true} disabled {/if}
+                        lay-skin="switch">
 
-        <div class="layui-col-lg4" style="text-align: right">
+                    </td>
+                    <td>{$vo.create_time}</td>
+                    <td>
+                        {if session('admin.super') eq true}
+                        <a href="/admin/user/{$vo.id}/edit" class="link"><i
+                                class="mdui-icon material-icons">&#xe3c9;</i></a>
+                        |
+                        <a href="javascript:;" onclick="deleteAdmin({$vo.id})"><i class="mdui-icon material-icons">&#xe872;</i></a>
+                        {else/}
+                        无权限
+                        {/if}
+                    </td>
+                </tr>
+                {/foreach}
 
-            <div class="layui-input-inline" style="width: 300px">
-                <input type="text" name="k" value="" id="keyword" placeholder="用户名" class="layui-input key">
-            </div>
-            <button type="button" class="layui-btn sou"
-                    onclick="location.href = '/admin/user?username=' + document.getElementById('keyword').value">搜索
-            </button>
-            <button type="button" class="layui-btn sou" onclick="location.href = '/admin/user'">刷新</button>
+                </tbody>
+            </table>
         </div>
     </div>
+</div>
 
-    <table class="layui-table layui-form">
 
-        <thead>
-        <tr>
-            <th><a href="?/admin/user/index/order/uid.html">UID</a></th>
-            <th>用户名</th>
-            <th>超级管理员</th>
-            <th>状态</th>
-            <th>创建时间</th>
-            <th>操作</th>
-        </tr>
-        </thead>
-        <tbody>
-        {foreach $admins as $key=>$vo }
-        <tr>
-            <td>{$vo.id}</td>
-            <td>{$vo.username}</td>
-            <td>{if $vo.super eq 1} 是 {else /} 否 {/if}</td>
-            <td>
-                <input type="checkbox" data-id="{$vo.id}" lay-filter="status" lay-text="正常|封禁" name="switch"
-                       {if $vo.status eq 1/} checked value="1" {else/} value="0" {/if}
-                {if session('admin.super') neq true} disabled {/if}
-                lay-skin="switch">
-            </td>
-            <td>{$vo.create_time}</td>
-            <td>
-                {if session('admin.super') eq true}
-                <a href="/admin/user/{$vo.id}/edit" class="layui-btn layui-btn-sm">修改</a>
-                <a href="javascript:;" class="layui-btn-danger layui-btn-sm layui-btn" onclick="deleteAdmin({$vo.id})">删除</a>
-                {else/}
-                无权限
-                {/if}
-            </td>
-        </tr>
-        {/foreach}
-        </tbody>
-    </table>
-
-    <div class="page">
+<div class="mws-panel-content">
+    <div class="list-page">
         {$admins|raw}
     </div>
 </div>
+
 {/block}
 
 {block name="script"}
@@ -107,7 +97,6 @@
 
     layui.use('form', function () {
         let form = layui.form, layer = layui.layer, $ = layui.jquery;
-
         form.on('switch(status)', function (data) {
             let id = $(data.elem).attr("data-id");
             let value = $(data.elem).attr("value") === '1' ? 0 : 1;
