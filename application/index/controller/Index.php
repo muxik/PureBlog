@@ -1,10 +1,12 @@
 <?php
 namespace app\index\controller;
 
-class Index
+use think\Controller;
+
+class Index extends Controller
 {
     public function index()
     {
-        return md5('admin' . salt(1));
+        return ;
     }
 }
