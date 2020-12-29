@@ -4,9 +4,9 @@
 <div class="x-nav">
       <span class="layui-breadcrumb">
         <a href="">首页</a>
-        <a href="">演示</a>
+        <a href="">分类管理</a>
         <a>
-          <cite>导航元素</cite></a>
+          <cite>分类列表</cite></a>
       </span>
     <a class="layui-btn layui-btn-primary layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right"
        href="javascript:location.replace(location.href);" title="刷新">
@@ -58,7 +58,8 @@
         {foreach $category as $key=>$vo}
         <tr cate-id='{$vo.id}' fid='{$vo.pid}'>
             <td>
-                <div class="layui-unselect layui-form-checkbox" lay-skin="primary" data-id='2'><i class="layui-icon">&#xe605;</i>
+                <div class="layui-unselect layui-form-checkbox" lay-skin="primary" data-id='{$vo.id}'><i
+                        class="layui-icon">&#xe605;</i>
                 </div>
             </td>
             <td>{$vo.id}</td>
@@ -80,7 +81,7 @@
                        onchange="changeState()" {if $vo.state eq 1} checked="" {/if}>
             </td>
             <td class="td-manage">
-                <button class="layui-btn layui-btn layui-btn-sm" onclick="x_admin_show('编辑','admin-edit.html')"><i
+                <button class="layui-btn layui-btn layui-btn-sm" onclick="x_admin_show('编辑','/admin/category/edit/{$vo.id}')"><i
                         class="layui-icon">&#xe642;</i>编辑
                 </button>
                 <!--                {if $vo.pid eq 0}-->
@@ -88,7 +89,7 @@
                 <!--                        class="layui-icon">&#xe642;</i>添加子栏目-->
                 <!--                </button>-->
                 <!--                {/if}-->
-                <button class="layui-btn-danger layui-btn layui-btn-sm" onclick="member_del(this,'要删除的id')"
+                <button class="layui-btn-danger layui-btn layui-btn-sm" onclick="member_del(this,'{$vo.id}')"
                         href="javascript:;"><i class="layui-icon">&#xe640;</i>删除
                 </button>
             </td>
@@ -111,9 +112,7 @@
 
             $.post('/admin/category/changeState', {id, value}, res => {
                 if (res.code === 1) {
-                    layer.msg(res.msg, {icon: 6, time: 1500}, () => {
-                        location.reload()
-                    })
+                    layer.msg(res.msg, {icon: 6, time: 1000})
                 } else {
                     layer.msg(res.msg, {icon: 5, time: 1500})
                 }
@@ -127,6 +126,15 @@
         layer.confirm('确认要删除吗？', function (index) {
             //发异步删除数据
             $(obj).parents("tr").remove();
+            $.post('/admin/category/del', {id}, res => {
+                if (res.code === 1) {
+                    layer.msg(res.msg, {icon: 6, time: 1500}, () => {
+                        $(".layui-form-checked").not('.header').parents('tr').remove();
+                    })
+                } else {
+                    layer.msg(res.msg, {icon: 5, time: 1500})
+                }
+            })
             layer.msg('已删除!', {icon: 1, time: 1000});
         });
     }
@@ -135,9 +143,18 @@
     function delAll(argument) {
         var data = tableCheck.getData();
         layer.confirm('确认要删除吗？' + data, function (index) {
+            $.post('/admin/category/del', {id: data}, res => {
+                if (res.code === 1) {
+                    layer.msg(res.msg, {icon: 6, time: 1500}, () => {
+                        $(".layui-form-checked").not('.header').parents('tr').remove();
+
+                    })
+                } else {
+                    layer.msg(res.msg, {icon: 5, time: 1500})
+                }
+            })
             //捉到所有被选中的，发异步进行删除
-            layer.msg('删除成功', {icon: 1});
-            $(".layui-form-checked").not('.header').parents('tr').remove();
+            // layer.msg('删除成功', {icon: 1});
         });
     }
 
@@ -148,9 +165,7 @@
         }
         $.post('/admin/category/add', data, res => {
             if (res.code === 1) {
-                layer.msg(res.msg, {icon: 6, time: 1500}, () => {
-                    location.reload()
-                })
+                layer.msg(res.msg, {icon: 6, time: 1500}, () => location.reload())
             } else {
                 layer.msg(res.msg, {icon: 5, time: 1500})
             }
@@ -161,9 +176,7 @@
     function changeSort(id, sort) {
         $.post('/admin/category/changeSort', {id, sort}, res => {
             if (res.code === 1) {
-                layer.msg(res.msg, {icon: 6, time: 1500}, () => {
-                    location.reload()
-                })
+                layer.msg(res.msg, {icon: 6, time: 1500})
             } else {
                 layer.msg(res.msg, {icon: 5, time: 1500})
             }

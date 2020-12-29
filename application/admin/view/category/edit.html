@@ -1,0 +1,69 @@
+{extend name="base/template"}
+{block name="title"}分类修改{/block}
+
+{block name="content"}
+<div class="x-body">
+    <form class="layui-form" action="">
+        <div class="layui-form-item">
+            <label class="layui-form-label">栏目名称</label>
+            <div class="layui-input-block">
+                <input type="text" name="name" value="{$category.name}" required lay-verify="required"
+                       placeholder="请输入栏目名称" autocomplete="off"
+                       class="layui-input">
+            </div>
+        </div>
+
+        {if $category.pid neq 0}
+        <div class="layui-form-item">
+            <label class="layui-form-label">顶级分类</label>
+            <div class="layui-input-block">
+                <select name="pid" lay-verify="required">
+                    {foreach $p_category as $key=>$vo}
+                    <option {if $vo.id eq $category.id} selected {/if} value="{$vo.id}" >
+                    {$vo.name}</option>
+                    {/foreach}
+                </select>
+            </div>
+        </div>
+        {/if}
+
+        <input type="hidden" name="id" value="{$category.id}">
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit lay-filter="add">立即提交</button>
+            </div>
+        </div>
+    </form>
+</div>
+{/block}
+
+{block name="script"}
+<script>
+    layui.use(['form', 'layer'], function () {
+        $ = layui.jquery;
+        var form = layui.form
+            , layer = layui.layer;
+
+        //监听提交
+        form.on('submit(add)', function (data) {
+            $.post('/admin/category/update', data.field, function (res) {
+                console.log(data.field);
+                if (res.code === 1) {
+                    layer.alert(res.msg, {icon: 6}, function () {
+                        // 获得frame索引
+                        var index = parent.layer.getFrameIndex(window.name);
+                        //关闭当前frame
+                        parent.layer.close(index);
+                    });
+                } else {
+                    layer.msg(res.msg, {icon: 5})
+                }
+            })
+            return false;
+        });
+
+
+    });
+</script>
+{/block}
