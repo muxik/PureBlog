@@ -14,16 +14,30 @@
 </div>
 <div class="x-body">
     <div class="layui-row">
-        <form class="layui-form layui-col-md12 x-so layui-form-pane">
-            <input class="layui-input" placeholder="分类名" name="cate_name">
-            <button class="layui-btn" lay-submit="" lay-filter="sreach"><i class="layui-icon"></i>增加</button>
-        </form>
+        <div class="layui-form layui-col-md3" style="margin-right: 10px">
+            <select name="category" id="p_category" lay-search>
+                <option value="0">顶级分类</option>
+                {foreach $p_category as $key=>$vo}
+                <option value="{$vo.id}">{$vo.name}</option>
+                {/foreach}
+            </select>
+        </div>
+        <div class="layui-form layui-col-md2" style="margin-right: 10px">
+            <input type="text" name="" id="category_name" class="layui-input" placeholder="栏目名">
+        </div>
+        <div class="layui-col-md4">
+            <div class="layui-form-item">
+                <button class="layui-btn" lay-submit="" lay-filter="sreach" onclick="addCategory()"><i
+                        class="layui-icon"></i>增加
+                </button>
+            </div>
+        </div>
     </div>
-    <blockquote class="layui-elem-quote">每个tr 上有两个属性 cate-id='1' 当前分类id fid='0' 父级id ,顶级分类为 0，有子分类的前面加收缩图标<i
-            class="layui-icon x-show" status='true'>&#xe623;</i></blockquote>
+    <!--    <blockquote class="layui-elem-quote">每个tr 上有两个属性 cate-id='1' 当前分类id fid='0' 父级id ,顶级分类为 0，有子分类的前面加收缩图标<i-->
+    <!--            class="layui-icon x-show" status='true'>&#xe623;</i></blockquote>-->
     <xblock>
         <button class="layui-btn layui-btn-danger" onclick="delAll()"><i class="layui-icon"></i>批量删除</button>
-        <span class="x-right" style="line-height:40px">共有数据：88 条</span>
+        <span class="x-right" style="line-height:40px">共有数据：{$count} 条</span>
     </xblock>
     <table class="layui-table layui-form">
         <thead>
@@ -50,28 +64,31 @@
             <td>{$vo.id}</td>
             <td>
                 {if $vo.pid eq 0}
-                <i class="layui-icon x-show" status='true'>&#xe623;</i>
-                {$vo.name}
+                <i class="layui-icon x-show" status='true'>&#xe623;</i>{$vo.name}
                 {else}
                 &nbsp;&nbsp;&nbsp;&nbsp;├ {$vo.name}
                 {/if}
 
             </td>
 
-            <td><input type="text" class="layui-input x-sort" name="order" value="{$vo.sort}"></td>
+            <td><input type="text" onblur="changeSort('{$vo.id}', this.value)" class="layui-input x-sort"
+                       name="order"
+                       value="{$vo.sort}"></td>
             <td>
-                <input type="checkbox" name="switch" lay-text="开|关" checked="" lay-skin="switch">
+                <input data-id="{$vo.id}" type="checkbox" lay-filter="state" value="{$vo.state}" name="switch"
+                       lay-text="开|关" lay-skin="switch"
+                       onchange="changeState()" {if $vo.state eq 1} checked="" {/if}>
             </td>
             <td class="td-manage">
-                <button class="layui-btn layui-btn layui-btn-xs" onclick="x_admin_show('编辑','admin-edit.html')"><i
+                <button class="layui-btn layui-btn layui-btn-sm" onclick="x_admin_show('编辑','admin-edit.html')"><i
                         class="layui-icon">&#xe642;</i>编辑
                 </button>
-                {if $vo.pid eq 0}
-                <button class="layui-btn layui-btn-warm layui-btn-xs" onclick="x_admin_show('编辑','admin-edit.html')"><i
-                        class="layui-icon">&#xe642;</i>添加子栏目
-                </button>
-                {/if}
-                <button class="layui-btn-danger layui-btn layui-btn-xs" onclick="member_del(this,'要删除的id')"
+                <!--                {if $vo.pid eq 0}-->
+                <!--                <button class="layui-btn layui-btn-warm layui-btn-sm" onclick="x_admin_show('编辑','admin-edit.html')"><i-->
+                <!--                        class="layui-icon">&#xe642;</i>添加子栏目-->
+                <!--                </button>-->
+                <!--                {/if}-->
+                <button class="layui-btn-danger layui-btn layui-btn-sm" onclick="member_del(this,'要删除的id')"
                         href="javascript:;"><i class="layui-icon">&#xe640;</i>删除
                 </button>
             </td>
@@ -86,6 +103,22 @@
 <script>
     layui.use(['form'], function () {
         form = layui.form;
+
+        form.on('switch(state)', function (data) {
+            let id = $(data.elem).attr('data-id')
+            let value = $(data.elem).val() === '1' ? 0 : 1;
+
+
+            $.post('/admin/category/changeState', {id, value}, res => {
+                if (res.code === 1) {
+                    layer.msg(res.msg, {icon: 6, time: 1500}, () => {
+                        location.reload()
+                    })
+                } else {
+                    layer.msg(res.msg, {icon: 5, time: 1500})
+                }
+            })
+        });
 
     });
 
@@ -107,5 +140,35 @@
             $(".layui-form-checked").not('.header').parents('tr').remove();
         });
     }
+
+    function addCategory() {
+        let data = {
+            pid: $("#p_category").val(),
+            name: $("#category_name").val()
+        }
+        $.post('/admin/category/add', data, res => {
+            if (res.code === 1) {
+                layer.msg(res.msg, {icon: 6, time: 1500}, () => {
+                    location.reload()
+                })
+            } else {
+                layer.msg(res.msg, {icon: 5, time: 1500})
+            }
+
+        })
+    }
+
+    function changeSort(id, sort) {
+        $.post('/admin/category/changeSort', {id, sort}, res => {
+            if (res.code === 1) {
+                layer.msg(res.msg, {icon: 6, time: 1500}, () => {
+                    location.reload()
+                })
+            } else {
+                layer.msg(res.msg, {icon: 5, time: 1500})
+            }
+        })
+    }
+
 </script>
 {/block}

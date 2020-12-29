@@ -13,7 +13,9 @@ Route::group('admin', function (){
     Route::get('welcome','admin/index/welcome');
 
     Route::get('category', 'admin/category/index');
-    Route::get('category/list', 'admin/category/lst');
+    Route::post('category/add', 'admin/category/add');
+    Route::post('category/changeSort','admin/category/changeSort');
+    Route::post('category/changeState','admin/category/changeState');
 
 })->middleware(['CheckLogin']);
 
