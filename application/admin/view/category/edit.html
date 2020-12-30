@@ -19,13 +19,21 @@
             <div class="layui-input-block">
                 <select name="pid" lay-verify="required">
                     {foreach $p_category as $key=>$vo}
-                    <option {if $vo.id eq $category.id} selected {/if} value="{$vo.id}" >
-                    {$vo.name}</option>
+                    <option {if $vo.id eq $category.id} selected {/if} value="{$vo.id}" >{$vo.name}</option>
                     {/foreach}
                 </select>
             </div>
         </div>
         {/if}
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">单页链接</label>
+            <div class="layui-input-block">
+                <input type="text" name="link" value="{$category.link}" required lay-verify="required"
+                       placeholder="请输入链接地址" autocomplete="off"
+                       class="layui-input">
+            </div>
+        </div>
 
         <input type="hidden" name="id" value="{$category.id}">
 

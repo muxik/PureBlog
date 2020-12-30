@@ -75,7 +75,7 @@ class Category extends Controller
 
     public function update(Request $request)
     {
-        $data = $request->only(['id', 'name', 'pid' => 0]);
+        $data = $request->only(['id', 'name', 'pid', 'link' => null]);
         $result = $this->model->edit($data);
         if (1 !== $result) {
             $this->error($result);
@@ -111,6 +111,18 @@ class Category extends Controller
             $this->error("修改失败");
         else
             $this->success("修改成功！");
+    }
+
+
+    public function setPage(Request $request)
+    {
+        $type = $request->post('value');
+        $result = $this->model->where('id', $request->post('id'))->update(['type' => $type]);
+        $info = $type == 1 ? "请到编辑页面添加链接" : "";
+        if (!$result)
+            $this->error("修改失败");
+        else
+            $this->success("修改成功!" . $info);
     }
 
 

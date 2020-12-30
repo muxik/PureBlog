@@ -50,6 +50,7 @@
             <th>栏目名</th>
             <th width="50">排序</th>
             <th width="50">状态</th>
+            <th width="50">设置为单页</th>
             <th width="280">操作</th>
         </tr>
 
@@ -78,10 +79,16 @@
             <td>
                 <input data-id="{$vo.id}" type="checkbox" lay-filter="state" value="{$vo.state}" name="switch"
                        lay-text="开|关" lay-skin="switch"
-                       onchange="changeState()" {if $vo.state eq 1} checked="" {/if}>
+                       {if $vo.state eq 1} checked="" {/if}>
+            </td>
+            <td>
+                <input data-id="{$vo.id}" type="checkbox" lay-filter="type" value="{$vo.type}" name="switch"
+                       lay-text="开|关" lay-skin="switch"
+                       {if $vo.type eq 1} checked="" {/if}>
             </td>
             <td class="td-manage">
-                <button class="layui-btn layui-btn layui-btn-sm" onclick="x_admin_show('编辑','/admin/category/edit/{$vo.id}')"><i
+                <button class="layui-btn layui-btn layui-btn-sm"
+                        onclick="x_admin_show('编辑','/admin/category/edit/{$vo.id}')"><i
                         class="layui-icon">&#xe642;</i>编辑
                 </button>
                 <!--                {if $vo.pid eq 0}-->
@@ -112,14 +119,30 @@
 
             $.post('/admin/category/changeState', {id, value}, res => {
                 if (res.code === 1) {
-                    layer.msg(res.msg, {icon: 6, time: 1000})
+                    layer.msg(res.msg, {icon: 6, time: 800}, () => location.reload())
+                } else {
+                    layer.msg(res.msg, {icon: 5, time: 1500})
+                }
+            })
+        })
+        ;
+
+        form.on('switch(type)', function (data) {
+            let id = $(data.elem).attr('data-id')
+            let value = $(data.elem).val() === '1' ? 0 : 1;
+
+            $.post('/admin/category/setPage', {id, value}, res => {
+                if (res.code === 1) {
+                    layer.msg(res.msg, {icon: 6, time: 800}, () => location.reload())
                 } else {
                     layer.msg(res.msg, {icon: 5, time: 1500})
                 }
             })
         });
 
-    });
+
+    })
+    ;
 
     /*用户-删除*/
     function member_del(obj, id) {
