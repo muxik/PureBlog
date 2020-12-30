@@ -33,6 +33,6 @@ class AdminValidate extends Validate
      */
     public function sceneLogin()
     {
-        return $this->only(['username','password', 'code']);
+        return $this->only(['username','password', 'captcha']);
     }
 }

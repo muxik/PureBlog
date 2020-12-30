@@ -179,12 +179,13 @@
 
             $.post('/admin/login.do', data, function (res) {
                 if (res.code === 1) {
-                    layer.msg(res.msg,{icon:6,time:1500}, function () {
+                    layer.msg(res.msg, {icon: 6, time: 1500}, function () {
                         window.location = res.url;
                     });
                     return;
                 }
 
+                document.getElementById('captchaPic').src  = document.getElementById('captchaPic').src + Math.random()
                 layer.msg(res.msg,{icon:5,time:1500});
                 return true
             })

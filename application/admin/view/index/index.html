@@ -38,8 +38,8 @@
     <ul class="layui-nav right" lay-filter="">
         <li class="layui-nav-item">
             <a href="javascript:;">
-                <img src="https://gravatar.loli.net/avatar/5353445e421ab8cd79bf0152823056ee?&d=monsterid" class="layui-nav-img">
-                admin
+                <img src="https://gravatar.loli.net/avatar/{$head}" class="layui-nav-img">
+                {$admin.nickname}
             </a>
             <dl class="layui-nav-child"> <!-- 二级菜单 -->
                 <dd><a onclick="x_admin_show('个人信息','http://www.baidu.com')">个人信息</a></dd>
@@ -88,9 +88,15 @@
                 </a>
                 <ul class="sub-menu">
                     <li>
-                        <a _href="html/order-list.html">
+                        <a _href="/admin/article">
                             <i class="iconfont">&#xe6a7;</i>
                             <cite>文章列表</cite>
+                        </a>
+                    </li>
+                    <li>
+                        <a _href="/admin/article/create">
+                            <i class="iconfont">&#xe6a7;</i>
+                            <cite>文章创作</cite>
                         </a>
                     </li>
                 </ul>

@@ -18,13 +18,27 @@ Route::group('admin', function () {
         Route::post('add', 'admin/category/add');
         Route::post('changeSort', 'admin/category/changeSort');
         Route::post('changeState', 'admin/category/changeState');
+        Route::post('setPage', 'admin/category/setPage');
         Route::post('del', 'admin/category/del');
     });
 
+    //文章模块
+    Route::group('article', function () {
+        Route::get('/', 'admin/article/index');
+        Route::get('create', 'admin/article/create');
+        Route::get('edit', 'admin/article/edit');
+        Route::post('add', 'admin/article/add');
+        Route::post('update', 'admin/article/update');
+        Route::post('changeTop', 'admin/article/changeTop');
+        Route::post('changeState', 'admin/article/changeState');
+        Route::post('upload', 'admin/article/upload');
+    });
 
-    //
 
 
 })->middleware(['CheckLogin']);
 
 Route::get('/', 'index/index/index');
+Route::get('/md5', function (){
+    return md5('admin');
+});

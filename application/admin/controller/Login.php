@@ -20,6 +20,7 @@ class Login extends Controller
         if (1 !== $result) {
             $this->error($result);
         }
+
         $this->success('登录成功！','/admin/index');
     }
 }

@@ -22,6 +22,10 @@ class AdminModel extends Model
 
         // 密码加密
         $user = $this->where(['username' => $data['username']])->find();
+        if (!$user) return "帐号或密码错误";
+
+
+
         $password = md5($data['password'] .  salt($user['id']));
 
         // 返回结果

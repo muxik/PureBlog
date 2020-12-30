@@ -19,7 +19,7 @@
             <div class="layui-input-block">
                 <select name="pid" lay-verify="required">
                     {foreach $p_category as $key=>$vo}
-                    <option {if $vo.id eq $category.id} selected {/if} value="{$vo.id}" >{$vo.name}</option>
+                    <option {if $vo.id eq $category.pid} selected {/if} value="{$vo.id}" >{$vo.name}</option>
                     {/foreach}
                 </select>
             </div>
