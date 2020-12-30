@@ -5,13 +5,13 @@
 <link rel="stylesheet" href="__ADMIN__/lib/editor/css/editormd.css">
 {/block}
 
-{block name="title"}添加文章{/block}
+{block name="title"}修改文章{/block}
 {block name="content"}
 <div class="x-body layui-anim layui-anim-up">
     <form class="layui-form" action="">
         <div class="layui-form-item">
             <div id="editormd">
-                <textarea style="display:none;" ># Muxi_k's</textarea>
+                <textarea style="display:none;">{$article.source}</textarea>
             </div>
         </div>
 
@@ -20,7 +20,7 @@
             <div class="layui-input-block">
                 <div class="layui-upload">
                     <div class="layui-upload-list">
-                        <img class="layui-upload-img" id="demo1" width="400">
+                        <img class="layui-upload-img" id="demo1" width="400" src="{$article.pic}">
                         <p id="demoText"></p>
                     </div>
                     <button type="button" class="layui-btn layui-btn-danger" id="test1"><i class="layui-icon"></i>上传图片
@@ -33,20 +33,22 @@
         <div class="layui-form-item">
             <label class="layui-form-label">标题:</label>
             <div class="layui-input-block">
-                <input type="text" name="title" required lay-verify="required" placeholder="请输入标题" autocomplete="off"
+                <input type="text" name="title" value="{$article.title}" required lay-verify="required"
+                       placeholder="请输入标题" autocomplete="off"
                        class="layui-input">
             </div>
         </div>
         <div class="layui-form-item layui-form-text">
             <label class="layui-form-label">描述:</label>
             <div class="layui-input-block">
-                <textarea name="description" placeholder="请输入内容" class="layui-textarea"></textarea>
+                <textarea name="description" value="{$article.description}" placeholder="请输入内容" class="layui-textarea">{$article.description}</textarea>
             </div>
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label">标签:</label>
             <div class="layui-input-block">
-                <input type="text" name="tag" required lay-verify="required" placeholder="请使用 ',' 分割"
+                <input type="text" name="tag" value="{$article.tag}" required lay-verify="required"
+                       placeholder="请使用 ',' 分割"
                        autocomplete="off" class="layui-input">
             </div>
         </div>
@@ -64,7 +66,8 @@
         <div class="layui-form-item">
             <label class="layui-form-label">是否加密：</label>
             <div class="layui-input-block">
-                <input type="checkbox" name="lock" value="1" lay-skin="switch" lay-filter="lock">
+                <input type="checkbox" {if $article.lock eq 1} checked {/if} name="lock" value="1" lay-skin="switch"
+                lay-filter="lock">
             </div>
         </div>
 
@@ -76,8 +79,9 @@
             </div>
         </div>
 
-        <input type="hidden" name="pic" id="pic">
+        <input type="hidden" name="pic" id="pic" value="{$article.pic}">
         <input type="hidden" name="content" id="content">
+        <input type="hidden" name="id" value="{$article.id}">
 
         <div class="layui-form-item">
             <div class="layui-input-block">
@@ -158,11 +162,11 @@
             info['content'] = Editor.getPreviewedHTML()
             info['source'] = Editor.getMarkdown()
 
-            $.post('/admin/article/add', info, res=>{
+            $.post('/admin/article/update', info, res => {
                 if (res.code === 1) {
                     layer.msg(res.msg, {icon: 6, time: 1000})
                 } else {
-                    layer.msg(res.msg, {icon: 6, time: 1000})
+                    layer.msg(res.msg, {icon: 5, time: 1000})
                 }
             })
 

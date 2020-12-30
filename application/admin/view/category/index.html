@@ -89,7 +89,7 @@
             <td class="td-manage">
                 <button class="layui-btn layui-btn layui-btn-sm"
                         onclick="x_admin_show('编辑','/admin/category/edit/{$vo.id}')"><i
-                        class="layui-icon">&#xe642;</i>编辑
+                        class="layui-icon">&#xe642;</i>
                 </button>
                 <!--                {if $vo.pid eq 0}-->
                 <!--                <button class="layui-btn layui-btn-warm layui-btn-sm" onclick="x_admin_show('编辑','admin-edit.html')"><i-->
@@ -97,7 +97,7 @@
                 <!--                </button>-->
                 <!--                {/if}-->
                 <button class="layui-btn-danger layui-btn layui-btn-sm" onclick="member_del(this,'{$vo.id}')"
-                        href="javascript:;"><i class="layui-icon">&#xe640;</i>删除
+                        href="javascript:;"><i class="layui-icon">&#xe640;</i>
                 </button>
             </td>
         </tr>
@@ -125,7 +125,7 @@
                 }
             })
         })
-        ;
+
 
         form.on('switch(type)', function (data) {
             let id = $(data.elem).attr('data-id')

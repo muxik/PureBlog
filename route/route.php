@@ -26,11 +26,12 @@ Route::group('admin', function () {
     Route::group('article', function () {
         Route::get('/', 'admin/article/index');
         Route::get('create', 'admin/article/create');
-        Route::get('edit', 'admin/article/edit');
+        Route::get('edit/:id', 'admin/article/edit');
         Route::post('add', 'admin/article/add');
         Route::post('update', 'admin/article/update');
-        Route::post('changeTop', 'admin/article/changeTop');
+        Route::post('del', 'admin/article/del');
         Route::post('changeState', 'admin/article/changeState');
+        Route::post('changeTop', 'admin/article/changeTop');
         Route::post('upload', 'admin/article/upload');
     });
 

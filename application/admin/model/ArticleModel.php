@@ -51,4 +51,20 @@ class ArticleModel extends Model
         }
         return 1;
     }
+
+    public function edit($data)
+    {
+        $validate = new ArticleValidate();
+        if (!$validate->scene('add')->check($data)){
+            return $validate->getError();
+        }
+        $id = $data['id'];
+        unset($data['id']);
+
+        $result = $this->where('id', $id)->update($data);
+        if (!$result) {
+            return "服务器错误,请稍后再试！";
+        }
+        return 1;
+    }
 }
