@@ -40,10 +40,7 @@ class CategoryModel extends Model
 
         $result = $this
             ->where('id', $data['id'])
-            ->update([
-                'name' => $data['name'],
-                'pid' => $data['pid']
-            ]);
+            ->update($data);
 
         if (!$result){
             return '服务器错误！请稍后再试';

@@ -75,7 +75,15 @@ class Category extends Controller
 
     public function update(Request $request)
     {
-        $data = $request->only(['id', 'name', 'pid', 'link' => null]);
+        if (empty($request->post('link'))) {
+            $param = ['id', 'name', 'pid' => 0];
+        } else {
+            $param = ['id', 'name', 'link' => null, 'pid' => 0];
+        }
+
+
+        $data = $request->only($param);
+
         $result = $this->model->edit($data);
         if (1 !== $result) {
             $this->error($result);

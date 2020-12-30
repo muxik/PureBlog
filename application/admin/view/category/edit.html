@@ -26,6 +26,7 @@
         </div>
         {/if}
 
+        {if $category.type eq 1}
         <div class="layui-form-item">
             <label class="layui-form-label">单页链接</label>
             <div class="layui-input-block">
@@ -34,7 +35,7 @@
                        class="layui-input">
             </div>
         </div>
-
+        {/if}
         <input type="hidden" name="id" value="{$category.id}">
 
         <div class="layui-form-item">
