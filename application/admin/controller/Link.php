@@ -49,14 +49,22 @@ class Link extends Controller
         $this->success('添加成功！');
     }
 
-    public function edit()
+    public function edit($id)
     {
-        return view();
+        $info = $this->model->where('id', $id)->find();
+        return view()->assign(['link' => $info]);
     }
 
     public function update(Request $request)
     {
+        $info = $request->only(['id','title','logo', 'link', 'description']);
 
+        $result = $this->model->edit($info);
+
+        if (1 !== $result) {
+            $this->error($result);
+        }
+        $this->success('修改成功！');
     }
 
     public function changeState(Request $request)
@@ -74,8 +82,15 @@ class Link extends Controller
     }
 
 
-    public function del()
+    public function del(Request $request)
     {
+        $id = $request->post('id');
+        $result = $this->model->useSoftDelete('delete_time', time())->delete($id);
+
+        if (!$result)
+            $this->error("删除失败");
+        else
+            $this->success("删除成功！");
 
     }
 

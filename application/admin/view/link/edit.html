@@ -1,0 +1,83 @@
+{extend name="base/template"}
+{block name="title"}链接修改{/block}
+
+{block name="content"}
+<div class="x-body">
+    <form class="layui-form" action="">
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">标题：</label>
+            <div class="layui-input-block">
+                <input type="text" name="title" value="{$link.title}" required lay-verify="required"
+                       placeholder="请输入链接名称" autocomplete="off"
+                       class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">描述：</label>
+            <div class="layui-input-block">
+                <input type="text" name="description"  value="{$link.description}" required lay-verify="required"
+                       placeholder="请输入链接描述" autocomplete="off"
+                       class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">LOGO地址：</label>
+            <div class="layui-input-block">
+                <input type="text" name="logo" value="{$link.logo}"  required lay-verify="required"
+                       placeholder="请输入链接地址" autocomplete="off"
+                       class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">链接地址：</label>
+            <div class="layui-input-block">
+                <input type="text" name="link" value="{$link.link}" required lay-verify="required"
+                       placeholder="请输入链接地址" autocomplete="off"
+                       class="layui-input">
+            </div>
+        </div>
+
+        <input type="hidden" name="id" value="{$link.id}">
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit lay-filter="add">立即提交</button>
+            </div>
+        </div>
+    </form>
+</div>
+{/block}
+
+{block name="script"}
+<script>
+    layui.use(['form', 'layer'], function () {
+        $ = layui.jquery;
+        var form = layui.form
+            , layer = layui.layer;
+
+        //监听提交
+        form.on('submit(add)', function (data) {
+            $.post('/admin/link/update', data.field, function (res) {
+                console.log(data.field);
+                if (res.code === 1) {
+                    layer.alert(res.msg, {icon: 6}, function () {
+                        // 获得frame索引
+                        var index = parent.layer.getFrameIndex(window.name);
+                        //关闭当前frame
+                        parent.layer.close(index);
+                    });
+                } else {
+                    layer.msg(res.msg, {icon: 5})
+                }
+            })
+            return false;
+        });
+
+
+    });
+</script>
+{/block}

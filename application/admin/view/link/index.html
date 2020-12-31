@@ -23,7 +23,7 @@
                     <option>描述</option>
                 </select>
             </div>
-            <input type="text" name="username" placeholder="请输入" autocomplete="off" class="layui-input">
+            <input type="text" name="username" placeholder="输入关键字搜索" autocomplete="off" class="layui-input">
             <button class="layui-btn" lay-submit="" lay-filter="sreach"><i class="layui-icon">&#xe615;</i></button>
         </form>
     </div>
@@ -72,7 +72,7 @@
             </td>
             <td>{$vo.create_time}</td>
             <td class="td-manage">
-                <a title="编辑" class="layui-btn layui-btn-xs" onclick="x_admin_show('编辑', '/admin/article/edit/{$vo.id}')" href="javascript:;">
+                <a title="编辑" class="layui-btn layui-btn-xs" onclick="x_admin_show('编辑', '/admin/link/edit/{$vo.id}')" href="javascript:;">
                     <i class="layui-icon">&#xe642;</i>
                 </a>
                 <a title="删除" class="layui-btn layui-btn-danger layui-btn-xs" onclick="del(this,'{$vo.id}')" href="javascript:;">
@@ -109,19 +109,6 @@
             })
         })
 
-        form.on('switch(top)', function (data) {
-            let id = $(data.elem).attr('data-id')
-            let value = $(data.elem).val() === '1' ? 0 : 1;
-
-
-            $.post('/admin/article/changeTop', {id, value}, res => {
-                if (res.code === 1) {
-                    layer.msg(res.msg, {icon: 6, time: 800}, () => location.reload())
-                } else {
-                    layer.msg(res.msg, {icon: 5, time: 1500})
-                }
-            })
-        })
     })
 
 
@@ -129,7 +116,7 @@
         layer.confirm('确认要删除吗？', function (index) {
             //发异步删除数据
             $(obj).parents("tr").remove();
-            $.post('/admin/article/del', {id}, res => {
+            $.post('/admin/link/del', {id}, res => {
                 if (res.code === 1) {
                     layer.msg(res.msg, {icon: 6, time: 1500}, () => {
                         $(".layui-form-checked").not('.header').parents('tr').remove();
@@ -145,7 +132,7 @@
     function delAll(argument) {
         var data = tableCheck.getData();
         layer.confirm('确认要删除吗？' + data, function (index) {
-            $.post('/admin/article/del', {id: data}, res => {
+            $.post('/admin/link/del', {id: data}, res => {
                 if (res.code === 1) {
                     layer.msg(res.msg, {icon: 6, time: 1500}, () => {
                         $(".layui-form-checked").not('.header').parents('tr').remove();

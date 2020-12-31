@@ -39,7 +39,7 @@ Route::group('admin', function () {
     Route::group('link',function (){
         Route::get('/', 'admin/link/index');
         Route::get('create', 'admin/link/create');
-        Route::get('edit', 'admin/link/edit');
+        Route::get('edit/:id', 'admin/link/edit');
         Route::post('del', 'admin/link/del');
         Route::post('add','admin/link/add');
         Route::post('update','admin/link/update');
@@ -47,6 +47,17 @@ Route::group('admin', function () {
         Route::post('del', 'admin/link/del');
     });
 
+    // 友情链接模块
+    Route::group('admin',function (){
+        Route::get('/', 'admin/admin/index');
+        Route::get('create', 'admin/admin/create');
+        Route::get('edit/:id', 'admin/admin/edit');
+        Route::post('del', 'admin/admin/del');
+        Route::post('add','admin/admin/add');
+        Route::post('update','admin/admin/update');
+        Route::post('changeState', 'admin/admin/changeState');
+        Route::post('del', 'admin/admin/del');
+    });
 })->middleware(['CheckLogin']);
 
 Route::get('/', 'index/index/index');
