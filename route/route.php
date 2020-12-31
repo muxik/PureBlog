@@ -47,17 +47,19 @@ Route::group('admin', function () {
         Route::post('del', 'admin/link/del');
     });
 
-    // 友情链接模块
+    // 管理员模块
+
+    Route::get('admin/edit/:id', 'admin/admin/edit');
+    Route::get('admin/create', 'admin/admin/create');
+    Route::get('admin', 'admin/admin/index');
     Route::group('admin',function (){
-        Route::get('/', 'admin/admin/index');
-        Route::get('create', 'admin/admin/create');
-        Route::get('edit/:id', 'admin/admin/edit');
         Route::post('del', 'admin/admin/del');
         Route::post('add','admin/admin/add');
         Route::post('update','admin/admin/update');
         Route::post('changeState', 'admin/admin/changeState');
         Route::post('del', 'admin/admin/del');
-    });
+    })->middleware(['Auth']);
+
 })->middleware(['CheckLogin']);
 
 Route::get('/', 'index/index/index');

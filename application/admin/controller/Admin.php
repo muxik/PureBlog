@@ -2,84 +2,89 @@
 
 namespace app\admin\controller;
 
+use app\admin\model\AdminModel;
 use think\Controller;
 use think\Request;
 
 class Admin extends Controller
 {
-    /**
-     * 显示资源列表
-     *
-     * @return \think\Response
-     */
+    protected $model;
+
+    protected function initialize()
+    {
+        $this->model = new  AdminModel();
+        parent::initialize();
+    }
+
     public function index()
     {
-        //
+        return view()->assign([
+            'admin' => $this->model->paginate(10),
+            'count' => $this->model->count()
+        ]);
     }
 
-    /**
-     * 显示创建资源表单页.
-     *
-     * @return \think\Response
-     */
     public function create()
     {
-        //
+        return view();
     }
 
-    /**
-     * 保存新建的资源
-     *
-     * @param  \think\Request  $request
-     * @return \think\Response
-     */
-    public function save(Request $request)
-    {
-        //
-    }
-
-    /**
-     * 显示指定的资源
-     *
-     * @param  int  $id
-     * @return \think\Response
-     */
-    public function read($id)
-    {
-        //
-    }
-
-    /**
-     * 显示编辑资源表单页.
-     *
-     * @param  int  $id
-     * @return \think\Response
-     */
     public function edit($id)
     {
-        //
+        $admin = $this->model->where('id', $id)->find();
+
+        return view()->assign([
+            'admin' => $admin
+        ]);
     }
 
-    /**
-     * 保存更新的资源
-     *
-     * @param  \think\Request  $request
-     * @param  int  $id
-     * @return \think\Response
-     */
-    public function update(Request $request, $id)
+    public function add(Request $request)
     {
-        //
+        $info = $request->only(['username', 'nickname', 'email', 'password']);
+        $info['state'] = 1;
+        $result = $this->model->add($info);
+
+        if (1 !== $result) {
+            $this->error($result);
+        }
+        $this->success('添加成功！');
     }
 
-    /**
-     * 删除指定资源
-     *
-     * @param  int  $id
-     * @return \think\Response
-     */
-    public function delete($id)
+    public function update(Request $request)
     {
-        //
+        $info = $request->only(['email', 'nickname', 'password', 'id']);
+        $result = $this->model->edit($info);
+        if (1 !== $result) {
+            $this->error($result);
+        }
+        $this->success('修改成功！');
     }
+
+    public function changeState(Request $request)
+    {
+        $state = $request->post('value', 1);
+        $result = $this
+            ->model
+            ->where('id', $request->post('id'))
+            ->update(['state' => $state]);
+        if (!$result)
+            $this->error("修改失败");
+        else
+            $this->success("修改成功！");
+
+    }
+
+
+    public function del(Request $request)
+    {
+        $id = $request->post('id');
+        $result = $this->model->useSoftDelete('delete_time', time())->delete($id);
+
+        if (!$result)
+            $this->error("删除失败");
+        else
+            $this->success("删除成功！");
+
+    }
+
 }
