@@ -60,6 +60,18 @@ Route::group('admin', function () {
         Route::post('del', 'admin/admin/del');
     })->middleware(['Auth']);
 
+    // 用户模块
+    Route::group('user',function (){
+        Route::get('edit/:id', 'admin/user/edit');
+        Route::get('create', 'admin/user/create');
+        Route::get('/', 'admin/user/index');
+        Route::post('del', 'admin/user/del');
+        Route::post('add','admin/user/add');
+        Route::post('update','admin/user/update');
+        Route::post('changeState', 'admin/user/changeState');
+        Route::post('del', 'admin/user/del');
+    });
+
 })->middleware(['CheckLogin']);
 
 Route::get('/', 'index/index/index');

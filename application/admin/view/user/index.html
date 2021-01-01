@@ -1,0 +1,144 @@
+{extend name="base/template"}
+
+{block name="content"}
+<div class="x-nav">
+      <span class="layui-breadcrumb">
+        <a href="">首页</a>
+        <a href="">用户管理管理</a>
+        <a>
+          <cite>用户列表</cite></a>
+      </span>
+    <a class="layui-btn layui-btn-primary layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right"
+       href="javascript:location.replace(location.href);" title="刷新">
+        <i class="layui-icon" style="line-height:38px">&#xe669;</i></a>
+</div>
+<div class="x-body">
+    <div class="layui-row">
+        <form class="layui-form layui-col-md12 x-so">
+            <input class="layui-input" placeholder="开始日" name="start" id="start">
+            <input class="layui-input" placeholder="截止日" name="end" id="end">
+            <input type="text" name="username" placeholder="请输入用户名" autocomplete="off" class="layui-input">
+            <button class="layui-btn" lay-submit="" lay-filter="sreach"><i class="layui-icon">&#xe615;</i></button>
+        </form>
+    </div>
+    <xblock>
+        <button class="layui-btn layui-btn-danger" onclick="delAll()"><i class="layui-icon"></i>批量删除</button>
+        <button class="layui-btn" onclick="x_admin_show('添加用户','/admin/user/create')"><i class="layui-icon"></i>添加
+        </button>
+        <span class="x-right" style="line-height:40px">共有数据：{$count} 条</span>
+    </xblock>
+    <table class="layui-table layui-form">
+        <thead>
+        <tr>
+            <th>
+                <div class="layui-unselect header layui-form-checkbox" lay-skin="primary"><i
+                        class="layui-icon">&#xe605;</i></div>
+            </th>
+            <th>ID</th>
+            <th>昵称</th>
+            <th>邮箱</th>
+            <th>加入时间</th>
+            <th>状态</th>
+            <th>操作</th>
+        </thead>
+        <tbody>
+        {foreach $user as $key=>$vo}
+        <tr>
+            <td>
+                <div class="layui-unselect layui-form-checkbox" lay-skin="primary" data-id='{$vo.id}'><i
+                        class="layui-icon">&#xe605;</i></div>
+            </td>
+            <td>{$vo.id}</td>
+            <td>{$vo.nickname}</td>
+            <td>{$vo.email}</td>
+            <td>{$vo.create_time}</td>
+            <td class="td-status">
+                <input {if $vo.state>= 1} checked {/if} lay-text="开|关" type="checkbox" data-id="{$vo.id}" name="switch"
+                value="{$vo.state}"
+                lay-skin="switch"
+                lay-filter="state">
+            <td class="td-manage">
+                <a title="编辑" onclick="x_admin_show('编辑','/admin/user/edit/{$vo.id}')" href="javascript:;">
+                    <i class="layui-icon">&#xe642;</i>
+                </a>
+                <a title="删除" onclick="del(this,'{$vo.id}')" href="javascript:;">
+                    <i class="layui-icon">&#xe640;</i>
+                </a>
+            </td>
+        </tr>
+        {/foreach}
+        </tbody>
+    </table>
+    <div class="page">
+        {$user|raw}
+    </div>
+
+</div>
+{/block}
+{block name="script"}
+<script>
+    layui.use('laydate', function () {
+        var laydate = layui.laydate;
+
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#start' //指定元素
+        });
+
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#end' //指定元素
+        });
+    });
+
+    layui.use(['form'], function () {
+        let form = layui.form
+        form.on('switch(state)', function (data) {
+            let id = $(data.elem).attr('data-id')
+            let value = $(data.elem).val() === '1' ? 0 : 1;
+
+
+            $.post('/admin/user/changeState', {id, value}, res => {
+                if (res.code === 1) {
+                    layer.msg(res.msg, {icon: 6, time: 800}, () => location.reload())
+                } else {
+                    layer.msg(res.msg, {icon: 5, time: 1500})
+                }
+            })
+        })
+
+    })
+
+    function del(obj, id) {
+        layer.confirm('确认要删除吗？', function (index) {
+            //发异步删除数据
+            $(obj).parents("tr").remove();
+            $.post('/admin/user/del', {id}, res => {
+                if (res.code === 1) {
+                    layer.msg(res.msg, {icon: 6, time: 1500}, () => {
+                        $(".layui-form-checked").not('.header').parents('tr').remove();
+                    })
+                } else {
+                    layer.msg(res.msg, {icon: 5, time: 1500})
+                }
+            })
+        });
+    }
+
+
+    function delAll(argument) {
+        var data = tableCheck.getData();
+        layer.confirm('确认要删除吗？' + data, function (index) {
+            $.post('/admin/user/del', {id: data}, res => {
+                if (res.code === 1) {
+                    layer.msg(res.msg, {icon: 6, time: 1500}, () => {
+                        $(".layui-form-checked").not('.header').parents('tr').remove();
+                    })
+                } else {
+                    layer.msg(res.msg, {icon: 5, time: 1500})
+                }
+            })
+        });
+    }
+</script>
+{/block}
