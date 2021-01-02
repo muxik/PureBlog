@@ -48,4 +48,13 @@ class CategoryModel extends Model
 
         return 1;
     }
+
+    /**
+     * 关联文章
+     * @return \think\model\relation\HasMany
+     */
+    public function article()
+    {
+        return $this->hasMany('ArticleModel', 'category_id', 'id');
+    }
 }

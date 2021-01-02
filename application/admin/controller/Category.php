@@ -142,7 +142,11 @@ class Category extends Controller
     public function del(Request $request)
     {
         $id = $request->post('id');
-        $result = $this->model->useSoftDelete('delete_time', time())->delete($id);
+
+        $category = $this->model
+            ->with('article')
+            ->find($id);
+        $result = $category->together('article')->delete();
 
         if (!$result)
             $this->error("删除失败");
