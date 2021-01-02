@@ -9,6 +9,11 @@ Route::post('admin/login.do', 'admin/Login/login');
 Route::group('admin', function () {
     Route::get('index', 'admin/index/index');
     Route::get('welcome', 'admin/index/welcome');
+    Route::get('out', function (){
+        session(null);
+        cookie(null,'admin_');
+        return redirect('/admin/login');
+    });
 
     // 分类模块
     Route::group('category', function () {
@@ -69,8 +74,15 @@ Route::group('admin', function () {
         Route::post('add','admin/user/add');
         Route::post('update','admin/user/update');
         Route::post('changeState', 'admin/user/changeState');
-        Route::post('del', 'admin/user/del');
     });
+
+    // 网站信息模块
+    Route::group('web',function (){
+        Route::get('/', 'admin/web/index');
+        Route::post('update','admin/web/update');
+        Route::post('changeClose', 'admin/web/changeClose');
+    });
+
 
 })->middleware(['CheckLogin']);
 

@@ -1,0 +1,104 @@
+{extend name="base/template"}
+
+{block name="content"}
+<div class="x-body layui-anim layui-anim-up">
+    <form class="layui-form">
+        <div class="layui-form-item">
+            <label for="name" class="layui-form-label">
+                <span class="x-red">*</span>网站名称
+            </label>
+            <div class="layui-input-block">
+                <input type="text" id="name" name="name" value="{$web.name}"  required
+                       lay-verify="required"
+                       autocomplete="off" class="layui-input">
+            </div>
+
+        </div>
+        <div class="layui-form-item">
+            <label for="logo" class="layui-form-label">
+                <span class="x-red">*</span>网站Logo
+            </label>
+            <div class="layui-input-block">
+                <input type="text" id="logo" name="logo" value="{$web.logo}"  required
+                       lay-verify="required"
+                       autocomplete="off" class="layui-input">
+            </div>
+
+        </div>
+        <div class="layui-form-item">
+            <label for="L_pass" class="layui-form-label">
+                <span class="x-red">*</span>网站关键字
+            </label>
+            <div class="layui-input-block">
+                <input type="text" id="L_pass" value="{$web.keyword}" name="keyword" required lay-verify="pass"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label for="copyright" class="layui-form-label">
+                <span class="x-red">*</span>版权信息
+            </label>
+            <div class="layui-input-block">
+                <input type="text" id="copyright" value="{$web.copyright}" name="copyright" required
+                       lay-verify="required"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+
+        <div class="layui-form-item">
+            <label for="L_email" class="layui-form-label">
+                <span class="x-red">*</span>邮箱
+            </label>
+            <div class="layui-input-block">
+                <input type="text" id="L_email" name="email" value="{$web.email}" required lay-verify="email"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label for="L_email" class="layui-form-label">
+                <span class="x-red">*</span>描述
+            </label>
+            <div class="layui-input-block">
+                <textarea type="text" name="description" value="{$web.description}" required
+                          autocomplete="off" class="layui-textarea">{$web.description}</textarea>
+            </div>
+        </div>
+        <input type="hidden" name="id" value="{$web.id}">
+
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">
+            </label>
+            <button class="layui-btn" lay-filter="edit" lay-submit="">
+                修改
+            </button>
+        </div>
+    </form>
+</div>
+{/block}
+{block name="script"}
+<script>
+    layui.use(['form', 'layer'], function () {
+        $ = layui.jquery;
+        var form = layui.form
+            , layer = layui.layer;
+
+        //监听提交
+        form.on('submit(edit)', function (data) {
+            $.post('/admin/web/update', data.field, function (res) {
+                if (res.code === 1) {
+                    layer.alert(res.msg, {icon: 6}, function () {
+                        location.reload()
+                    });
+                } else {
+                    layer.msg(res.msg, {icon: 5})
+                }
+            });
+            return false;
+        });
+    });
+</script>
+{/block}

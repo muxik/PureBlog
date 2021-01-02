@@ -9,6 +9,10 @@ class Login extends Controller
 {
     public function index()
     {
+        if (cookie('admin_user') || !empty(session('user.id', '', 'admin_'))) {
+            $this->redirect('/admin/index');
+        }
+
         return view();
     }
 
