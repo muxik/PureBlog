@@ -4,8 +4,6 @@ namespace app\admin\controller;
 
 use think\Controller;
 use think\Db;
-use think\Model;
-use think\Request;
 
 class Index extends Controller
 {

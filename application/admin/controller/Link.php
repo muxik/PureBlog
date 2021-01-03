@@ -4,7 +4,7 @@
 namespace app\admin\controller;
 
 
-use app\admin\model\LinkModel;
+use app\common\model\LinkModel;
 use think\Controller;
 use think\Request;
 

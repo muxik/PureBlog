@@ -1,9 +1,10 @@
 <?php
 
-namespace app\admin\model;
+namespace app\common\model;
 
 
-use app\admin\validate\UserValidate;
+
+use app\common\validate\UserValidate;
 use think\Model;
 use think\model\concern\SoftDelete;
 

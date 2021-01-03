@@ -1,12 +1,14 @@
 <?php
 
 
-namespace app\admin\model;
+namespace app\common\model;
 
 
-use app\admin\validate\ArticleValidate;
+use app\admin\model\AdminModel;
+use app\common\validate\ArticleValidate;
 use think\Model;
 use think\model\concern\SoftDelete;
+use think\model\relation\BelongsTo;
 
 class ArticleModel extends Model
 {
@@ -17,7 +19,7 @@ class ArticleModel extends Model
 
     /**
      * 关联栏目
-     * @return \think\model\relation\BelongsTo
+     * @return BelongsTo
      */
     public function category()
     {
@@ -26,11 +28,11 @@ class ArticleModel extends Model
 
     /**
      * 关联作者
-     * @return \think\model\relation\BelongsTo
+     * @return BelongsTo
      */
     public function admin()
     {
-        return $this->belongsTo('AdminModel', 'admin_id', 'id');
+        return $this->belongsTo('app\\admin\\model\\AdminModel', 'admin_id', 'id');
     }
 
     /**

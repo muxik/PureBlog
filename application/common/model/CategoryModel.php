@@ -1,10 +1,11 @@
 <?php
 
 
-namespace app\admin\model;
+namespace app\common\model;
 
 
-use app\admin\validate\CategoryValidate;
+
+use app\common\validate\CategoryValidate;
 use think\Model;
 use think\model\concern\SoftDelete;
 

@@ -87,6 +87,6 @@ Route::group('admin', function () {
 })->middleware(['CheckLogin']);
 
 Route::get('/', 'index/index/index');
-Route::get('/md5', function (){
-    return md5('admin');
-});
+//Route::get('/md5', function (){
+//    return md5('admin');
+//});

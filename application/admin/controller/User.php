@@ -2,7 +2,8 @@
 
 namespace app\admin\controller;
 
-use app\admin\model\UserModel;
+
+use app\common\model\UserModel;
 use think\Controller;
 use think\Request;
 

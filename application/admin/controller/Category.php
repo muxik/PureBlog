@@ -4,7 +4,7 @@
 namespace app\admin\controller;
 
 
-use app\admin\model\CategoryModel;
+use app\common\model\CategoryModel;
 use think\Controller;
 use think\Request;
 

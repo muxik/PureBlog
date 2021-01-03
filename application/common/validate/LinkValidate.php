@@ -1,12 +1,13 @@
 <?php
 
 
-namespace app\admin\validate;
+namespace app\common\validate;
+
 
 
 use think\Validate;
 
-class WebValidate extends Validate
+class LinkValidate extends Validate
 {
 
     /**
@@ -16,10 +17,10 @@ class WebValidate extends Validate
      * @var array
      */
     protected $rule = [
-        'name|网站名称' => 'require',
-        'description|网站描述' => 'require',
-        'logo|网站LOGO' => 'require',
-        'copyright|版权信息' => 'require',
+        'link|链接' => 'require',
+        'description|描述' => 'require',
+        'logo|LOGO' => 'require',
+        'title|' => 'require',
     ];
 
     /**
@@ -30,7 +31,7 @@ class WebValidate extends Validate
      */
     protected $message = [];
 
-    public function sceneEdit()
+    public function sceneAdd()
     {
         return $this->only(['link', 'description', 'logo','title']);
     }
