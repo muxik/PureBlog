@@ -52,32 +52,37 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarResponsive">
                 <ul class="navbar-nav ml-auto">
-                    <li class="nav-item active">
-                        <a class="nav-link" href="index.html">主页
-                            <span class="sr-only">(current)</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="about.html">关于</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="blog.html">生活</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="post-details.html">Post Details</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="contact.html">Contact Us</a>
-                    </li>
+
+                    {foreach $category as $k=>$vo}
+                    {if $vo.pid eq 0}
+                    {if !empty($vo.scategory[0])}
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown"
-                           aria-haspopup="true" aria-expanded="false">Dropdown</a>
+                           aria-haspopup="true" aria-expanded="false">{$vo.name}</a>
                         <div class="dropdown-menu" aria-labelledby="dropdown01">
-                            <a class="dropdown-item" href="#">Action</a>
-                            <a class="dropdown-item" href="#">Another action</a>
-                            <a class="dropdown-item" href="#">Something else here</a>
+                            {foreach $vo.scategory as $key=>$v}
+                            {if empty($v.link)}
+                            <a class="dropdown-item" href="/category/{$v.id}">{$v.name}</a>
+                            {else}
+                            <a class="dropdown-item" href="{$v.link}">{$v.name}</a>
+                            {/if}
+                            {/foreach}
                         </div>
                     </li>
+                    {else}
+                    <li class="nav-item">
+                        {if empty($vo.link)}
+                        <a class="nav-link" href="/category/{$vo.page}">{$vo.name}</a>
+                        {else}
+                        <a class="nav-link" href="  {$vo.link}">{$vo.name}</a>
+                        {/if}
+
+
+                    </li>
+                    {/if}
+
+                    {/if}
+                    {/foreach}
                 </ul>
             </div>
         </div>

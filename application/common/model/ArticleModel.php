@@ -4,7 +4,6 @@
 namespace app\common\model;
 
 
-use app\admin\model\AdminModel;
 use app\common\validate\ArticleValidate;
 use think\Model;
 use think\model\concern\SoftDelete;

@@ -13,10 +13,18 @@ class Index extends Controller
             ->with(['category', 'admin'])
             ->where('state', '>', 0)
             ->select();
-//        return  json($article);
 
-        return view()->assign([
-            'article' => $article
-        ]);
+        $category = model('CategoryModel')
+            ->with(['scategory'])
+            ->select();
+
+//        return json($category);
+
+        $viewData = [
+            'article' => $article,
+            'category' => $category
+        ];
+
+        return view()->assign($viewData);
     }
 }

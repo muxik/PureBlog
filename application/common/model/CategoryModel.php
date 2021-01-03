@@ -58,4 +58,13 @@ class CategoryModel extends Model
     {
         return $this->hasMany('ArticleModel', 'category_id', 'id');
     }
+
+    /**
+     * 子分类
+     * @return \think\model\relation\BelongsTo
+     */
+    public function scategory()
+    {
+        return $this->hasMany('CategoryModel', 'pid', 'id');
+    }
 }
