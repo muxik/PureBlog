@@ -25,6 +25,9 @@
         <div class="layui-form layui-col-md2" style="margin-right: 10px">
             <input type="text" name="" id="category_name" class="layui-input" placeholder="栏目名">
         </div>
+        <div class="layui-form layui-col-md2" style="margin-right: 10px">
+            <input type="text" name="" id="category_page" class="layui-input" placeholder="url名">
+        </div>
         <div class="layui-col-md4">
             <div class="layui-form-item">
                 <button class="layui-btn" lay-submit="" lay-filter="sreach" onclick="addCategory()"><i
@@ -181,7 +184,8 @@
     function addCategory() {
         let data = {
             pid: $("#p_category").val(),
-            name: $("#category_name").val()
+            name: $("#category_name").val(),
+            page: $("#category_page").val()
         }
         $.post('/admin/category/add', data, res => {
             if (res.code === 1) {

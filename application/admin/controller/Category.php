@@ -51,7 +51,7 @@ class Category extends Controller
     public function add(Request $request)
     {
 
-        $data = $request->only(['pid', 'name', 'sort' => 0]);
+        $data = $request->only(['pid', 'page', 'name', 'sort' => 0]);
         $result = $this->model->add($data);
         if (1 !== $result) {
             $this->error($result);
@@ -76,7 +76,7 @@ class Category extends Controller
     public function update(Request $request)
     {
         if (empty($request->post('link'))) {
-            $param = ['id', 'name', 'pid' => 0];
+            $param = ['id', 'name', 'pid', 'page' => 0];
         } else {
             $param = ['id', 'name', 'link' => null, 'pid' => 0];
         }
