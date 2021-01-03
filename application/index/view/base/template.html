@@ -62,9 +62,9 @@
                         <div class="dropdown-menu" aria-labelledby="dropdown01">
                             {foreach $vo.scategory as $key=>$v}
                             {if empty($v.link)}
-                            <a class="dropdown-item" href="/category/{$v.id}">{$v.name}</a>
+                            <a class="dropdown-item {$key + 1 < count($vo.scategory) ? 'line':'a'  }" href="/category/{$v.id}">{$v.name}</a>
                             {else}
-                            <a class="dropdown-item" href="{$v.link}">{$v.name}</a>
+                            <a class="dropdown-item {$key + 1 < count($vo.scategory) ? 'line':'a'  }" href="{$v.link}">{$v.name}</a>
                             {/if}
                             {/foreach}
                         </div>
@@ -111,9 +111,7 @@
             </div>
             <div class="col-lg-12">
                 <div class="copyright-text">
-                    <p>Copyright 2020 Stand Blog Co.
-
-                        | Design: <a rel="nofollow" href="https://templatemo.com" target="_parent">TemplateMo</a></p>
+                    <p>{$web.copyright}</p>
                 </div>
             </div>
         </div>

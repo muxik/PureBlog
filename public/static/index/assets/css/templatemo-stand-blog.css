@@ -1143,15 +1143,23 @@ footer p a:hover {
 
 /* user */
 
-.dropdown-item {
-    /*border: none;*/
-    text-align: center;
-}
 
 .dropdown-menu {
-    background-color: rgba(255, 255, 255, .2);
+    background-color: rgba(204, 212, 206,.1);
     border: none;
 }
+
+.dropdown-item {
+    /*border: none;*/
+    /*text-align: left;*/
+    text-align: justify;
+    text-align-last: center;
+}
+
+.line {
+    border-bottom: 1px solid #ccc;
+}
+
 
 .head {
     text-align: center;
@@ -1170,13 +1178,12 @@ footer p a:hover {
 
 }
 
-.sidebar-item{
+.sidebar-item {
     padding: .9rem;
-    background-color: rgba(255,255,255,.9);
+    background-color: rgba(255, 255, 255, .9);
 
 }
 
-.blog-post{
-
-    background-color: rgba(255,255,255,.9);
+.blog-post {
+    background-color: rgba(255, 255, 255, .9);
 }
