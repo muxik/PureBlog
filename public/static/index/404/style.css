@@ -1,0 +1,27 @@
+.not-page{
+    margin-top: 15%;
+    /*margin-left: 10%;*/
+}
+
+.not-found-info {
+    margin-top: 3.5em;
+}
+
+.not-found-info h2 {
+    font-size: 1.65em;
+    margin-bottom: 1.2em;
+}
+
+.not-found-info a {
+    margin-top: 2em;
+    border: 1px solid #ccc;
+    padding: 6px 12px;
+    color: #0a001f;
+}
+
+.not-found-info a:hover {
+    border: none;
+    background-color: rgba(46,204,43,.65);
+    color: #fff;
+    transition: .2s;
+}

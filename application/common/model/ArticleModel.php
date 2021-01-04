@@ -68,4 +68,18 @@ class ArticleModel extends Model
         }
         return 1;
     }
+
+    /**
+     * @param $keyword
+     * @param $value
+     * @return ArticleModel
+     */
+    public function search($keyword, $value)
+    {
+        $where[] = [
+            $value, 'like', '%' . $keyword . '%'
+        ];
+        return $this->where($where);
+    }
+
 }

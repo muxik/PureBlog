@@ -41,18 +41,22 @@ h1, h2, h3, h4, h5, h6 {
 
 .main-button a {
     display: inline-block;
-    background-color: #f48840;
-    color: #fff;
+    background-color: white;
+    border: 1px solid #ccc;
+    color: #777;
     font-size: 13px;
     font-weight: 500;
-    padding: 12px 20px;
+    padding: 10px 20px;
     text-transform: uppercase;
     transition: all .3s;
 }
 
 .main-button a:hover {
-    background-color: #fb9857;
+    background-color: rgba(46, 204, 43, .7);
+    font-size: 14px;
+    color: #fff;
 }
+
 
 .heading-page {
     padding-top: 110px;
@@ -433,6 +437,11 @@ header .navbar {
     margin-bottom: 30px;
 }
 
+.blog-posts .blog-thumb {
+    max-height: 25em;
+    overflow: hidden;
+}
+
 .blog-posts .blog-thumb img {
     width: 100%;
     overflow: hidden;
@@ -542,10 +551,10 @@ header .navbar {
 }
 
 .blog-posts .main-button a {
-    height: 60px;
-    line-height: 60px;
+    height: 37px;
+    line-height: 37px;
     padding: 0px;
-    width: 100%;
+    width: 138px;
     text-align: center;
 }
 
@@ -1145,7 +1154,7 @@ footer p a:hover {
 
 
 .dropdown-menu {
-    background-color: rgba(204, 212, 206,.1);
+    background-color: rgba(204, 212, 206, .1);
     border: none;
 }
 
@@ -1187,3 +1196,12 @@ footer p a:hover {
 .blog-post {
     background-color: rgba(255, 255, 255, .9);
 }
+
+
+.page {
+    display: flex;
+    display: -webkit-flex;
+    width: 100%;
+    justify-content: space-between;
+}
+

@@ -22,11 +22,15 @@
     <link rel="stylesheet" href="__INDEX__/assets/css/owl.css">
     <!--
 
+
+
     TemplateMo 551 Stand Blog
 
     https://templatemo.com/tm-551-stand-blog
 
     -->
+    <link rel="stylesheet" href="__INDEX__/404/style.css">
+
 </head>
 
 <body>
@@ -62,7 +66,7 @@
                         <div class="dropdown-menu" aria-labelledby="dropdown01">
                             {foreach $vo.scategory as $key=>$v}
                             {if empty($v.link)}
-                            <a class="dropdown-item {$key + 1 < count($vo.scategory) ? 'line':'a'  }" href="/category/{$v.id}">{$v.name}</a>
+                            <a class="dropdown-item {$key + 1 < count($vo.scategory) ? 'line':'a'  }" href="/category/{$v.page}">{$v.name}</a>
                             {else}
                             <a class="dropdown-item {$key + 1 < count($vo.scategory) ? 'line':'a'  }" href="{$v.link}">{$v.name}</a>
                             {/if}
@@ -128,6 +132,11 @@
 <script src="__INDEX__/assets/js/slick.js"></script>
 <script src="__INDEX__/assets/js/isotope.js"></script>
 <script src="__INDEX__/assets/js/accordions.js"></script>
+
+
+<script src='__INDEX__/404/gsap.min.js'></script>
+<script src="__INDEX__/404/script.js"></script>
+
 
 <script language="text/Javascript">
     cleared[0] = cleared[1] = cleared[2] = 0; //set a cleared flag for each field

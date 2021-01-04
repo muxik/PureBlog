@@ -2,29 +2,35 @@
 
 namespace app\index\controller;
 
-use think\Controller;
-
-class Index extends Controller
+class Index extends IndexController
 {
     public function index()
     {
-        $web = model('WebModel')
-            ->find();
 
-        $article = model('ArticleModel')
-            ->field('category_id,title,pic,read,description,tag,top,create_time,admin_id')
-            ->with(['category', 'admin'])
-            ->where([['state', '>', 0]])
-            ->order('create_time', 'desc');
+        $viewData = [
+            'article' => $this->article->paginate(5),
+            'page' => $this->article->paginate(5)->toArray(),
+            'new_article' => $this->article->limit(5),
+            'category' => $this->category->select(),
+            'web' => $this->web,
+            'tag' => $this->getTags()
+        ];
 
+        // 搜索
+        if (!empty(input('q'))) {
+            $viewData['article'] = $this->article
+                ->where([['title', 'like', '%' . input('q') . '%']])
+                ->paginate(5);
+            return view()->assign($viewData);
+        }
 
-        $category = model('CategoryModel')
-            ->where([['state', '>', 0]])
-            ->with(['scategory'])
-            ->select();
+        return view()->assign($viewData);
+    }
 
+    protected function getTags()
+    {
         $tag = [];
-        $tag = array_unique($tag);
+        $this->tags = array_unique($tag);
         foreach (
             model('ArticleModel')
                 ->field('tag')
@@ -37,18 +43,36 @@ class Index extends Controller
                 array_push($tag, $v);
             }
         }
-//        return json($category);
-
-        $viewData = [
-            'article' => $article->paginate(5),
-            'new_article' => $article->limit(5),
-            'category' => $category,
-            'web' => $web,
-            'tag' => $tag
-        ];
-
-        return view()->assign($viewData);
+        return $tag;
     }
 
+    public function category()
+    {
+        $viewData = [
+            'article' => $this->article->paginate(5),
+            'page' => $this->article->paginate(5)->toArray(),
+            'new_article' => $this->article->limit(5),
+            'category' => $this->category->select(),
+            'web' => $this->web,
+            'tag' => $this->getTags()
+        ];
 
+        $category_name = '';
+        foreach (explode('/', request()->url()) as $key => $vo) {
+            if ($key > 1) {
+                $line = $key > 2 ? '/' : '';
+                $category_name .= $line . $vo;
+            }
+        }
+
+        $category = $this->category->where('page', $category_name)->find();
+        $id = 0;
+        if (!empty($category['id'])){
+            $id = $category['id'];
+        }
+        $viewData['article'] = $this->article
+            ->where('category_id', $id)
+            ->paginate(5);
+        return view('index')->assign($viewData);
+    }
 }

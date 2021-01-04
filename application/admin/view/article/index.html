@@ -77,7 +77,7 @@
                 <span onmouseover="$(this).hide(); $(this).next().show()" style="cursor: pointer;font-size: 16px;" >查看</span>
                 <img onmouseout="$(this).hide(); $(this).prev().show({ duration: 100})" id="pic" width="200" src="{$vo.pic}" alt="" style="display: none;" ></td>
             <td>{$vo.title}</td>
-            <td>{$vo.description}</td>
+            <td style="max-width: 10em;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;"><p>{$vo.description}</p></td>
             <td>{$vo.read}</td>
             <td>{$vo.category.name}</td>
             <td>
