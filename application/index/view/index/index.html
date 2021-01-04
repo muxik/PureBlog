@@ -1,4 +1,4 @@
-{extend name="base/template"}
+{extend name="base:template"}
 
 {block name="content"}
 <section class="blog-posts">
@@ -76,78 +76,8 @@
                     </div>
                 </div>
             </div>
-            <div class="col-lg-4">
-                <div class="sidebar">
-                    <div class="row">
-                        <div class="col-lg-12">
-                            <div class="sidebar-item search">
-                                <form id="search_form" name="gs" method="GET" action="/">
-                                    <input type="text" name="q" class="searchText" placeholder="type to search..."
-                                           autocomplete="on">
-                                </form>
-                            </div>
-                        </div>
-                        <div class="col-lg-12">
-                            <div class="sidebar-item head">
-                                <img src="https://gravatar.loli.net/avatar/5353445e421ab8cd79bf0152823056ee" alt="">
-                                <p>有梦，就不该放弃，不是么？</p>
-                            </div>
-                        </div>
-                        <div class="col-lg-12">
-                            <div class="sidebar-item recent-posts">
-                                <div class="sidebar-heading">
-                                    <h2>最新文章</h2>
-                                </div>
-                                <div class="content">
-                                    <ul>
-                                        {foreach $article as $k=>$v}
-                                        <li>
-                                            <a href="post-details.html">
-                                                <h5>{$v.title}</h5>
-                                                <span>{$v.create_time}</span>
-                                            </a>
-                                        </li>
-                                        {/foreach}
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-12">
-                            <div class="sidebar-item categories">
-                                <div class="sidebar-heading">
-                                    <h2>Categories</h2>
-                                </div>
-                                <div class="content">
-                                    <ul>
-                                        <li><a href="#">- Nature Lifestyle</a></li>
-                                        <li><a href="#">- Awesome Layouts</a></li>
-                                        <li><a href="#">- Creative Ideas</a></li>
-                                        <li><a href="#">- Responsive Templates</a></li>
-                                        <li><a href="#">- HTML5 / CSS3 Templates</a></li>
-                                        <li><a href="#">- Creative &amp; Unique</a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-12">
-                            <div class="sidebar-item tags">
-                                <div class="sidebar-heading">
-                                    <h2>Tag Clouds</h2>
-                                </div>
-                                <div class="content">
-                                    <ul>
-                                        {foreach $tag as $key=>$vo}
-                                        <li><a href="#">{$vo}</a></li>
-                                        {/foreach}
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            {include file="base:right"}
         </div>
     </div>
 </section>
-
 {/block}

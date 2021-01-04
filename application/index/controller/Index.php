@@ -75,4 +75,9 @@ class Index extends IndexController
             ->paginate(5);
         return view('index')->assign($viewData);
     }
+
+    public function like()
+    {
+        $this->web->setInc('like');
+    }
 }

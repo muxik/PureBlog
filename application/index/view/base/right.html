@@ -1,0 +1,63 @@
+<div class="col-lg-4">
+    <div class="sidebar">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="sidebar-item search">
+                    <form id="search_form" name="gs" method="GET" action="/">
+                        <input type="text" name="q" class="searchText" placeholder="输入你想搜索的内容吧ヽ(✿ﾟ▽ﾟ)ノ"
+                               autocomplete="on">
+                    </form>
+                </div>
+            </div>
+            <div class="col-lg-12 moneybox" id="leafContainer">
+
+                <div class="sidebar-item head ">
+                    <img src="{$web.logo}" alt="">
+                    <p>{$web.motto}</p>
+                    <div class="like-me">
+                        <i class="fa fa-heart" id="like" aria-hidden="true"></i>
+                        <span id="like-count">{$web.like}</span>
+                    </div>
+
+                </div>
+            </div>
+
+
+            <div class="col-lg-12">
+                <div class="sidebar-item recent-posts">
+                    <div class="sidebar-heading">
+                        <h2>最新文章</h2>
+                    </div>
+                    <div class="content">
+                        <ul>
+                            {foreach $article as $k=>$v}
+                            <li>
+                                <img src="{$v.pic}" alt="">
+                                <a href="post-details.html">
+                                    <h5>{$v.title}</h5>
+                                    <span>{$v.create_time}</span>
+                                </a>
+                            </li>
+                            {/foreach}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-12">
+                <div class="sidebar-item tags">
+                    <div class="sidebar-heading">
+                        <h2>标签库</h2>
+                    </div>
+                    <div class="content">
+                        <ul>
+                            {foreach $tag as $key=>$vo}
+                            <li><a href="#">{$vo}</a></li>
+                            {/foreach}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

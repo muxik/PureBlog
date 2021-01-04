@@ -4,7 +4,7 @@
 namespace app\admin\controller;
 
 
-use app\admin\model\WebModel;
+use app\common\model\WebModel;
 use think\Controller;
 use think\Request;
 

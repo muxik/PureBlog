@@ -5,12 +5,13 @@
 
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="TemplateMo">
+    <meta name="description" content="{$web.description}">
+    <meta name="author" content="Muxi_k">
+    <meta name="keywords" content="{$web.keyword}">
     <link href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i&display=swap"
           rel="stylesheet">
 
-    <title>Stand CSS Blog by TemplateMo</title>
+    <title>{$web.name}</title>
 
     <!-- Bootstrap core CSS -->
     <link href="__INDEX__/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -49,7 +50,8 @@
 <header class="">
     <nav class="navbar navbar-expand-lg">
         <div class="container">
-            <a class="navbar-brand" href="index.html"><h2>Muxi_k' Blog<em>.</em></h2></a>
+            <a class="navbar-brand" href="/"><h2>{$web.title}<em>.</em></h2></a>
+            <span class="web-description" id="web-description">我想和你一样，不顾那些所以···</span>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive"
                     aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -117,6 +119,7 @@
                 <div class="copyright-text">
                     <p>{$web.copyright}</p>
                 </div>
+                <p id="hitokoto"><a href="#" id="hitokoto_text" style="color: #dc6565">^_^ 获取中...</a></p>
             </div>
         </div>
     </div>
@@ -137,6 +140,37 @@
 <script src='__INDEX__/404/gsap.min.js'></script>
 <script src="__INDEX__/404/script.js"></script>
 
+<script type="text/javascript">
+
+    // 一言
+    var xhr = new XMLHttpRequest();
+    xhr.open('get', 'https://v1.hitokoto.cn');
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+            var data = JSON.parse(xhr.responseText);
+            var hitokoto = document.getElementById('hitokoto_text');
+            hitokoto.href = 'https://hitokoto.cn/?uuid=' + data.uuid
+            hitokoto.innerText = data.hitokoto;
+        }
+    }
+    xhr.send();
+
+
+    // Do you like me?
+    if (sessionStorage.getItem('like') === 'true') {
+        $(".like-me").addClass('active')
+
+    }
+        $("#like").click(function (){
+        if (sessionStorage.getItem('like') !== 'true') {
+            sessionStorage.setItem('like','true')
+            $count = parseInt($("#like-count").text()) + 1
+            $("#like-count").text($count)
+            $(".like-me").addClass('active')
+            $.post('/muxik/like', {state:true})
+        }
+    });
+</script>
 
 <script language="text/Javascript">
     cleared[0] = cleared[1] = cleared[2] = 0; //set a cleared flag for each field
@@ -147,6 +181,7 @@
             t.style.color = '#fff';
         }
     }
+
 </script>
 
 </body>

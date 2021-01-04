@@ -163,7 +163,7 @@ class Article extends Controller
     {
         $file = $request->file('file');
         $info = $file
-            ->validate(['size' => 15678888888, 'ext' => 'jpg,png,gif'])
+            ->validate(['size' => 15678888888, 'ext' => 'jpg,png,gif,jpeg'])
             ->move('./static/upload');
 
         $save_path = '/static/upload/' . $info->getSaveName();

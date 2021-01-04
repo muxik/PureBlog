@@ -87,4 +87,7 @@ Route::group('admin', function () {
 })->middleware(['CheckLogin']);
 
 Route::get('/', 'index/index/index');
+
+Route::post('muxik/like', 'index/index/like');
+
 Route::get('category/[:page]','index/index/category');
