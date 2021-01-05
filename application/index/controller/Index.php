@@ -24,6 +24,7 @@ class Index extends IndexController
             return view()->assign($viewData);
         }
 
+
         return view()->assign($viewData);
     }
 
@@ -73,6 +74,7 @@ class Index extends IndexController
         $viewData['article'] = $this->article
             ->where('category_id', $id)
             ->paginate(5);
+
         return view('index')->assign($viewData);
     }
 
@@ -80,7 +82,6 @@ class Index extends IndexController
     {
         $info = model('ArticleModel')
             ->field('source,id,category_id,content,title,pic,read,description,tag,top,create_time,admin_id')
-//            ->where([['state', '>', 1]])
             ->find($id);
 
         $viewData = [
@@ -88,10 +89,8 @@ class Index extends IndexController
             'info' => $info,
             'category' => $this->category->select(),
             'web' => $this->web,
-            'tag' => $this->getTags()
+            'tag' => $this->getTags(),
         ];
-//        return json($info);
-
         return view('info')->assign($viewData);
     }
 

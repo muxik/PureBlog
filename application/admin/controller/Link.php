@@ -81,6 +81,20 @@ class Link extends Controller
 
     }
 
+    public function setConnect(Request $request)
+    {
+        $type = $request->post('value', 1);
+        $result = $this
+            ->model
+            ->where('id', $request->post('id'))
+            ->update(['type' => $type]);
+        if (!$result)
+            $this->error("修改失败");
+        else
+            $this->success("修改成功！");
+
+    }
+
 
     public function del(Request $request)
     {

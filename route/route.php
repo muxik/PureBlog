@@ -49,6 +49,7 @@ Route::group('admin', function () {
         Route::post('add','admin/link/add');
         Route::post('update','admin/link/update');
         Route::post('changeState', 'admin/link/changeState');
+        Route::post('setConnect', 'admin/link/setConnect');
         Route::post('del', 'admin/link/del');
     });
 

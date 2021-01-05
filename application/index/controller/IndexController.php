@@ -11,6 +11,7 @@ class IndexController extends Controller
     protected $web;
     protected $article;
     protected $category;
+    protected $connect;
 
 
     protected function initialize()
@@ -28,6 +29,11 @@ class IndexController extends Controller
         $this->category = model('CategoryModel')
             ->where([['state', '>', 0]])
             ->with(['scategory']);
+
+        $this->connect = model('LinkModel')
+            ->where([['state', '>', 0], ['type', '=', 1]])->select();
+
+        $this->assign(['connect' => $this->connect]);
 
 
 
