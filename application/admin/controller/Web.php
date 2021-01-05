@@ -28,7 +28,7 @@ class Web extends Controller
 
     public function update(Request $request)
     {
-        $info = $request->only(['id','logo','name','description','email','copyright','keyword']);
+        $info = $request->only(['motto','id','logo','name','description','email','copyright','keyword']);
 
         $result = $this->model->edit($info);
 

@@ -19,7 +19,7 @@ class IndexController extends Controller
             ->find();
 
         $this->article = model('ArticleModel')
-            ->field('category_id,title,pic,read,description,tag,top,create_time,admin_id')
+            ->field('id,category_id,title,pic,read,description,tag,top,create_time,admin_id')
             ->with(['category', 'admin'])
             ->where([['state', '>', 0]])
             ->order('create_time', 'desc');

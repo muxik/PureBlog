@@ -18,7 +18,6 @@
                         <i class="fa fa-heart" id="like" aria-hidden="true"></i>
                         <span id="like-count">{$web.like}</span>
                     </div>
-
                 </div>
             </div>
 
@@ -30,10 +29,10 @@
                     </div>
                     <div class="content">
                         <ul>
-                            {foreach $article as $k=>$v}
+                            {foreach $new_article as $k=>$v}
                             <li>
                                 <img src="{$v.pic}" alt="">
-                                <a href="post-details.html">
+                                <a href="/info/{$v.id}">
                                     <h5>{$v.title}</h5>
                                     <span>{$v.create_time}</span>
                                 </a>
@@ -57,7 +56,6 @@
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 </div>

@@ -14,15 +14,15 @@
                                     <img src="{$vo.pic}" alt="">
                                 </div>
                                 <div class="down-content">
-                                    <span>{$vo.category.name}</span>
-                                    <a href="post-details.html"><h4>{$vo.title}</h4></a>
+                                    <span class="cate">{$vo.category.name}</span>
+                                    <a href="/info/{$vo.id}"><h4>{$vo.title}</h4></a>
                                     <ul class="post-info">
                                         <li><a href="#">@ {$vo.admin.nickname}</a></li>
                                         <li><a href="#"><i class="fa fa-clock-o"></i> {$vo.create_time}</a></li>
                                         <!--                                        <li><a href="#">12 Comments</a></li>-->
                                         <li><a href="#"><i class="fa fa-eye"></i> {$vo.read}</a></li>
                                     </ul>
-                                    <p>{$vo.description | raw}</p>
+                                    <p class="down-content-line">{$vo.description | raw}</p>
                                     <div class="post-options">
                                         <div class="row">
                                             <div class="col-6">

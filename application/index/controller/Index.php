@@ -10,7 +10,7 @@ class Index extends IndexController
         $viewData = [
             'article' => $this->article->paginate(5),
             'page' => $this->article->paginate(5)->toArray(),
-            'new_article' => $this->article->limit(5),
+            'new_article' => $this->article->limit(5)->select(),
             'category' => $this->category->select(),
             'web' => $this->web,
             'tag' => $this->getTags()
@@ -51,7 +51,7 @@ class Index extends IndexController
         $viewData = [
             'article' => $this->article->paginate(5),
             'page' => $this->article->paginate(5)->toArray(),
-            'new_article' => $this->article->limit(5),
+            'new_article' => $this->article->limit(5)->select(),
             'category' => $this->category->select(),
             'web' => $this->web,
             'tag' => $this->getTags()
@@ -67,13 +67,32 @@ class Index extends IndexController
 
         $category = $this->category->where('page', $category_name)->find();
         $id = 0;
-        if (!empty($category['id'])){
+        if (!empty($category['id'])) {
             $id = $category['id'];
         }
         $viewData['article'] = $this->article
             ->where('category_id', $id)
             ->paginate(5);
         return view('index')->assign($viewData);
+    }
+
+    public function info($id)
+    {
+        $info = model('ArticleModel')
+            ->field('source,id,category_id,content,title,pic,read,description,tag,top,create_time,admin_id')
+//            ->where([['state', '>', 1]])
+            ->find($id);
+
+        $viewData = [
+            'new_article' => $this->article->limit(5)->select(),
+            'info' => $info,
+            'category' => $this->category->select(),
+            'web' => $this->web,
+            'tag' => $this->getTags()
+        ];
+//        return json($info);
+
+        return view('info')->assign($viewData);
     }
 
     public function like()

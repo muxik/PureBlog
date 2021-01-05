@@ -21,15 +21,16 @@
     <link rel="stylesheet" href="__INDEX__/assets/css/fontawesome.css">
     <link rel="stylesheet" href="__INDEX__/assets/css/templatemo-stand-blog.css">
     <link rel="stylesheet" href="__INDEX__/assets/css/owl.css">
+
+
+    {block name="style"}
+    {/block}
     <!--
-
-
-
     TemplateMo 551 Stand Blog
-
     https://templatemo.com/tm-551-stand-blog
 
     -->
+<!--    <link rel="stylesheet" href="/public/static/admin/lib/editor/css/editormd.min.css">-->
     <link rel="stylesheet" href="__INDEX__/404/style.css">
 
 </head>
@@ -65,7 +66,7 @@
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown"
                            aria-haspopup="true" aria-expanded="false">{$vo.name}</a>
-                        <div class="dropdown-menu" aria-labelledby="dropdown01">
+                        <div class="dropdown-menu" aria-labelledby= "dropdown01">
                             {foreach $vo.scategory as $key=>$v}
                             {if empty($v.link)}
                             <a class="dropdown-item {$key + 1 < count($vo.scategory) ? 'line':'a'  }" href="/category/{$v.page}">{$v.name}</a>
@@ -183,6 +184,6 @@
     }
 
 </script>
-
+{block name="script"} {/block}
 </body>
 </html>

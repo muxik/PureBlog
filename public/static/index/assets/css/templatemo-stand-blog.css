@@ -17,13 +17,13 @@ body {
     /*background-size:100% 100%;*/
 }
 
-p {
-    margin-bottom: 0px;
-    font-size: 14px;
-    font-weight: 400;
-    color: #7a7a7a;
-    line-height: 30px;
-}
+/*p {*/
+/*    margin-bottom: 0px;*/
+/*    font-size: 14px;*/
+/*    font-weight: 400;*/
+/*    color: #7a7a7a;*/
+/*    line-height: 30px;*/
+/*}*/
 
 a {
     text-decoration: none !important;
@@ -32,7 +32,7 @@ a {
 ul {
     padding: 0;
     margin: 0;
-    list-style: none;
+    /*list-style: none;*/
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -456,7 +456,7 @@ header .navbar {
     border-bottom: 1px solid #eee;
 }
 
-.blog-posts .down-content span {
+.blog-posts .down-content .cate {
     font-size: 18px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -512,7 +512,7 @@ header .navbar {
     color: #f48840;
 }
 
-.blog-posts .down-content p {
+.blog-posts .down-content .down-content-line {
     padding: 25px 0px;
     margin: 25px 0px;
     border-top: 1px solid #eee;
@@ -1242,3 +1242,26 @@ footer p a:hover {
     top: 2rem;
 }
 
+li.L1, li.L3, li.L5, li.L7, li.L9{
+    background: #282828 !important;
+}
+
+.editormd-preview-container pre, .editormd-html-preview pre{
+    background: #282828 !important;
+}
+
+.pln {
+    color: #b4b7a5 !important;
+}
+
+.pun{
+    color: #779792 !important;
+}
+
+.typ {
+    color: #83a598 !important;
+}
+
+.kwd {
+    color: #fb4934 !important;
+}

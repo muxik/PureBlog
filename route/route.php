@@ -88,6 +88,7 @@ Route::group('admin', function () {
 
 Route::get('/', 'index/index/index');
 
-Route::post('muxik/like', 'index/index/like');
+Route::get('info/:id','index/index/info');
 
 Route::get('category/[:page]','index/index/category');
+Route::post('muxik/like', 'index/index/like');
