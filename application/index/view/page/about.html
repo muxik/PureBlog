@@ -5,47 +5,14 @@
 <section class="blog-posts grid-system">
     <div class="container">
         <div class="row">
-            <div class="col-lg-8">
+            <div class="col-lg-12">
                 <div class="all-blog-posts">
                     <div class="row">
                         <div class="col-lg-12">
                             <div class="blog-post">
-                                <div class="blog-thumb">
-                                    <img src="{$info.pic}" alt="">
-                                </div>
                                 <div class="down-content">
-                                    <span class="cate">{$info.category.name}</span>
-                                    <a href="{:request()->url()}"><h4>{$info.title}</h4></a>
-                                    <ul class="post-info">
-                                        <li><a href="#">{$info.admin.nickname}</a></li>
-                                        <li><a href="#">{$info.create_time}</a></li>
-                                        <li><a href="#">10 Comments</a></li>
-                                    </ul>
-                                    <!--                                    <p class="down-content-line"></p>-->
-
-                                    <div class="content-view down-content-line" id="content-view">
+                                    <div class="content-view " id="content-view">
                                         <textarea id="append"></textarea>
-                                    </div>
-                                    <div class="post-options">
-                                        <div class="row">
-                                            <div class="col-6">
-                                                <ul class="post-tags">
-                                                    <li><i class="fa fa-tags"></i></li>
-                                                    {foreach :explode(',', $info.tag) as $k=>$v}
-                                                    <li><a href="#">{$v}</a>{$k + 1 < count(explode(',', $info.tag)) ? ',
-                                                        ' : ''}
-                                                    </li>
-                                                    {/foreach}
-                                                </ul>
-                                            </div>
-                                            <div class="col-6">
-                                                <ul class="post-share">
-                                                    <li><i class="fa fa-share-alt"></i></li>
-                                                    <li><a href="#">Facebook</a>,</li>
-                                                    <li><a href="#"> Twitter</a></li>
-                                                </ul>
-                                            </div>
-                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -129,12 +96,10 @@
                     </div>
                 </div>
             </div>
-            {include file="base:right"}
         </div>
     </div>
 </section>
-
-<div id="source" style="display: none"> {$info.source | raw}</div>
+<div id="source" style="display: none"> {include file="source/about"}</div>
 {/block}
 
 {block name="script"}
@@ -171,7 +136,7 @@
 {/block}
 
 {block name="style"}
-<link rel="stylesheet" href="http://editor.md.ipandao.com/css/editormd.preview.css">
+<link rel="stylesheet" href="__ADMIN__/lib/editor/css/editormd.preview.css">
 <link rel="stylesheet" href="//highlightjs.org/static/demo/styles/gruvbox-dark.css">
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
 
