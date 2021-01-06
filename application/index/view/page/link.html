@@ -1,0 +1,144 @@
+{extend name="base:template"}
+
+{block name="content"}
+
+<section class="blog-posts grid-system">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="all-blog-posts">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="blog-post">
+                                <div class="down-content">
+                                    <div class="content-view " id="content-view">
+                                        <div class="links">
+                                            <div class="link-me">
+                                                <div class="link-title">
+                                                    <strong>在那可以找到我?</strong>
+                                                </div>
+                                                <div class="link-body">
+                                                    {foreach $connect as $key=>$vo}
+                                                    <div class="link-item">
+                                                        <a href="{$vo.link}" target="_blank">
+                                                            <img src="{$vo.logo}" alt="消失" >
+                                                            <span style="color: rgb({:mt_rand(1,222)},{:mt_rand(1,155)},{:mt_rand(1,185)})">{$vo.title}</span>
+                                                        </a>
+                                                    </div>
+                                                    {/foreach}
+                                                </div>
+                                            </div>
+                                            <div class="link-friend">
+                                                <div class="link-title">
+                                                    <strong>如果相逢是一道风景!</strong>
+                                                </div>
+                                                <div class="link-body">
+                                                    {foreach $link as $key=>$vo}
+                                                    <div class="link-item">
+                                                        <a href="{$vo.link}" target="_blank">
+                                                            <img src="{$vo.logo}" alt="消失">
+                                                            <span style="color: rgb({:mt_rand(1,255)},{:mt_rand(1,255)},{:mt_rand(1,255)})">{$vo.title}</span>
+                                                        </a>
+                                                    </div>
+                                                    {/foreach}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-12">
+                            <div class="sidebar-item submit-comment">
+                                <div class="sidebar-heading">
+                                    <h2>Your comment</h2>
+                                </div>
+                                <div class="content">
+                                    <form id="comment" action="#" method="post">
+                                        <div class="row">
+                                            <div class="col-md-6 col-sm-12">
+                                                <fieldset>
+                                                    <input name="name" type="text" id="name" placeholder="昵称"
+                                                           required="">
+                                                </fieldset>
+                                            </div>
+                                            <div class="col-md-6 col-sm-12">
+                                                <fieldset>
+                                                    <input name="email" type="text" id="email" placeholder="邮箱"
+                                                           required="">
+                                                </fieldset>
+                                            </div>
+                                            <div class="col-md-12 col-sm-12">
+                                                <fieldset>
+                                                    <input name="subject" type="text" id="subject"
+                                                           placeholder="网站">
+                                                </fieldset>
+                                            </div>
+                                            <div class="col-lg-12">
+                                                <fieldset>
+                                                    <textarea name="message" rows="6" id="message"
+                                                              placeholder="" required=""></textarea>
+                                                </fieldset>
+                                            </div>
+                                            <div class="col-lg-12">
+                                                <fieldset>
+                                                    <button type="submit" id="form-submit" class="main-button">Submit
+                                                    </button>
+                                                </fieldset>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-12">
+                            <div class="sidebar-item comments">
+                                <div class="sidebar-heading">
+                                    <h2>4 comments</h2>
+                                </div>
+                                <div class="content">
+                                    <ul>
+                                        <li>
+                                            <div class="author-thumb">
+                                                <img src="assets/images/comment-author-01.jpg" alt="">
+                                            </div>
+                                            <div class="right-content">
+                                                <h4>Charles Kate<span>May 16, 2020</span></h4>
+                                                <p>Fusce ornare mollis eros. Duis et diam vitae justo fringilla
+                                                    condimentum eu quis leo. Vestibulum id turpis porttitor sapien
+                                                    facilisis scelerisque. Curabitur a nisl eu lacus convallis eleifend
+                                                    posuere id tellus.</p>
+                                            </div>
+                                        </li>
+                                        <li class="replied">
+                                            <div class="author-thumb">
+                                                <img src="assets/images/comment-author-02.jpg" alt="">
+                                            </div>
+                                            <div class="right-content">
+                                                <h4>Thirteen Man<span>May 20, 2020</span></h4>
+                                                <p>In porta urna sed venenatis sollicitudin. Praesent urna sem, pulvinar
+                                                    vel mattis eget.</p>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<div id="source" style="display: none"> {include file="source/about"}</div>
+{/block}
+
+{block name="script"}S
+{/block}
+
+{block name="style"}
+<link rel="stylesheet" href="__ADMIN__/lib/editor/css/editormd.preview.css">
+<link rel="stylesheet" href="//highlightjs.org/static/demo/styles/gruvbox-dark.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+
+{/block}
