@@ -20,7 +20,7 @@
                                                 <div class="link-body">
                                                     {foreach $connect as $key=>$vo}
                                                     <div class="link-item">
-                                                        <a href="{$vo.link}" target="_blank">
+                                                        <a href="{$vo.link}" title="{$vo.description}" target="_blank">
                                                             <img src="{$vo.logo}" alt="消失" >
                                                             <span style="color: rgb({:mt_rand(1,222)},{:mt_rand(1,155)},{:mt_rand(1,185)})">{$vo.title}</span>
                                                         </a>
@@ -35,7 +35,7 @@
                                                 <div class="link-body">
                                                     {foreach $link as $key=>$vo}
                                                     <div class="link-item">
-                                                        <a href="{$vo.link}" target="_blank">
+                                                        <a href="{$vo.link}" title="{$vo.description}" target="_blank">
                                                             <img src="{$vo.logo}" alt="消失">
                                                             <span style="color: rgb({:mt_rand(1,255)},{:mt_rand(1,255)},{:mt_rand(1,255)})">{$vo.title}</span>
                                                         </a>
@@ -46,12 +46,13 @@
                                         </div>
                                     </div>
                                 </div>
+                                <span>与我相逢？&nbsp;<a href="/about.html">点此查看友链申请说明！</a></span>
                             </div>
                         </div>
                         <div class="col-lg-12" id="comment-form">
                             <div class="sidebar-item submit-comment">
                                 <div class="sidebar-heading">
-                                    <h2 id="comment-title" data-id="0">评论此文章</h2>
+                                    <h2 id="comment-title" data-id="0">评论</h2>
                                 </div>
                                 <div class="content">
                                     <form method="post" id="comment">
@@ -71,7 +72,7 @@
                                             <div class="col-md-12 col-sm-12">
                                                 <fieldset>
                                                     <input name="site" type="text" id="subject"
-                                                           placeholder="网站">
+                                                           placeholder="网站" value="http://">
                                                 </fieldset>
                                             </div>
                                             <div class="col-lg-12">
@@ -105,7 +106,7 @@
                                         <li style="display: block">
                                             <div class="author-thumb">
                                                 <img src="https://gravatar.loli.net/avatar/{:md5(strtolower(trim($v.email)))}"
-                                                     alt="">
+                                                     alt="" onclick="location.href = '{$v.site}'">
                                             </div>
                                             <div class="right-content">
                                                 <h4>{$v.nickname} <span>{$v.os}</span><span>{$v.browser}</span></h4>
@@ -119,8 +120,8 @@
                                         {foreach :model('CommentModel')->where('pid', $v.id)->select() as $k=>$c}
                                         <li style="display: block" class="replied">
                                             <div class="author-thumb">
-                                                <img src="https://gravatar.loli.net/avatar/{:md5(strtolower(trim($v.email)))}"
-                                                     alt="">
+                                                <img src="https://gravatar.loli.net/avatar/{:md5(strtolower(trim($c.email)))}"
+                                                     alt="" onclick="location.href = '{$c.site}'">
                                             </div>
                                             <div class="right-content">
                                                 <h4>{$c.nickname} <span>{$c.os}</span><span>{$c.browser}</span></h4>
@@ -199,7 +200,7 @@
     html = `<div class="col-lg-12" id="comment-form">
                             <div class="sidebar-item submit-comment">
                                 <div class="sidebar-heading">
-                                    <h2 id="comment-title" data-id="0">评论此文章</h2>
+                                    <h2 id="comment-title" data-id="0">评论</h2>
                                 </div>
                                 <div class="content" >
                                     <form method="post" id="comment">
@@ -219,7 +220,7 @@
                                             <div class="col-md-12 col-sm-12">
                                                 <fieldset>
                                                     <input name="site" type="text" id="subject"
-                                                           placeholder="网站">
+                                                           placeholder="网站" value="http://">
                                                 </fieldset>
                                             </div>
                                             <div class="col-lg-12">

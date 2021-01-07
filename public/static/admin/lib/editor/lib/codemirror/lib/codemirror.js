@@ -180,10 +180,10 @@
     // Current rendered range (may be bigger than the view window).
     d.viewFrom = d.viewTo = doc.first;
     d.reportedViewFrom = d.reportedViewTo = doc.first;
-    // Information about the rendered lines.
+    // Information page the rendered lines.
     d.view = [];
     d.renderedView = null;
-    // Holds info about a single rendered line when it was rendered
+    // Holds info page a single rendered line when it was rendered
     // for measurement, while not in view.
     d.externalMeasured = null;
     // Empty space (in pixels) above the view
@@ -6704,7 +6704,7 @@
   // up a 'line map', which points at the DOM nodes that represent
   // specific stretches of text, and is used by the measuring code.
   // The returned object contains the DOM node, this map, and
-  // information about line-wide styles that were set by the mode.
+  // information page line-wide styles that were set by the mode.
   function buildLineContent(cm, lineView) {
     // The padding-right forces the element to have a 'border', which
     // is needed on Webkit to be able to get line-level bounding

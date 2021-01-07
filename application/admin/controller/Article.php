@@ -184,7 +184,11 @@ class Article extends Controller
     public function del(Request $request)
     {
         $id = $request->post('id');
-        $result = $this->model->useSoftDelete('delete_time', time())->delete($id);
+
+        $category = $this->model
+            ->with('comment')
+            ->find($id);
+        $result = $category->together('comment')->delete();
 
         if (!$result)
             $this->error("删除失败");

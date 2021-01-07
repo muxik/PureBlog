@@ -82,4 +82,14 @@ class ArticleModel extends Model
         return $this->where($where);
     }
 
+
+    /**
+     * 关联评论
+     * @return ArticleModel|\think\model\relation\HasMany
+     */
+    public function comment()
+    {
+        return $this->hasMany('CommentModel', 'article_id', 'id');
+    }
+
 }

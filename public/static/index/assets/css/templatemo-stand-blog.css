@@ -91,7 +91,7 @@ h1, h2, h3, h4, h5, h6 {
 
 #preloader {
     overflow: hidden;
-    background: #f48840;
+    background: rgba(255, 255, 255, .94);
     left: 0;
     right: 0;
     top: 0;
@@ -114,9 +114,9 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 #preloader .jumper > div {
-    background-color: #fff;
-    width: 10px;
-    height: 10px;
+    background-color: #282828;
+    /*width: 100px;*/
+    /*height: 100px;*/
     border-radius: 100%;
     -webkit-animation-fill-mode: both;
     animation-fill-mode: both;
@@ -452,6 +452,7 @@ header .navbar {
 .blog-posts .down-content {
     padding: 10px;
     border-right: 1px solid #eee;
+    border-top: 1px solid #eee;
     border-left: 1px solid #eee;
     border-bottom: 1px solid #eee;
 }
@@ -514,9 +515,11 @@ header .navbar {
 
 .blog-posts .down-content .down-content-line {
     padding: 25px 0px;
-    margin: 25px 0px;
+    margin: 10px 0px;
+    line-height: 2rem;
     border-top: 1px solid #eee;
-    border-bottom: 1px solid #eee;
+    color: #666;
+    /*border-bottom: 1px solid #eee;*/
 }
 
 .blog-posts .down-content ul.post-share {
@@ -631,8 +634,10 @@ ul.page-numbers li a:hover {
 
 .blog-posts .comments ul li .author-thumb img {
     max-width: 50px;
+    max-height: 50px;
     border-radius: 50%;
     display: inline;
+    object-fit: cover;
 }
 
 .blog-posts .comments ul li .right-content {
@@ -647,11 +652,15 @@ ul.page-numbers li a:hover {
 }
 
 .blog-posts .comments ul li .right-content h4 span {
-    font-size: 14px;
-    color: #aaa;
+    font-size: 10px;
+    color: #fff;
     font-weight: 400;
     letter-spacing: 0.25px;
-    margin-left: 20px;
+    margin-left: .8em;
+    border-radius: 5px;
+    box-shadow: 0 0 3px #0e9aef;
+    padding: 1px 3px;
+    background-color: #0e9aef;
 }
 
 .blog-posts .submit-comment {
@@ -663,7 +672,7 @@ ul.page-numbers li a:hover {
     height: 46px;
     border: 1px solid #eee;
     font-size: 13px;
-    text-transform: uppercase;
+    /*text-transform: uppercase;*/
     font-weight: 500;
     color: #7a7a7a;
     outline: none;
@@ -676,7 +685,7 @@ ul.page-numbers li a:hover {
     height: 46px;
     border: 1px solid #eee;
     font-size: 13px;
-    text-transform: uppercase;
+    /*text-transform: uppercase;*/
     font-weight: 500;
     color: #7a7a7a;
     outline: none;
@@ -1068,7 +1077,8 @@ footer p a:hover {
         left: 30px;
         top: 25px;
     }
-    .web-description{
+
+    .web-description {
         opacity: 0%;
     }
 
@@ -1162,7 +1172,7 @@ footer p a:hover {
 
 
 .dropdown-menu {
-    background-color: rgba(204, 212, 206, .1);
+    background-color: rgba(221, 231, 224, 0.1);
     border: none;
 }
 
@@ -1187,6 +1197,10 @@ footer p a:hover {
     height: 9rem;
     overflow: hidden;
     border-radius: 50%;
+}
+
+.head img:hover {
+    margin: 20px;
 }
 
 .head p {
@@ -1242,11 +1256,85 @@ footer p a:hover {
     top: 2rem;
 }
 
-li.L1, li.L3, li.L5, li.L7, li.L9{
+
+#hitokoto a {
+    color: #e2e1e4 !important;
+    font-weight: bolder;
+    font-size: 1.2em;
+}
+
+
+.copyright-text p {
+    color: #e2e1e4 !important;
+    font-weight: bold;
+    font-size: 1em;
+
+}
+
+@media (min-width: 1200px) {
+    .container {
+        max-width: 1240px;
+    }
+}
+
+
+.link-title {
+    margin: 2em 0;
+    color: #e74c3c;
+    font-size: 1.2em;
+}
+
+.link-body {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    width: 60%;
+    margin-left: 2em;
+}
+
+.link-body .link-item img {
+    border-radius: 50%;
+    width: 2rem;
+    height: 2rem;
+    object-fit: cover
+}
+
+.link-body .link-item img:hover {
+    /*box-shadow:  0 0 1em  #e67e22;*/
+    padding: 3px;
+    transition: .2s;
+
+}
+
+.link-body .link-item span {
+    display: block;
+    text-align: center;
+}
+
+
+.right-content p {
+    margin: .2em ;
+}
+
+
+#reply {
+    cursor: pointer;
+
+}
+
+
+
+/* editor.md 高亮颜色 */
+
+.editormd-preview-container pre, .editormd-html-preview pre {
     background: #282828 !important;
 }
 
-.editormd-preview-container pre, .editormd-html-preview pre{
+pre ol li.L1,
+pre ol li.L3,
+pre ol li.L5,
+pre ol li.L7,
+pre ol li.L9 {
     background: #282828 !important;
 }
 
@@ -1254,7 +1342,7 @@ li.L1, li.L3, li.L5, li.L7, li.L9{
     color: #b4b7a5 !important;
 }
 
-.pun{
+.pun {
     color: #779792 !important;
 }
 
@@ -1264,4 +1352,14 @@ li.L1, li.L3, li.L5, li.L7, li.L9{
 
 .kwd {
     color: #fb4934 !important;
+}
+
+
+.editormd-preview-container, .editormd-html-preview {
+    font-size: 16px !important;
+}
+
+.inden-3 {
+    margin-left: 2em !important;
+    line-height: 1em;
 }

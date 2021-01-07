@@ -16,6 +16,7 @@ class Index extends IndexController
             'tag' => $this->getTags()
         ];
 
+
         // 搜索
         if (!empty(input('q'))) {
             $viewData['article'] = $this->article
@@ -28,25 +29,6 @@ class Index extends IndexController
         return view()->assign($viewData);
     }
 
-    protected function getTags()
-    {
-        $tag = [];
-        $this->tags = array_unique($tag);
-        foreach (
-            model('ArticleModel')
-                ->field('tag')
-                ->where('state', '>', 0)
-                ->select()
-            as
-            $key => $vo
-        ) {
-            foreach (explode(',', $vo['tag']) as $k => $v) {
-                array_push($tag, $v);
-            }
-        }
-        return $tag;
-    }
-
     public function category()
     {
         $viewData = [
@@ -57,6 +39,8 @@ class Index extends IndexController
             'web' => $this->web,
             'tag' => $this->getTags()
         ];
+
+
 
         $category_name = '';
         foreach (explode('/', request()->url()) as $key => $vo) {
@@ -84,6 +68,8 @@ class Index extends IndexController
             ->field('source,id,category_id,content,title,pic,read,description,tag,top,create_time,admin_id')
             ->find($id);
 
+        $info->setInc('read');
+
         $viewData = [
             'new_article' => $this->article->limit(5)->select(),
             'info' => $info,
@@ -91,7 +77,10 @@ class Index extends IndexController
             'web' => $this->web,
             'tag' => $this->getTags(),
         ];
+
+
         return view('info')->assign($viewData);
+
     }
 
     public function like()

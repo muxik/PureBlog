@@ -6092,7 +6092,7 @@ $.widget("ui.draggable", $.ui.mouse, {
 
 	_mouseStop: function(event) {
 
-		//If we are using droppables, inform the manager about the drop
+		//If we are using droppables, inform the manager page the drop
 		var that = this,
 			dropped = false;
 		if ($.ui.ddmanager && !this.options.dropBehaviour) {
@@ -13905,7 +13905,7 @@ var sortable = $.widget("ui.sortable", $.ui.mouse, {
 			return;
 		}
 
-		//If we are using droppables, inform the manager about the drop
+		//If we are using droppables, inform the manager page the drop
 		if ($.ui.ddmanager && !this.options.dropBehaviour) {
 			$.ui.ddmanager.drop(this, event);
 		}
@@ -15645,7 +15645,7 @@ var tabs = $.widget( "ui.tabs", {
 			// support: IE <9
 			// Preventing the default action in mousedown doesn't prevent IE
 			// from focusing the element, so if the anchor gets focused, blur.
-			// We don't have to worry about focusing the previously focused
+			// We don't have to worry page focusing the previously focused
 			// element since clicking on a non-focusable element should focus
 			// the body anyway.
 			.delegate( ".ui-tabs-anchor", "focus" + this.eventNamespace, function() {

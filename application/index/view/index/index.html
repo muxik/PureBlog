@@ -15,7 +15,7 @@
                                 </div>
                                 <div class="down-content">
                                     <span class="cate">{$vo.category.name}</span>
-                                    <a href="/info/{$vo.id}"><h4>{$vo.title}</h4></a>
+                                    <a href="/info/{$vo.id}.html"><h4>{$vo.title}</h4></a>
                                     <ul class="post-info">
                                         <li><a href="#">@ &nbsp;{$vo.admin.nickname}</a></li>
                                         <li><a href="#"><i class="fa fa-clock-o"></i> &nbsp;{$vo.create_time}</a></li>
@@ -48,6 +48,7 @@
                         </div>
                         {/if}
 
+                        {if empty($article[0])}
                         <div class="col-lg-12 page">
                             <div class="left">
                                 {if $page.current_page neq 1}
@@ -68,6 +69,7 @@
                                 {/if}
                             </div>
                         </div>
+                        {/if}
                     </div>
                 </div>
             </div>

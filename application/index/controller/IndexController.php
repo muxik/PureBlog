@@ -12,6 +12,7 @@ class IndexController extends Controller
     protected $article;
     protected $category;
     protected $connect;
+    protected $link;
 
 
     protected function initialize()
@@ -21,7 +22,7 @@ class IndexController extends Controller
 
         $this->article = model('ArticleModel')
             ->field('id,category_id,title,pic,read,description,tag,top,create_time,admin_id')
-            ->with(['category', 'admin'])
+            ->with(['category', 'admin', 'comment'])
             ->where([['state', '>', 0]])
             ->order('create_time', 'desc');
 
@@ -33,10 +34,40 @@ class IndexController extends Controller
         $this->connect = model('LinkModel')
             ->where([['state', '>', 0], ['type', '=', 1]])->select();
 
-        $this->assign(['connect' => $this->connect]);
+        $this->link = model('LinkModel')
+            ->where([['state', '>', 0], ['type', '=', 0]])->select();
+
+        $this->assign([
+            'connect' => $this->connect,
+            'link'  => $this->link,
+            'web' => $this->web,
+            'category' => $this->category->select(),
+            'new_article' => $this->article->limit(5)->select(),
+            'tag' => $this->getTags()
+        ]);
 
 
 
         parent::initialize();
     }
+
+    protected function getTags()
+    {
+        $tag = [];
+        $this->tags = array_unique($tag);
+        foreach (
+            model('ArticleModel')
+                ->field('tag')
+                ->where('state', '>', 0)
+                ->select()
+            as
+            $key => $vo
+        ) {
+            foreach (explode(',', $vo['tag']) as $k => $v) {
+                array_push($tag, $v);
+            }
+        }
+        return $tag;
+    }
+
 }
