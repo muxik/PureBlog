@@ -1,4 +1,4 @@
-# PureBlog v2.0.0
+# PureBlog v2.0.9
 
 基于thinkphp5.1风格简约功能丰富的php博客系统
 
@@ -81,6 +81,9 @@ location /static/ {
 }
 
 ```
+
+## 更新日至
+  - 2.0.9 重写所有功能新增文章评论多级分类
 
 ## LICENSE
 
