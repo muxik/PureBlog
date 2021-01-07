@@ -17,10 +17,10 @@
                                     <span class="cate">{$vo.category.name}</span>
                                     <a href="/info/{$vo.id}"><h4>{$vo.title}</h4></a>
                                     <ul class="post-info">
-                                        <li><a href="#">@ {$vo.admin.nickname}</a></li>
-                                        <li><a href="#"><i class="fa fa-clock-o"></i> {$vo.create_time}</a></li>
-                                        <!--                                        <li><a href="#">12 Comments</a></li>-->
-                                        <li><a href="#"><i class="fa fa-eye"></i> {$vo.read}</a></li>
+                                        <li><a href="#">@ &nbsp;{$vo.admin.nickname}</a></li>
+                                        <li><a href="#"><i class="fa fa-clock-o"></i> &nbsp;{$vo.create_time}</a></li>
+                                        <li><a href="#"><i class="fa fa-comment-o"></i> &nbsp;{:count($vo.comment)}</a></li>
+                                        <li><a href="#"><i class="fa fa-eye"></i> &nbsp;{$vo.read}</a></li>
                                     </ul>
                                     <p class="down-content-line">{$vo.description | raw}</p>
                                     <div class="post-options">
@@ -53,7 +53,8 @@
                                 {if $page.current_page neq 1}
                                 {if $page.current_page >= $page.per_page}
                                 <div class="main-button ">
-                                    <a href="/?page={$page.current_page - 1}"><i class="fa fa-angle-left"></i>&nbsp; 更新文章</a>
+                                    <a href="/?page={$page.current_page - 1}"><i class="fa fa-angle-left"></i>&nbsp;
+                                        更新文章</a>
                                 </div>
                                 {/if}
                                 {/if}
@@ -61,7 +62,8 @@
                             <div class="right">
                                 {if $page.current_page neq $page.last_page}
                                 <div class="main-button ">
-                                    <a href="/?page={$page.current_page + 1}">先前文章&nbsp; <i class="fa fa-angle-right"></i></a>
+                                    <a href="/?page={$page.current_page + 1}">先前文章&nbsp; <i
+                                            class="fa fa-angle-right"></i></a>
                                 </div>
                                 {/if}
                             </div>

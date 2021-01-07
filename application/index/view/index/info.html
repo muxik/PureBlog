@@ -19,7 +19,7 @@
                                     <ul class="post-info">
                                         <li><a href="#">{$info.admin.nickname}</a></li>
                                         <li><a href="#">{$info.create_time}</a></li>
-                                        <li><a href="#">10 Comments</a></li>
+                                        <li><a href="#">{:count($info.comment)} Comments</a></li>
                                     </ul>
                                     <!--                                    <p class="down-content-line"></p>-->
 
@@ -32,7 +32,8 @@
                                                 <ul class="post-tags">
                                                     <li><i class="fa fa-tags"></i></li>
                                                     {foreach :explode(',', $info.tag) as $k=>$v}
-                                                    <li><a href="#">{$v}</a>{$k + 1 < count(explode(',', $info.tag)) ? ',
+                                                    <li><a href="#">{$v}</a>{$k + 1 < count(explode(',', $info.tag)) ?
+                                                        ',
                                                         ' : ''}
                                                     </li>
                                                     {/foreach}
@@ -50,17 +51,19 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-lg-12">
+
+
+                        <div class="col-lg-12" id="comment-form">
                             <div class="sidebar-item submit-comment">
                                 <div class="sidebar-heading">
-                                    <h2>Your comment</h2>
+                                    <h2 id="comment-title" data-id="0">评论此文章</h2>
                                 </div>
                                 <div class="content">
-                                    <form id="comment" action="#" method="post">
+                                    <form method="post" id="comment">
                                         <div class="row">
                                             <div class="col-md-6 col-sm-12">
                                                 <fieldset>
-                                                    <input name="name" type="text" id="name" placeholder="昵称"
+                                                    <input name="nickname" type="text" id="name" placeholder="昵称"
                                                            required="">
                                                 </fieldset>
                                             </div>
@@ -72,19 +75,21 @@
                                             </div>
                                             <div class="col-md-12 col-sm-12">
                                                 <fieldset>
-                                                    <input name="subject" type="text" id="subject"
+                                                    <input name="site" type="text" id="subject"
                                                            placeholder="网站">
                                                 </fieldset>
                                             </div>
                                             <div class="col-lg-12">
                                                 <fieldset>
-                                                    <textarea name="message" rows="6" id="message"
+                                                    <textarea name="content" rows="6" id="message"
                                                               placeholder="" required=""></textarea>
                                                 </fieldset>
                                             </div>
+                                            <input type="hidden" name="article_id" value="{$info.id}">
                                             <div class="col-lg-12">
                                                 <fieldset>
-                                                    <button type="submit" id="form-submit" class="main-button">Submit
+                                                    <button onclick="comment()" type="submit" id="form-submit"
+                                                            class="main-button">评论
                                                     </button>
                                                 </fieldset>
                                             </div>
@@ -96,32 +101,45 @@
                         <div class="col-lg-12">
                             <div class="sidebar-item comments">
                                 <div class="sidebar-heading">
-                                    <h2>4 comments</h2>
+                                    <h2>{:count($info.comment)} 条评论</h2>
                                 </div>
                                 <div class="content">
                                     <ul>
-                                        <li>
+                                        {foreach $info.comment as $k=>$v}
+                                        {if $v.pid eq 0}
+                                        <li style="display: block">
                                             <div class="author-thumb">
-                                                <img src="assets/images/comment-author-01.jpg" alt="">
+                                                <img src="https://gravatar.loli.net/avatar/{:md5(strtolower(trim($v.email)))}"
+                                                     alt="">
                                             </div>
                                             <div class="right-content">
-                                                <h4>Charles Kate<span>May 16, 2020</span></h4>
-                                                <p>Fusce ornare mollis eros. Duis et diam vitae justo fringilla
-                                                    condimentum eu quis leo. Vestibulum id turpis porttitor sapien
-                                                    facilisis scelerisque. Curabitur a nisl eu lacus convallis eleifend
-                                                    posuere id tellus.</p>
+                                                <h4>{$v.nickname} <span>{$v.os}</span><span>{$v.browser}</span></h4>
+                                                <p>{$v.content}</p>
+                                                <a class="reply" data-id="{$v.id}" data-name="{$v.nickname}" href="javascript:;">回复</a>
+                                                <span>{$v.create_time}</span>
                                             </div>
                                         </li>
-                                        <li class="replied">
+                                        <li id="reply-{$v.id}" class="reply-form" style="display: none"></li>
+                                        {foreach :model('CommentModel')->where('pid', $v.id)->select() as $k=>$c}
+                                        <li style="display: block" class="replied">
                                             <div class="author-thumb">
-                                                <img src="assets/images/comment-author-02.jpg" alt="">
+                                                <img src="https://gravatar.loli.net/avatar/{:md5(strtolower(trim($v.email)))}"
+                                                     alt="">
                                             </div>
                                             <div class="right-content">
-                                                <h4>Thirteen Man<span>May 20, 2020</span></h4>
-                                                <p>In porta urna sed venenatis sollicitudin. Praesent urna sem, pulvinar
-                                                    vel mattis eget.</p>
+                                                <h4>{$c.nickname} <span>{$c.os}</span><span>{$c.browser}</span></h4>
+                                                <p>{$c.content}</p>
+                                                <!--                                                <a class="reply" data-id="{$c.id}" data-name="{$c.nickname}">回复</a>-->
+                                                <span>{$c.create_time}</span>
                                             </div>
                                         </li>
+                                        {/foreach}
+                                        {/if}
+
+
+                                        {/foreach}
+
+
                                     </ul>
                                 </div>
                             </div>
@@ -138,7 +156,7 @@
 {/block}
 
 {block name="script"}
-<script src="http://editor.md.ipandao.com/examples/js/jquery.min.js"></script>
+<!--<script src="http://editor.md.ipandao.com/examples/js/jquery.min.js"></script>-->
 <script src="__ADMIN__/lib/editor/lib/marked.min.js"></script>
 <script src="__ADMIN__/lib/editor/lib/prettify.min.js"></script>
 
@@ -150,28 +168,145 @@
 
 <script src="__ADMIN__/lib/editor/editormd.js"></script>
 <script>
+
+    toastr.options = {
+        "closeButton": false,
+        "debug": false,
+        "newestOnTop": false,
+        "progressBar": false,
+        "positionClass": "toast-top-center",
+        "preventDuplicates": false,
+        "onclick": null,
+        "showDuration": "300",
+        "hideDuration": "1000",
+        "timeOut": "1500",
+        "extendedTimeOut": "1000",
+        "showEasing": "swing",
+        "hideEasing": "linear",
+        "showMethod": "fadeIn",
+        "hideMethod": "fadeOut"
+    }
+
+
+    function comment() {
+        $('#comment').submit(function (e) {
+            let data = $(this).serialize();
+
+            data += '&pid=' + $('#comment-title').attr('data-id')
+            $.post('/commentAdd', data, res => {
+                if (res.code === 1) {
+                    toastr.success(res.msg)
+                    setTimeout(()=>location.reload(), 1500)
+
+                } else {
+                    toastr.error(res.msg)
+                }
+            })
+            // if ($('#comment-title').attr('data-id') == 0) {
+            //
+            // } else {
+            //     toastr.error('回复功能已经关闭')
+            //     location.reload()
+            // }
+
+            return false;
+        });
+    }
+
+
+    html = `<div class="col-lg-12" id="comment-form">
+                            <div class="sidebar-item submit-comment">
+                                <div class="sidebar-heading">
+                                    <h2 id="comment-title" data-id="0">评论此文章</h2>
+                                </div>
+                                <div class="content" >
+                                    <form method="post" id="comment">
+                                        <div class="row">
+                                            <div class="col-md-6 col-sm-12">
+                                                <fieldset>
+                                                    <input name="nickname" type="text" id="name" placeholder="昵称"
+                                                           required="">
+                                                </fieldset>
+                                            </div>
+                                            <div class="col-md-6 col-sm-12">
+                                                <fieldset>
+                                                    <input name="email" type="text" id="email" placeholder="邮箱"
+                                                           required="">
+                                                </fieldset>
+                                            </div>
+                                            <div class="col-md-12 col-sm-12">
+                                                <fieldset>
+                                                    <input name="site" type="text" id="subject"
+                                                           placeholder="网站">
+                                                </fieldset>
+                                            </div>
+                                            <div class="col-lg-12">
+                                                <fieldset>
+                                                    <textarea name="content" rows="6" id="message"
+                                                              placeholder="" required=""></textarea>
+                                                </fieldset>
+                                            </div>
+                                            <input type="hidden" name="article_id" value="{$info.id}">
+                                            <div class="col-lg-12">
+                                                <fieldset>
+                                                    <button onclick="comment()" type="submit" id="form-submit" class="main-button">评论
+                                                    </button>
+                                                </fieldset>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>`
+
+
+    $('.reply').click(function (e) {
+        let name = $(this).attr('data-name')
+        let id = $(this).attr('data-id')
+
+        $(this).hide()
+        // html = $('#comment-form').html()
+        $("#comment-form").remove()
+
+        $('.reply-form').each(function (i, e) {
+            if (e != this) {
+                $(e).remove()
+            }
+        })
+
+        $('#reply-' + id).show().html(html).attr('style', 'margin-top:-4em')
+        $('#comment-title').html('回复' + name).attr('data-id', id)
+
+    })
+
+
     content = $('#source').html();
     $("#append").val(content);//将需要转换的内容加到转换后展示容器的textarea隐藏标签中
 
     //转换开始,第一个参数是上面的div的id
     editormd.markdownToHTML("content-view", {
-        htmlDecode      : "style,script,iframe",  // you can filter tags decode
-        emoji           : true,
-        taskList        : true,
-        tex             : true,  // 默认不解析
-        flowChart       : true,  // 默认不解析
-        sequenceDiagram : true,  // 默认不解析
-        tocm            : true,
+        htmlDecode: "style,script,iframe",  // you can filter tags decode
+        emoji: true,
+        taskList: true,
+        tex: true,  // 默认不解析
+        flowChart: true,  // 默认不解析
+        sequenceDiagram: true,  // 默认不解析
+        tocm: true,
     });
 
-    $('pre code').each(function(i, block) {
+    $('pre code').each(function (i, block) {
         hljs.highlightBlock(block);
     });
 </script>
 {/block}
 
 {block name="style"}
-<link rel="stylesheet" href="http://editor.md.ipandao.com/css/editormd.preview.css">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
+<script src="http://i.gtimg.cn/qzone/biz/gdt/lib/jquery/jquery-2.1.4.js?max_age=31536000"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+
+
+<link rel="stylesheet" href="__ADMIN__/lib/editor/css/editormd.preview.css">
 <link rel="stylesheet" href="//highlightjs.org/static/demo/styles/gruvbox-dark.css">
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
 
