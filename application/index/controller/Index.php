@@ -6,15 +6,9 @@ class Index extends IndexController
 {
     public function index()
     {
-
-        $viewData = [
-            'article' => $this->article->paginate(5),
-            'page' => $this->article->paginate(5)->toArray(),
-            'new_article' => $this->article->limit(5)->select(),
-            'category' => $this->category->select(),
-            'web' => $this->web,
-            'tag' => $this->getTags()
-        ];
+        $this->assign([
+            'page' => $this->article->paginate(5)->toArray()
+        ]);
 
 
         // 搜索
@@ -25,21 +19,14 @@ class Index extends IndexController
             return view()->assign($viewData);
         }
 
-
-        return view()->assign($viewData);
+        return view();
     }
 
     public function category()
     {
-        $viewData = [
-            'article' => $this->article->paginate(5),
-            'page' => $this->article->paginate(5)->toArray(),
-            'new_article' => $this->article->limit(5)->select(),
-            'category' => $this->category->select(),
-            'web' => $this->web,
-            'tag' => $this->getTags()
-        ];
-
+        $this->assign([
+            'page' => $this->article->paginate(5)->toArray()
+        ]);
 
 
         $category_name = '';
@@ -59,7 +46,7 @@ class Index extends IndexController
             ->where('category_id', $id)
             ->paginate(5);
 
-        return view('index')->assign($viewData);
+        return view('index');
     }
 
     public function info($id)
@@ -70,16 +57,12 @@ class Index extends IndexController
 
         $info->setInc('read');
 
-        $viewData = [
-            'new_article' => $this->article->limit(5)->select(),
+        $this->assign([
             'info' => $info,
-            'category' => $this->category->select(),
-            'web' => $this->web,
-            'tag' => $this->getTags(),
-        ];
+        ]);
 
 
-        return view('info')->assign($viewData);
+        return view('info');
 
     }
 

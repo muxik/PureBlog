@@ -43,7 +43,9 @@ class IndexController extends Controller
             'web' => $this->web,
             'category' => $this->category->select(),
             'new_article' => $this->article->limit(5)->select(),
-            'tag' => $this->getTags()
+            'tag' => $this->getTags(),
+            'article' => $this->article->paginate(5)
+
         ]);
 
 
