@@ -1,5 +1,12 @@
 {extend name="base:template"}
 
+{block name="title"}{$info.title}{/block}
+
+{block name="meta"}
+<meta name="description" content="{$info.descrtion}">
+<meta name="keywords" content="{$info.descrtion}">
+block}
+
 {block name="content"}
 
 <section class="blog-posts grid-system">
