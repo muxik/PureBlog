@@ -7,7 +7,6 @@
 {block name="title"}友人{/block}
 
 
-
 {block name="content"}
 <section class="blog-posts grid-system">
     <div class="container">
@@ -28,7 +27,7 @@
                                                     {foreach $connect as $key=>$vo}
                                                     <div class="link-item">
                                                         <a href="{$vo.link}" title="{$vo.description}" target="_blank">
-                                                            <img src="{$vo.logo}" alt="消失" >
+                                                            <img src="{$vo.logo}" alt="消失">
                                                             <span style="color: rgb({:mt_rand(1,222)},{:mt_rand(1,155)},{:mt_rand(1,185)})">{$vo.title}</span>
                                                         </a>
                                                     </div>
@@ -56,98 +55,7 @@
                                 <span>与我相逢？&nbsp;<a href="/about.html">点此查看友链申请说明！</a></span>
                             </div>
                         </div>
-                        <div class="col-lg-12" id="comment-form">
-                            <div class="sidebar-item submit-comment">
-                                <div class="sidebar-heading">
-                                    <h2 id="comment-title" data-id="0">评论</h2>
-                                </div>
-                                <div class="content">
-                                    <form method="post" id="comment">
-                                        <div class="row">
-                                            <div class="col-md-6 col-sm-12">
-                                                <fieldset>
-                                                    <input name="nickname" type="text" id="name" placeholder="昵称"
-                                                           required="">
-                                                </fieldset>
-                                            </div>
-                                            <div class="col-md-6 col-sm-12">
-                                                <fieldset>
-                                                    <input name="email" type="text" id="email" placeholder="邮箱"
-                                                           required="">
-                                                </fieldset>
-                                            </div>
-                                            <div class="col-md-12 col-sm-12">
-                                                <fieldset>
-                                                    <input name="site" type="text" id="subject"
-                                                           placeholder="网站" value="http://">
-                                                </fieldset>
-                                            </div>
-                                            <div class="col-lg-12">
-                                                <fieldset>
-                                                    <textarea name="content" rows="6" id="message"
-                                                              placeholder="" required=""></textarea>
-                                                </fieldset>
-                                            </div>
-                                            <input type="hidden" name="page_id" value="2">
-                                            <div class="col-lg-12">
-                                                <fieldset>
-                                                    <button onclick="comment()" type="submit" id="form-submit"
-                                                            class="main-button">评论
-                                                    </button>
-                                                </fieldset>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-12">
-                            <div class="sidebar-item comments">
-                                <div class="sidebar-heading">
-                                    <h2>{:count($comment)} 条评论</h2>
-                                </div>
-                                <div class="content">
-                                    <ul>
-                                        {foreach $comment as $k=>$v}
-                                        {if $v.pid eq 0}
-                                        <li style="display: block">
-                                            <div class="author-thumb">
-                                                <img src="https://gravatar.loli.net/avatar/{:md5(strtolower(trim($v.email)))}"
-                                                     alt="" onclick="location.href = '{$v.site}'">
-                                            </div>
-                                            <div class="right-content">
-                                                <h4>{$v.nickname} <span>{$v.os}</span><span>{$v.browser}</span></h4>
-                                                <p>{$v.content}</p>
-                                                <a class="reply" data-id="{$v.id}" data-name="{$v.nickname}"
-                                                   href="javascript:;">回复</a>
-                                                <span>{$v.create_time}</span>
-                                            </div>
-                                        </li>
-                                        <li id="reply-{$v.id}" class="reply-form" style="display: none"></li>
-                                        {foreach :model('CommentModel')->where('pid', $v.id)->select() as $k=>$c}
-                                        <li style="display: block" class="replied">
-                                            <div class="author-thumb">
-                                                <img src="https://gravatar.loli.net/avatar/{:md5(strtolower(trim($c.email)))}"
-                                                     alt="" onclick="location.href = '{$c.site}'">
-                                            </div>
-                                            <div class="right-content">
-                                                <h4>{$c.nickname} <span>{$c.os}</span><span>{$c.browser}</span></h4>
-                                                <p>{$c.content}</p>
-                                                <!--                                                <a class="reply" data-id="{$c.id}" data-name="{$c.nickname}">回复</a>-->
-                                                <span>{$c.create_time}</span>
-                                            </div>
-                                        </li>
-                                        {/foreach}
-                                        {/if}
-
-
-                                        {/foreach}
-
-
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
+                        {include file="base:comment" name="page_id" value="2" comment="comment"}
                     </div>
                 </div>
             </div>
@@ -159,115 +67,7 @@
 
 {block name="script"}
 <script>
-    toastr.options = {
-        "closeButton": false,
-        "debug": false,
-        "newestOnTop": false,
-        "progressBar": false,
-        "positionClass": "toast-top-center",
-        "preventDuplicates": false,
-        "onclick": null,
-        "showDuration": "300",
-        "hideDuration": "1000",
-        "timeOut": "1500",
-        "extendedTimeOut": "1000",
-        "showEasing": "swing",
-        "hideEasing": "linear",
-        "showMethod": "fadeIn",
-        "hideMethod": "fadeOut"
-    }
 
-
-    function comment() {
-        $('#comment').submit(function (e) {
-            let data = $(this).serialize();
-
-            data += '&pid=' + $('#comment-title').attr('data-id')
-            $.post('/commentAdd', data, res => {
-                if (res.code === 1) {
-                    toastr.success(res.msg)
-                    setTimeout(() => location.reload(), 1500)
-
-                } else {
-                    toastr.error(res.msg)
-                }
-            })
-            // if ($('#comment-title').attr('data-id') == 0) {
-            //
-            // } else {
-            //     toastr.error('回复功能已经关闭')
-            //     location.reload()
-            // }
-
-            return false;
-        });
-    }
-
-
-    html = `<div class="col-lg-12" id="comment-form">
-                            <div class="sidebar-item submit-comment">
-                                <div class="sidebar-heading">
-                                    <h2 id="comment-title" data-id="0">评论</h2>
-                                </div>
-                                <div class="content" >
-                                    <form method="post" id="comment">
-                                        <div class="row">
-                                            <div class="col-md-6 col-sm-12">
-                                                <fieldset>
-                                                    <input name="nickname" type="text" id="name" placeholder="昵称"
-                                                           required="">
-                                                </fieldset>
-                                            </div>
-                                            <div class="col-md-6 col-sm-12">
-                                                <fieldset>
-                                                    <input name="email" type="text" id="email" placeholder="邮箱"
-                                                           required="">
-                                                </fieldset>
-                                            </div>
-                                            <div class="col-md-12 col-sm-12">
-                                                <fieldset>
-                                                    <input name="site" type="text" id="subject"
-                                                           placeholder="网站" value="http://">
-                                                </fieldset>
-                                            </div>
-                                            <div class="col-lg-12">
-                                                <fieldset>
-                                                    <textarea name="content" rows="6" id="message"
-                                                              placeholder="" required=""></textarea>
-                                                </fieldset>
-                                            </div>
-                                            <input type="hidden" name="page_id" value="2">
-                                            <div class="col-lg-12">
-                                                <fieldset>
-                                                    <button onclick="comment()" type="submit" id="form-submit" class="main-button">评论
-                                                    </button>
-                                                </fieldset>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>`
-
-
-    $('.reply').click(function (e) {
-        let name = $(this).attr('data-name')
-        let id = $(this).attr('data-id')
-
-        $(this).hide()
-        // html = $('#comment-form').html()
-        $("#comment-form").remove()
-
-        $('.reply-form').each(function (i, e) {
-            if (e != this) {
-                $(e).remove()
-            }
-        })
-
-        $('#reply-' + id).show().html(html).attr('style', 'margin-top:-4em')
-        $('#comment-title').html('回复' + name).attr('data-id', id)
-
-    })
 </script>
 {/block}
 
