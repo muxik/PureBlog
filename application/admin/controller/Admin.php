@@ -3,16 +3,15 @@
 namespace app\admin\controller;
 
 use app\admin\model\AdminModel;
-use think\Controller;
 use think\Request;
 
-class Admin extends Controller
+class Admin extends AdminController
 {
     protected $model;
 
     protected function initialize()
     {
-        $this->model = new  AdminModel();
+        $this->model = new AdminModel();
         parent::initialize();
     }
 
@@ -60,31 +59,14 @@ class Admin extends Controller
         $this->success('修改成功！');
     }
 
-    public function changeState(Request $request)
+    public function changeState()
     {
-        $state = $request->post('value', 1);
-        $result = $this
-            ->model
-            ->where('id', $request->post('id'))
-            ->update(['state' => $state]);
-        if (!$result)
-            $this->error("修改失败");
-        else
-            $this->success("修改成功！");
-
+        $this->change($this->model,'state');
     }
 
-
-    public function del(Request $request)
+    public function del()
     {
-        $id = $request->post('id');
-        $result = $this->model->useSoftDelete('delete_time', time())->delete($id);
-
-        if (!$result)
-            $this->error("删除失败");
-        else
-            $this->success("删除成功！");
-
+        $this->delete($this->model);
     }
 
 }

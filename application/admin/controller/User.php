@@ -4,10 +4,9 @@ namespace app\admin\controller;
 
 
 use app\common\model\UserModel;
-use think\Controller;
 use think\Request;
 
-class User extends Controller
+class User extends AdminController
 {
     protected $model;
 
@@ -62,29 +61,13 @@ class User extends Controller
 
     public function changeState(Request $request)
     {
-        $state = $request->post('value', 1);
-        $result = $this
-            ->model
-            ->where('id', $request->post('id'))
-            ->update(['state' => $state]);
-        if (!$result)
-            $this->error("修改失败");
-        else
-            $this->success("修改成功！");
-
+        $this->change($this->model, 'state');
     }
 
 
-    public function del(Request $request)
+    public function del()
     {
-        $id = $request->post('id');
-        $result = $this->model->useSoftDelete('delete_time', time())->delete($id);
-
-        if (!$result)
-            $this->error("删除失败");
-        else
-            $this->success("删除成功！");
-
+        $this->delete($this->model);
     }
 
 }

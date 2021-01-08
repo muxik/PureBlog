@@ -5,11 +5,10 @@ namespace app\admin\controller;
 
 
 use app\common\model\ArticleModel;
-use think\Controller;
 use think\Image;
 use think\Request;
 
-class Article extends Controller
+class Article extends AdminController
 {
 
     protected $base = ['source', 'pic', 'content', 'title', 'category_id', 'tag', 'description'];
@@ -77,32 +76,17 @@ class Article extends Controller
      */
     public function changeState(Request $request)
     {
-        $state = $request->post('value', 1);
-        $result = $this
-            ->model
-            ->where('id', $request->post('id'))
-            ->update(['state' => $state]);
-        if (!$result)
-            $this->error("修改失败");
-        else
-            $this->success("修改成功！");
+        $this->change($this->model, 'state');
+
     }
 
     /**
      * 更改文章置顶
      * @param Request $request
      */
-    public function changeTop(Request $request)
+    public function changeTop()
     {
-        $state = $request->post('value', 1);
-        $result = $this
-            ->model
-            ->where('id', $request->post('id'))
-            ->update(['top' => $state]);
-        if (!$result)
-            $this->error("修改失败");
-        else
-            $this->success("修改成功！");
+        $this->change($this->model, 'top');
     }
 
     /**

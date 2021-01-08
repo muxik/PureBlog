@@ -5,10 +5,9 @@ namespace app\admin\controller;
 
 
 use app\common\model\LinkModel;
-use think\Controller;
 use think\Request;
 
-class Link extends Controller
+class Link extends AdminController
 {
 
     protected $model;
@@ -67,45 +66,20 @@ class Link extends Controller
         $this->success('修改成功！');
     }
 
-    public function changeState(Request $request)
+    public function changeState()
     {
-        $state = $request->post('value', 1);
-        $result = $this
-            ->model
-            ->where('id', $request->post('id'))
-            ->update(['state' => $state]);
-        if (!$result)
-            $this->error("修改失败");
-        else
-            $this->success("修改成功！");
-
+        $this->change($this->model, 'state');
     }
 
-    public function setConnect(Request $request)
+    public function setConnect()
     {
-        $type = $request->post('value', 1);
-        $result = $this
-            ->model
-            ->where('id', $request->post('id'))
-            ->update(['type' => $type]);
-        if (!$result)
-            $this->error("修改失败");
-        else
-            $this->success("修改成功！");
-
+        $this->change($this->model, 'type');
     }
 
 
-    public function del(Request $request)
+    public function del()
     {
-        $id = $request->post('id');
-        $result = $this->model->useSoftDelete('delete_time', time())->delete($id);
-
-        if (!$result)
-            $this->error("删除失败");
-        else
-            $this->success("删除成功！");
-
+        $this->delete($this->model);
     }
 
 

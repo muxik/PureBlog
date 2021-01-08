@@ -7,6 +7,7 @@ Route::post('admin/login.do', 'admin/Login/login');
 
 
 Route::group('admin', function () {
+    Route::get('/', 'admin/index/index');
     Route::get('index', 'admin/index/index');
     Route::get('welcome', 'admin/index/welcome');
     Route::get('out', function (){
