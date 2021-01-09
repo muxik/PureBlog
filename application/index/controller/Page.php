@@ -23,6 +23,13 @@ class Page extends IndexController
         return view('page/link');
     }
 
+    public function timeLine()
+    {
+        $comment = model('CommentModel')->where('page_id', 3)->select();
+        $this->assign(['comment' => $comment]);
+        return view('page/time_line');
+    }
+
     public function commentAdd(Request $request)
     {
         $comment = $request->only(['nickname', 'pid' => 0, 'content', 'email', 'site' => null, 'article_id' => null, 'page_id' => null]);

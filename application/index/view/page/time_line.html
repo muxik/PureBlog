@@ -1,0 +1,55 @@
+{extend name="base:template"}
+
+
+{block name="title"}碎碎念{/block}
+
+{block name="content"}
+<section class="blog-posts grid-system">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="all-blog-posts">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="blog-post">
+                                <div class="down-content">
+                                    <div class="content-view " id="content-view">
+
+                                        <div class="timeline timeline-single-column">
+                                            <span class="timeline-label"><span
+                                                    class="label label-primary" style="color: #fff;border-radius: .2em;padding: 2px;">2021</span></span>
+                                            <div class="timeline-item">
+                                                <div class="timeline-point timeline-point-blank">
+                                                </div>
+                                                <div class="timeline-event">
+                                                    <div class="timeline-heading">
+                                                        <h4>辛苦了快两周的时间</h4>
+                                                    </div>
+                                                    <div class="timeline-body">
+                                                        <p>网站终于快弄完了！！</p>
+                                                    </div>
+                                                    <div class="timeline-footer primary">
+                                                        <p class="text-right">Muxi_k 2020.1.9</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <span class="timeline-label">
+</span>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                {include file="base:comment" name="page_id" value="3" comment="comment"}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+</section>
+{/block}
+{block name="style"}
+<link rel="stylesheet" href="__INDEX__/assets/css/timeline.css">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
+<script src="http://i.gtimg.cn/qzone/biz/gdt/lib/jquery/jquery-2.1.4.js?max_age=31536000"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+{/block}

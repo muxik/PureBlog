@@ -96,5 +96,7 @@ Route::get('category/[:page]','index/index/category');
 Route::get('about', 'index/page/about')->ext('html');
 Route::get('link', 'index/page/link')->ext('html');
 
+Route::get('page/time_line', 'index/page/timeLine')->ext('html');
+
 Route::post('muxik/like', 'index/index/like');
 Route::post('commentAdd', 'index/page/commentAdd');
