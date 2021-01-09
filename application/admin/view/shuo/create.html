@@ -1,0 +1,57 @@
+{extend name="base/template"}
+{block name="title"}链接添加{/block}
+
+{block name="content"}
+<div class="x-body">
+    <form class="layui-form" action="">
+
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">内容：</label>
+            <div class="layui-input-block">
+                <input type="text" name="content"  required lay-verify="required"
+                       placeholder="请输入内容" autocomplete="off"
+                       class="layui-input">
+            </div>
+        </div>
+        
+
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit lay-filter="add">立即提交</button>
+            </div>
+        </div>
+    </form>
+</div>
+{/block}
+
+{block name="script"}
+<script>
+    layui.use(['form', 'layer'], function () {
+        $ = layui.jquery;
+        var form = layui.form
+            , layer = layui.layer;
+
+        //监听提交
+        form.on('submit(add)', function (data) {
+            $.post('/admin/shuo/add', data.field, function (res) {
+                console.log(data.field);
+                if (res.code === 1) {
+                    layer.alert(res.msg, {icon: 6}, function () {
+                        // 获得frame索引
+                        var index = parent.layer.getFrameIndex(window.name);
+                        //关闭当前frame
+                        parent.layer.close(index);
+                    });
+                } else {
+                    layer.msg(res.msg, {icon: 5})
+                }
+            })
+            return false;
+        });
+
+
+    });
+</script>
+{/block}

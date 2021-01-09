@@ -85,6 +85,17 @@ Route::group('admin', function () {
         Route::post('changeClose', 'admin/web/changeClose');
     });
 
+    // 碎碎念模块
+    Route::group('shuo',function (){
+        Route::get('edit/:id', 'admin/shuo/edit');
+        Route::get('create', 'admin/shuo/create');
+        Route::get('/', 'admin/shuo/index');
+        Route::post('del', 'admin/shuo/del');
+        Route::post('add','admin/shuo/add');
+        Route::post('update','admin/shuo/update');
+        Route::post('changeState', 'admin/shuo/changeState');
+    });
+
 
 })->middleware(['CheckLogin']);
 
