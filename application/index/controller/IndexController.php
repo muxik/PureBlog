@@ -29,7 +29,8 @@ class IndexController extends Controller
 
         $this->category = model('CategoryModel')
             ->where([['state', '>', 0]])
-            ->with(['scategory']);
+            ->with(['scategory'])
+            ->order('sort', 'asc');
 
         $this->connect = model('LinkModel')
             ->where([['state', '>', 0], ['type', '=', 1]])->select();

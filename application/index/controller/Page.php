@@ -27,6 +27,8 @@ class Page extends IndexController
     {
         $comment = model('CommentModel')->where('page_id', 3)->select();
         $shuo = model('ShuoModel')->where('state', '>', 0)->select();
+
+
         $this->assign(['comment' => $comment, 'shuo' => $shuo]);
         return view('page/time_line');
     }
