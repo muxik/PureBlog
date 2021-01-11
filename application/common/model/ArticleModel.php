@@ -87,7 +87,7 @@ class ArticleModel extends Model
      * 关联评论
      * @return ArticleModel|\think\model\relation\HasMany
      */
-    public function comment()
+    public function comments()
     {
         return $this->hasMany('CommentModel', 'article_id', 'id');
     }

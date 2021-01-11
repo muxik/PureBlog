@@ -96,7 +96,7 @@ class Category extends AdminController
      */
     public function changeState()
     {
-        $this->change($this->model,'state');
+        $this->change($this->model, 'state');
     }
 
 
@@ -127,10 +127,11 @@ class Category extends AdminController
     {
         $id = $request->post('id');
 
-        $category = $this->model
-            ->with('article')
-            ->find($id);
-        $result = $category->together('article')->delete();
+        $cateInfo = $this->model->with('article,article.comments')->find($id);
+        foreach ($cateInfo['article'] as $k => $v) {
+            $v->together('comments')->delete();
+        }
+        $result = $cateInfo->together('article')->delete();
 
         if (!$result)
             $this->error("删除失败");
