@@ -4,6 +4,7 @@
 namespace app\admin\controller;
 
 
+use app\common\controller\admin\AdminController;
 use app\common\model\ShuoModel;
 use think\Request;
 

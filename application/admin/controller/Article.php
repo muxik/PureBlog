@@ -4,6 +4,7 @@
 namespace app\admin\controller;
 
 
+use app\common\controller\admin\AdminController;
 use app\common\model\ArticleModel;
 use think\Image;
 use think\Request;

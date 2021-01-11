@@ -3,6 +3,7 @@
 namespace app\admin\controller;
 
 
+use app\common\controller\admin\AdminController;
 use app\common\model\UserModel;
 use think\Request;
 

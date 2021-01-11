@@ -2,10 +2,11 @@
 
 namespace app\admin\controller;
 
+use app\common\controller\admin\AdminController;
 use think\Controller;
 use think\Request;
 
-class Login extends Controller
+class Login extends AdminController
 {
     public function index()
     {

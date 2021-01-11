@@ -17,12 +17,6 @@ function salt($key)
     return sha1(pow($key, 2) * 3.14);
 }
 
-function s_comment($id){
-    $info = model('CommentModel')->where('pid', $id)->select();
-    return $info;
-}
-
-
 function getBrowser()
 {
     $user_OSagent = $_SERVER['HTTP_USER_AGENT'];

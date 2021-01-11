@@ -1,12 +1,12 @@
 <?php
 
 
-namespace app\admin\controller;
+namespace app\common\controller\admin;
 
 
 use think\Controller;
 
-class AdminController extends  Controller
+class AdminController extends Controller
 {
 
     /**

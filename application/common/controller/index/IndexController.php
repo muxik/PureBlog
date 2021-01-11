@@ -1,7 +1,7 @@
 <?php
 
 
-namespace app\index\controller;
+namespace app\common\controller\index;
 
 
 use think\Controller;
@@ -15,6 +15,10 @@ class IndexController extends Controller
     protected $link;
 
 
+    /**
+     * 类初始化
+     * @throws \think\exception\DbException
+     */
     protected function initialize()
     {
         $this->web = model('WebModel')
@@ -54,6 +58,10 @@ class IndexController extends Controller
         parent::initialize();
     }
 
+    /**
+     * 获取文章Tag
+     * @return array
+     */
     protected function getTags()
     {
         $tag = [];
@@ -71,6 +79,12 @@ class IndexController extends Controller
             }
         }
         return $tag;
+    }
+
+
+    public function __call($name, $arguments)
+    {
+        return "Page is Not Found";
     }
 
 }

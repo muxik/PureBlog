@@ -4,11 +4,11 @@
 namespace app\admin\controller;
 
 
+use app\common\controller\index\IndexController;
 use app\common\model\WebModel;
-use think\Controller;
 use think\Request;
 
-class Web extends Controller
+class Web extends IndexController
 {
 
     protected $model;

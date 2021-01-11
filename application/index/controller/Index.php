@@ -2,6 +2,8 @@
 
 namespace app\index\controller;
 
+use app\common\controller\index\IndexController;
+
 class Index extends IndexController
 {
     public function index()

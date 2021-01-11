@@ -3,6 +3,7 @@
 namespace app\admin\controller;
 
 use app\admin\model\AdminModel;
+use app\common\controller\admin\AdminController;
 use think\Request;
 
 class Admin extends AdminController
