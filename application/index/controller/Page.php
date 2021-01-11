@@ -25,7 +25,7 @@ class Page extends IndexController
             ->find($id);
 
 
-        $comment = $this->getComments('page_id', 1);
+        $comment = $this->getComments('article_id', $id);
         $info->setInc('read');
 
         $this->assign([

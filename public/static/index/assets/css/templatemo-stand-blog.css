@@ -1277,6 +1277,9 @@ footer p a:hover {
     }
 }
 
+.link-item {
+    text-align: center !important;
+}
 
 .link-title {
     margin: 2em 0;
@@ -1300,7 +1303,6 @@ footer p a:hover {
 }
 
 .link-body .link-item img:hover {
-    /*box-shadow:  0 0 1em  #e67e22;*/
     padding: 3px;
     transition: .2s;
 
@@ -1308,7 +1310,6 @@ footer p a:hover {
 
 .link-body .link-item span {
     display: block;
-    text-align: center;
 }
 
 
