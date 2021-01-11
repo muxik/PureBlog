@@ -35,7 +35,6 @@ class Page extends IndexController
 
 
         return view('info');
-
     }
 
     /**
