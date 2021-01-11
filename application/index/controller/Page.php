@@ -10,13 +10,42 @@ use think\Request;
 class Page extends IndexController
 {
 
+
+    /**
+     * 文章详情页
+     * @param $id
+     * @return \think\response\View
+     * @throws \think\Exception
+     */
+    public function info($id)
+    {
+
+        $info = model('ArticleModel')
+            ->field('source,id,category_id,content,title,pic,read,description,tag,top,create_time,admin_id')
+            ->find($id);
+
+
+        $comment = $this->getComments('page_id', 1);
+        $info->setInc('read');
+
+        $this->assign([
+            'info' => $info,
+            'comment' => $comment
+        ]);
+
+
+        return view('info');
+
+    }
+
     /**
      * 关于
      * @return \think\response\View
      */
     public function about()
     {
-        $comment = model('CommentModel')->where('page_id', 1)->select();
+        $comment = $this->getComments('page_id', 1);
+
         $this->assign(['comment' => $comment]);
         return view('page/about');
     }
@@ -27,7 +56,8 @@ class Page extends IndexController
      */
     public function link()
     {
-        $comment = model('CommentModel')->where('page_id', 2)->select();
+
+        $comment = $this->getComments('page_id', 2);
         $this->assign(['comment' => $comment]);
         return view('page/link');
     }
@@ -38,8 +68,12 @@ class Page extends IndexController
      */
     public function timeLine()
     {
-        $comment = model('CommentModel')->where('page_id', 3)->select();
-        $shuo = model('ShuoModel')->order('create_time','desc')->where('state', '>', 0)->select();
+        $comment = $this->getComments('page_id', 3);
+
+        $shuo = model('ShuoModel')
+            ->order('create_time', 'desc')
+            ->where('state', '>', 0)
+            ->select();
 
 
         $this->assign(['comment' => $comment, 'shuo' => $shuo]);

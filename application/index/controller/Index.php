@@ -51,22 +51,7 @@ class Index extends IndexController
         return view('index');
     }
 
-    public function info($id)
-    {
-        $info = model('ArticleModel')
-            ->field('source,id,category_id,content,title,pic,read,description,tag,top,create_time,admin_id')
-            ->find($id);
 
-        $info->setInc('read');
-
-        $this->assign([
-            'info' => $info,
-        ]);
-
-
-        return view('info');
-
-    }
 
     public function like()
     {

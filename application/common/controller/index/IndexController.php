@@ -13,6 +13,7 @@ class IndexController extends Controller
     protected $category;
     protected $connect;
     protected $link;
+    protected $comment;
 
 
     /**
@@ -26,7 +27,7 @@ class IndexController extends Controller
 
         $this->article = model('ArticleModel')
             ->field('id,category_id,title,pic,read,description,tag,top,create_time,admin_id')
-            ->with(['category', 'admin', 'comment'])
+            ->with(['category', 'admin'])
             ->where([['state', '>', 0]])
             ->order('create_time', 'desc');
 
@@ -42,6 +43,7 @@ class IndexController extends Controller
         $this->link = model('LinkModel')
             ->where([['state', '>', 0], ['type', '=', 0]])->select();
 
+
         $this->assign([
             'connect' => $this->connect,
             'link'  => $this->link,
@@ -50,9 +52,7 @@ class IndexController extends Controller
             'new_article' => $this->article->limit(5)->select(),
             'tag' => $this->getTags(),
             'article' => $this->article->paginate(5)
-
         ]);
-
 
 
         parent::initialize();
@@ -82,9 +82,13 @@ class IndexController extends Controller
     }
 
 
-    public function __call($name, $arguments)
-    {
-        return "Page is Not Found";
+    protected function getComments($type, $id){
+        $this->comment = model('CommentModel');
+
+        return $this->comment
+            ->where($type, $id)
+            ->order('create_time', 'desc')
+            ->select();
     }
 
 }
