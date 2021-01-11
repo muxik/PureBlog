@@ -10,6 +10,17 @@ use think\Request;
 class Page extends IndexController
 {
 
+    protected $page;
+
+    protected function initialize()
+    {
+        $this->page = [
+            '1' => ['关于', 'https://muxik.top/about.html'],
+            '2' => ['友人', 'https://muxik.top/link.html'],
+            '3' => ['碎碎念', 'https://muxik.top//page/shuo.html']
+        ];
+        parent::initialize();
+    }
 
     /**
      * 文章详情页
@@ -82,6 +93,7 @@ class Page extends IndexController
     /**
      * 评论添加
      * @param Request $request
+     * @throws \Exception
      */
     public function commentAdd(Request $request)
     {
@@ -95,6 +107,21 @@ class Page extends IndexController
         if (1 !== $result) {
             $this->error($result);
         }
+
+        $title = !empty($comment['article_id']) ? model('ArticleModel')->find($comment['article_id'])['title'] : $this->page["{$comment['page_id']}"][0];
+        $link = !empty($comment['article_id']) ? "https://muxik.top/info/{$comment['article_id']}" : $this->page["{$comment['page_id']}"][1];
+
+        if (0 != $comment['pid']) {
+            // 发送邮件 : 回复
+            $content = model('CommentModel')->find($comment['pid']);
+            $template = getReplyTemplate($content['nickname'], $content['content'], $comment['content'], $comment['nickname'], $link, $title);
+
+            mailto($content['email'], $template, config('comment.reply_title'));
+        }
+
+        // 发送邮件 : 评论
+        $template = getCommentTemplate($comment['nickname'], $comment['email'],$link, $title, $comment['content']);
+        mailto(config('comment.email'), $template, config('comment.comment_title'));
 
         $this->success('评论成功!');
     }

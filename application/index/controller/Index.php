@@ -12,7 +12,6 @@ class Index extends IndexController
             'page' => $this->article->paginate(5)->toArray()
         ]);
 
-
         // 搜索
         if (!empty(input('q'))) {
             $viewData['article'] = $this->article

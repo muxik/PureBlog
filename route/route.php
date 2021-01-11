@@ -112,3 +112,7 @@ Route::get('page/time_line', 'index/page/timeLine')->ext('html');
 
 Route::post('muxik/like', 'index/index/like');
 Route::post('commentAdd', 'index/page/commentAdd');
+
+Route::get('temp',function (){
+    return view('temp');
+});
