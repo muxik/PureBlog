@@ -1,3 +1,12 @@
+# [](https://github.com/muxik/PureBlog/compare/v2.2.1...v) (2021-01-12)
+
+
+### Bug Fixes
+
+* 修复了后台分类修改bug ([eab0fac](https://github.com/muxik/PureBlog/commit/eab0fac060291dd14ca2170e06ad382244de2e38))
+
+
+
 # [](https://github.com/muxik/PureBlog/compare/v2.1.2...v) (2021-01-11)
 
 
