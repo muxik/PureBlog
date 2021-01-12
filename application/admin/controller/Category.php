@@ -76,9 +76,9 @@ class Category extends AdminController
     public function update(Request $request)
     {
         if (empty($request->post('link'))) {
-            $param = ['id', 'name', 'pid', 'page' => 0];
+            $param = ['id', 'name', 'page' => 0];
         } else {
-            $param = ['id', 'name', 'link' => null, 'pid' => 0];
+            $param = ['id', 'name', 'link' => null];
         }
 
 

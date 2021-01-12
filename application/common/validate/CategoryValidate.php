@@ -34,7 +34,7 @@ class CategoryValidate extends Validate
 
     public function sceneEdit()
     {
-        return $this->only(['name', 'pid']);
+        return $this->only(['name']);
     }
 
 }
