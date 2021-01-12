@@ -61,14 +61,16 @@
                     {if !empty($vo.scategory[0])}
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown"
-                           aria-haspopup="true" aria-expanded="false">{$vo.name}</a>
+                           aria-haspopup="true" aria-expanded="false">{$vo.name |raw}</a>
                         <div class="dropdown-menu" aria-labelledby="dropdown01">
                             {foreach $vo.scategory as $key=>$v}
                             {if empty($v.link)}
                             <a class="dropdown-item {$key + 1 < count($vo.scategory) ? 'line':'a'  }"
-                               href="/category/{$v.page}">{$v.name}</a>
+                               href="/category/{$v.page}">{$v.name |raw }</a>
                             {else}
-                            <a class="dropdown-item {$key + 1 < count($vo.scategory) ? 'line':'a'  }" href="{$v.link}">{$v.name}</a>
+                            <a class="dropdown-item {$key + 1 < count($vo.scategory) ? 'line':'a'  }" href="{$v.link}">
+                                {$v.name}
+                            </a>
                             {/if}
                             {/foreach}
                         </div>
@@ -76,9 +78,9 @@
                     {else}
                     <li class="nav-item">
                         {if empty($vo.link)}
-                        <a class="nav-link" href="/category/{$vo.page}">{$vo.name}</a>
+                        <a class="nav-link" href="/category/{$vo.page}">{$vo.name|raw}</a>
                         {else}
-                        <a class="nav-link" href="{$vo.link}">{$vo.name}</a>
+                        <a class="nav-link" href="{$vo.link}">{$vo.name|raw}</a>
                         {/if}
                     </li>
                     {/if}
@@ -132,7 +134,6 @@
 <script src="__INDEX__/assets/js/slick.js"></script>
 <script src="__INDEX__/assets/js/isotope.js"></script>
 <script src="__INDEX__/assets/js/accordions.js"></script>
-
 
 
 <script type="text/javascript">

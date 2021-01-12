@@ -1200,7 +1200,8 @@ footer p a:hover {
 }
 
 .head img:hover {
-    margin: 20px;
+    padding: 20px;
+    transition: .2s;
 }
 
 .head p {
