@@ -96,6 +96,13 @@ Route::group('admin', function () {
         Route::post('changeState', 'admin/shuo/changeState');
     });
 
+    // 碎碎念模块
+    Route::group('comment',function (){
+        Route::get('/', 'admin/comment/index');
+        Route::post('del', 'admin/comment/del');
+        Route::post('changeState', 'admin/comment/changeState');
+    });
+
 
 })->middleware(['CheckLogin']);
 
