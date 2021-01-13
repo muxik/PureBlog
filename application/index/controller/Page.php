@@ -14,11 +14,6 @@ class Page extends IndexController
 
     protected function initialize()
     {
-        $this->page = [
-            '1' => ['关于', 'https://muxik.top/about.html'],
-            '2' => ['友人', 'https://muxik.top/link.html'],
-            '3' => ['碎碎念', 'https://muxik.top//page/shuo.html']
-        ];
         parent::initialize();
     }
 
@@ -108,8 +103,8 @@ class Page extends IndexController
             $this->error($result);
         }
 
-        $title = !empty($comment['article_id']) ? model('ArticleModel')->find($comment['article_id'])['title'] : $this->page["{$comment['page_id']}"][0];
-        $link = !empty($comment['article_id']) ? "https://muxik.top/info/{$comment['article_id']}" : $this->page["{$comment['page_id']}"][1];
+        $title = !empty($comment['article_id']) ? model('ArticleModel')->find($comment['article_id'])['title'] : config("page.{$comment['page_id']}")[0];
+        $link = !empty($comment['article_id']) ? "https://muxik.top/info/{$comment['article_id']}" : config("page.{$comment['page_id']}")[0];
 
         if (0 != $comment['pid']) {
             // 发送邮件 : 回复
