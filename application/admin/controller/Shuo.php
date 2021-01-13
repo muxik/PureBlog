@@ -23,11 +23,11 @@ class Shuo extends AdminController
     {
         $count = $this->model
             ->count();
-        $link = $this->model
+        $shuo = $this->model
             ->paginate(10);
 
         return view()->assign([
-            'link' => $link,
+            'shuo' => $shuo,
             'count' => $count
         ]);
     }
