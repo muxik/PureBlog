@@ -1,3 +1,12 @@
+# [](https://github.com/muxik/PureBlog/compare/v2.2.2...v) (2021-01-15)
+
+
+### Bug Fixes
+
+* 修复评论邮箱信息链接bug ([a510555](https://github.com/muxik/PureBlog/commit/a51055564e11ed07e6662d8acc4dc9fd0e44257c))
+
+
+
 # [](https://github.com/muxik/PureBlog/compare/v2.2.1...v) (2021-01-12)
 
 
