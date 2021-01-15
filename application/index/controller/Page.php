@@ -103,8 +103,13 @@ class Page extends IndexController
             $this->error($result);
         }
 
-        $title = !empty($comment['article_id']) ? model('ArticleModel')->find($comment['article_id'])['title'] : config("page.{$comment['page_id']}")[0];
-        $link = !empty($comment['article_id']) ? "https://muxik.top/info/{$comment['article_id']}" : config("page.{$comment['page_id']}")[0];
+        $title = !empty($comment['article_id'])
+            ? model('ArticleModel')->find($comment['article_id'])['title']
+            : config("page.{$comment['page_id']}")[0];
+
+        $link = !empty($comment['article_id'])
+            ? "https://muxik.top/info/{$comment['article_id']}.html"
+            : config("page.{$comment['page_id']}")[0] . ".html";
 
         if (0 != $comment['pid']) {
             // 发送邮件 : 回复
@@ -115,7 +120,7 @@ class Page extends IndexController
         }
 
         // 发送邮件 : 评论
-        $template = getCommentTemplate($comment['nickname'], $comment['email'],$link, $title, $comment['content']);
+        $template = getCommentTemplate($comment['nickname'], $comment['email'], $link, $title, $comment['content']);
         mailto(config('comment.email'), $template, config('comment.comment_title'));
 
         $this->success('评论成功!');
