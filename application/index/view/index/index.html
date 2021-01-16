@@ -2,79 +2,79 @@
 
 {block name="content"}
 <section class="blog-posts">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-8">
-                <div class="all-blog-posts">
-                    <div class="row">
-                        {foreach $article as $key=>$vo}
-                        <div class="col-lg-12">
-                            <div class="blog-post">
-                                <div class="blog-thumb">
-                                    <img src="{$vo.pic}" alt="">
-                                </div>
-                                <div class="down-content">
-                                    <span class="cate">{$vo.category.name}</span>
-                                    <a href="/info/{$vo.id}.html"><h4>{$vo.title}</h4></a>
-                                    <ul class="post-info">
-                                        <li><a href="#">@ &nbsp;{$vo.admin.nickname}</a></li>
-                                        <li><a href="#"><i class="fa fa-clock-o"></i> &nbsp;{$vo.create_time}</a></li>
-                                        <li><a href="#"><i class="fa fa-comment-o"></i> &nbsp;{:count($vo.comments)}</a></li>
-                                        <li><a href="#"><i class="fa fa-eye"></i> &nbsp;{$vo.read}</a></li>
-                                    </ul>
-                                    <p class="down-content-line">{$vo.description | raw}</p>
-                                    <div class="post-options">
-                                        <div class="row">
-                                            <div class="col-6">
-                                                <ul class="post-tags">
-                                                    <li><i class="fa fa-tags"></i></li>
-                                                    {foreach :explode(',', $vo.tag) as $k=>$v}
-                                                    <li><a href="#">{$v}</a>{$k + 1 < count(explode(',', $vo.tag)) ? ',
-                                                        ' : ''}
-                                                    </li>
-                                                    {/foreach}
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        {/foreach}
-
-                        {if empty($article[0])}
-                        <div class="col-lg-12">
-                            {include title="没有任何东西! ʕ•ﻌ•ʔ " description="" file="page:404"}
-                        </div>
-                        {/if}
-
-                        {if empty($article[0])}
-                        <div class="col-lg-12 page">
-                            <div class="left">
-                                {if $page.current_page neq 1}
-                                {if $page.current_page >= $page.per_page}
-                                <div class="main-button ">
-                                    <a href="/?page={$page.current_page - 1}"><i class="fa fa-angle-left"></i>&nbsp;
-                                        更新文章</a>
-                                </div>
-                                {/if}
-                                {/if}
-                            </div>
-                            <div class="right">
-                                {if $page.current_page neq $page.last_page}
-                                <div class="main-button ">
-                                    <a href="/?page={$page.current_page + 1}">先前文章&nbsp; <i
-                                            class="fa fa-angle-right"></i></a>
-                                </div>
-                                {/if}
-                            </div>
-                        </div>
-                        {/if}
-                    </div>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8">
+        <div class="all-blog-posts">
+          <div class="row">
+            {foreach $article as $key=>$vo}
+            <div class="col-lg-12">
+              <div class="blog-post">
+                <div class="blog-thumb">
+                  <img src="{$vo.pic}" alt="">
                 </div>
+                <div class="down-content">
+                  <span class="cate">{$vo.category.name}</span>
+                  <a href="/info/{$vo.id}.html">
+                    <h4>{$vo.title}</h4>
+                  </a>
+                  <ul class="post-info">
+                    <li><a href="#">@ &nbsp;{$vo.admin.nickname}</a></li>
+                    <li><a href="#"><i class="fa fa-clock-o"></i> &nbsp;{$vo.create_time}</a></li>
+                    <li><a href="#"><i class="fa fa-comment-o"></i> &nbsp;{:count($vo.comments)}</a></li>
+                    <li><a href="#"><i class="fa fa-eye"></i> &nbsp;{$vo.read}</a></li>
+                  </ul>
+                  <p class="down-content-line">{$vo.description | raw}</p>
+                  <div class="post-options">
+                    <div class="row">
+                      <div class="col-6">
+                        <ul class="post-tags">
+                          <li><i class="fa fa-tags"></i></li>
+                          {foreach :explode(',', $vo.tag) as $k=>$v}
+                          <li><a href="#">{$v}</a>{$k + 1 < count(explode(',', $vo.tag)) ? ',
+                                                        ' : '' } </li>
+                              {/foreach}
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-            {include file="base:right"}
+            {/foreach}
+
+            {if empty($article[0])}
+            <div class="col-lg-12">
+              {include title="没有任何东西! ʕ•ﻌ•ʔ " description="" file="page:404"}
+            </div>
+            {/if}
+
+
+            {if $page.total > 5}
+            <div class="col-lg-12 page">
+              <div class="left">
+                {if $page.current_page neq 1}
+                {if $page.current_page <= $page.per_page} <div class="main-button ">
+                  <a href="/?page={$page.current_page - 1}"><i class="fa fa-angle-left"></i>&nbsp;
+                    更新文章</a>
+              </div>
+              {/if}
+              {/if}
+            </div>
+            <div class="right">
+              {if $page.current_page neq $page.last_page}
+              <div class="main-button ">
+                <a href="/?page={$page.current_page + 1}">先前文章&nbsp; <i class="fa fa-angle-right"></i></a>
+              </div>
+              {/if}
+            </div>
+          </div>
+          {/if}
         </div>
+      </div>
     </div>
+    {include file="base:right"}
+  </div>
+  </div>
 </section>
 {/block}
