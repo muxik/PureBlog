@@ -14,7 +14,7 @@
                   <img src="{$vo.pic}" alt="">
                 </div>
                 <div class="down-content">
-                  <span class="cate">{$vo.category.name}</span>
+                  <span class="cate">{$vo.category.name | raw}</span>
                   <a href="/info/{$vo.id}.html">
                     <h4>{$vo.title}</h4>
                   </a>
