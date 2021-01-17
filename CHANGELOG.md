@@ -1,3 +1,14 @@
+# [](https://github.com/muxik/PureBlog/compare/v2.2.2...v) (2021-01-17)
+
+
+### Bug Fixes
+
+* 修复分类名原样显示bug ([6cd33f2](https://github.com/muxik/PureBlog/commit/6cd33f27d61e0864849daaa014fda600e3874b91))
+* 修复分页bug ([81c00ef](https://github.com/muxik/PureBlog/commit/81c00ef8ee57d29c711d44d8cfa4d231a9dfb0cc))
+* 修复评论邮箱信息链接bug ([a510555](https://github.com/muxik/PureBlog/commit/a51055564e11ed07e6662d8acc4dc9fd0e44257c))
+
+
+
 # [](https://github.com/muxik/PureBlog/compare/v2.2.2...v) (2021-01-15)
 
 
