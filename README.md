@@ -6,6 +6,7 @@
 
 辨识度来自排版、留白与唯一的强调色 —— 黛青 `#235A73`,而非装饰。
 
+[![CI](https://github.com/muxik/PureBlog/actions/workflows/ci.yml/badge.svg)](https://github.com/muxik/PureBlog/actions/workflows/ci.yml)
 [![Go](https://img.shields.io/badge/Go-1.22+-00ADD8?logo=go&logoColor=white)](https://go.dev)
 [![Gin](https://img.shields.io/badge/Gin-JSON_API-008ECF)](https://gin-gonic.com)
 [![Vue 3](https://img.shields.io/badge/Vue-3-42b883?logo=vuedotjs&logoColor=white)](https://vuejs.org)
