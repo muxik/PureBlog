@@ -1081,6 +1081,9 @@
         "http.postResponse": {
             "type": "object",
             "properties": {
+                "categoryId": {
+                    "type": "integer"
+                },
                 "contentHtml": {
                     "type": "string"
                 },
@@ -1110,6 +1113,12 @@
                 },
                 "summary": {
                     "type": "string"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/http.tagResponse"
+                    }
                 },
                 "title": {
                     "type": "string"
@@ -1178,6 +1187,9 @@
                 "title"
             ],
             "properties": {
+                "categoryId": {
+                    "type": "integer"
+                },
                 "contentMd": {
                     "type": "string"
                 },
@@ -1195,6 +1207,12 @@
                 },
                 "summary": {
                     "type": "string"
+                },
+                "tagIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
                 },
                 "title": {
                     "type": "string"

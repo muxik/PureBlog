@@ -1105,6 +1105,7 @@ export interface components {
             status: "approved" | "pending";
         };
         "http.postResponse": {
+            categoryId?: number;
             contentHtml?: string;
             contentMd?: string;
             coverUrl?: string;
@@ -1115,6 +1116,7 @@ export interface components {
             slug?: string;
             status?: string;
             summary?: string;
+            tags?: components["schemas"]["http.tagResponse"][];
             title?: string;
             updatedAt?: string;
             viewCount?: number;
@@ -1136,12 +1138,14 @@ export interface components {
             sort?: number;
         };
         "http.savePostRequest": {
+            categoryId?: number;
             contentMd?: string;
             coverUrl?: string;
             pinned?: boolean;
             slug?: string;
             status?: string;
             summary?: string;
+            tagIds?: number[];
             title: string;
         };
         "http.saveTagRequest": {

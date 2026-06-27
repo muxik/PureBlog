@@ -15,6 +15,7 @@ type PostModel struct {
 	ContentMD   string     `gorm:"column:content_md"`
 	ContentHTML string     `gorm:"column:content_html"`
 	CoverURL    string     `gorm:"column:cover_url"`
+	CategoryID  *int64     `gorm:"column:category_id;index"`
 	Status      string     `gorm:"column:status;index;size:20"`
 	Pinned      bool       `gorm:"column:pinned"`
 	AuthorID    int64      `gorm:"column:author_id;index"`
@@ -27,6 +28,15 @@ type PostModel struct {
 // TableName pins the table created by the goose migration.
 func (PostModel) TableName() string { return "posts" }
 
+// PostTagModel is the join table between posts and tags.
+type PostTagModel struct {
+	PostID int64 `gorm:"column:post_id;primaryKey"`
+	TagID  int64 `gorm:"column:tag_id;primaryKey"`
+}
+
+// TableName pins the join table created by the goose migration.
+func (PostTagModel) TableName() string { return "post_tags" }
+
 func toDomainPost(m *PostModel) *domain.Post {
 	return &domain.Post{
 		ID:          m.ID,
@@ -36,6 +46,7 @@ func toDomainPost(m *PostModel) *domain.Post {
 		ContentMD:   m.ContentMD,
 		ContentHTML: m.ContentHTML,
 		CoverURL:    m.CoverURL,
+		CategoryID:  m.CategoryID,
 		Status:      domain.PostStatus(m.Status),
 		Pinned:      m.Pinned,
 		AuthorID:    m.AuthorID,
@@ -55,6 +66,7 @@ func fromDomainPost(p *domain.Post) *PostModel {
 		ContentMD:   p.ContentMD,
 		ContentHTML: p.ContentHTML,
 		CoverURL:    p.CoverURL,
+		CategoryID:  p.CategoryID,
 		Status:      string(p.Status),
 		Pinned:      p.Pinned,
 		AuthorID:    p.AuthorID,

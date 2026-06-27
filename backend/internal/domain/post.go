@@ -35,6 +35,7 @@ type Post struct {
 	ContentMD   string
 	ContentHTML string
 	CoverURL    string
+	CategoryID  *int64
 	Status      PostStatus
 	Pinned      bool
 	AuthorID    int64
@@ -42,6 +43,10 @@ type Post struct {
 	PublishedAt *time.Time
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
+
+	// Associations
+	TagIDs []int64 // write-side: tag ids to attach on create/update
+	Tags   []Tag   // read-side: the attached tags
 }
 
 // PostListFilter parameterises a paginated post listing.

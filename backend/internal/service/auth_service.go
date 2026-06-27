@@ -87,9 +87,9 @@ func (s *AuthService) EnsureAdmin(ctx context.Context, username, password string
 		return err
 	}
 	return s.users.Create(ctx, &domain.User{
-		Username:    username,
+		Username:     username,
 		PasswordHash: hash,
-		DisplayName: username,
-		Role:        "admin",
+		DisplayName:  username,
+		Role:         "admin",
 	})
 }

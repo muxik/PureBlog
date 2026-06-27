@@ -25,13 +25,15 @@ type renderRequest struct {
 }
 
 type savePostRequest struct {
-	Title     string `json:"title" binding:"required"`
-	Slug      string `json:"slug"`
-	Summary   string `json:"summary"`
-	ContentMD string `json:"contentMd"`
-	CoverURL  string `json:"coverUrl"`
-	Status    string `json:"status"`
-	Pinned    bool   `json:"pinned"`
+	Title      string  `json:"title" binding:"required"`
+	Slug       string  `json:"slug"`
+	Summary    string  `json:"summary"`
+	ContentMD  string  `json:"contentMd"`
+	CoverURL   string  `json:"coverUrl"`
+	Status     string  `json:"status"`
+	Pinned     bool    `json:"pinned"`
+	CategoryID *int64  `json:"categoryId"`
+	TagIDs     []int64 `json:"tagIds"`
 }
 
 // ---- responses ----
@@ -54,19 +56,21 @@ type tokenResponse struct {
 }
 
 type postResponse struct {
-	ID          int64      `json:"id"`
-	Slug        string     `json:"slug"`
-	Title       string     `json:"title"`
-	Summary     string     `json:"summary"`
-	ContentMD   string     `json:"contentMd,omitempty"`
-	ContentHTML string     `json:"contentHtml,omitempty"`
-	CoverURL    string     `json:"coverUrl"`
-	Status      string     `json:"status"`
-	Pinned      bool       `json:"pinned"`
-	ViewCount   int64      `json:"viewCount"`
-	PublishedAt *time.Time `json:"publishedAt"`
-	CreatedAt   time.Time  `json:"createdAt"`
-	UpdatedAt   time.Time  `json:"updatedAt"`
+	ID          int64         `json:"id"`
+	Slug        string        `json:"slug"`
+	Title       string        `json:"title"`
+	Summary     string        `json:"summary"`
+	ContentMD   string        `json:"contentMd,omitempty"`
+	ContentHTML string        `json:"contentHtml,omitempty"`
+	CoverURL    string        `json:"coverUrl"`
+	CategoryID  *int64        `json:"categoryId"`
+	Status      string        `json:"status"`
+	Pinned      bool          `json:"pinned"`
+	ViewCount   int64         `json:"viewCount"`
+	Tags        []tagResponse `json:"tags"`
+	PublishedAt *time.Time    `json:"publishedAt"`
+	CreatedAt   time.Time     `json:"createdAt"`
+	UpdatedAt   time.Time     `json:"updatedAt"`
 }
 
 type listResponse struct {
@@ -93,12 +97,17 @@ func toPostResponse(p *domain.Post, includeContent bool) postResponse {
 		Title:       p.Title,
 		Summary:     p.Summary,
 		CoverURL:    p.CoverURL,
+		CategoryID:  p.CategoryID,
 		Status:      string(p.Status),
 		Pinned:      p.Pinned,
 		ViewCount:   p.ViewCount,
 		PublishedAt: p.PublishedAt,
 		CreatedAt:   p.CreatedAt,
 		UpdatedAt:   p.UpdatedAt,
+	}
+	resp.Tags = make([]tagResponse, len(p.Tags))
+	for i := range p.Tags {
+		resp.Tags[i] = toTagResponse(&p.Tags[i])
 	}
 	if includeContent {
 		resp.ContentMD = p.ContentMD

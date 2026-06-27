@@ -20,33 +20,46 @@ var _ domain.PostRepository = (*PostRepo)(nil)
 func (r *PostRepo) Create(ctx context.Context, p *domain.Post) error {
 	m := fromDomainPost(p)
 	m.ID = 0
-	if err := r.db.WithContext(ctx).Create(m).Error; err != nil {
+	err := r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		if err := tx.Create(m).Error; err != nil {
+			return err
+		}
+		return setPostTags(tx, m.ID, p.TagIDs)
+	})
+	if err != nil {
 		return mapErr(err)
 	}
 	*p = *toDomainPost(m)
-	return nil
+	return r.attachTags(ctx, p)
 }
 
 func (r *PostRepo) Update(ctx context.Context, p *domain.Post) error {
-	res := r.db.WithContext(ctx).Model(&PostModel{}).Where("id = ?", p.ID).Updates(map[string]any{
-		"slug":         p.Slug,
-		"title":        p.Title,
-		"summary":      p.Summary,
-		"content_md":   p.ContentMD,
-		"content_html": p.ContentHTML,
-		"cover_url":    p.CoverURL,
-		"status":       string(p.Status),
-		"pinned":       p.Pinned,
-		"published_at": p.PublishedAt,
-		"updated_at":   time.Now(),
+	err := r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		res := tx.Model(&PostModel{}).Where("id = ?", p.ID).Updates(map[string]any{
+			"slug":         p.Slug,
+			"title":        p.Title,
+			"summary":      p.Summary,
+			"content_md":   p.ContentMD,
+			"content_html": p.ContentHTML,
+			"cover_url":    p.CoverURL,
+			"category_id":  p.CategoryID,
+			"status":       string(p.Status),
+			"pinned":       p.Pinned,
+			"published_at": p.PublishedAt,
+			"updated_at":   time.Now(),
+		})
+		if res.Error != nil {
+			return res.Error
+		}
+		if res.RowsAffected == 0 {
+			return domain.ErrNotFound
+		}
+		return setPostTags(tx, p.ID, p.TagIDs)
 	})
-	if res.Error != nil {
-		return mapErr(res.Error)
+	if err != nil {
+		return mapErr(err)
 	}
-	if res.RowsAffected == 0 {
-		return domain.ErrNotFound
-	}
-	return nil
+	return r.attachTags(ctx, p)
 }
 
 func (r *PostRepo) Delete(ctx context.Context, id int64) error {
@@ -65,7 +78,11 @@ func (r *PostRepo) GetByID(ctx context.Context, id int64) (*domain.Post, error) 
 	if err := r.db.WithContext(ctx).First(&m, id).Error; err != nil {
 		return nil, mapErr(err)
 	}
-	return toDomainPost(&m), nil
+	p := toDomainPost(&m)
+	if err := r.attachTags(ctx, p); err != nil {
+		return nil, err
+	}
+	return p, nil
 }
 
 func (r *PostRepo) GetBySlug(ctx context.Context, slug string) (*domain.Post, error) {
@@ -73,7 +90,11 @@ func (r *PostRepo) GetBySlug(ctx context.Context, slug string) (*domain.Post, er
 	if err := r.db.WithContext(ctx).Where("slug = ?", slug).First(&m).Error; err != nil {
 		return nil, mapErr(err)
 	}
-	return toDomainPost(&m), nil
+	p := toDomainPost(&m)
+	if err := r.attachTags(ctx, p); err != nil {
+		return nil, err
+	}
+	return p, nil
 }
 
 func (r *PostRepo) List(ctx context.Context, f domain.PostListFilter) ([]*domain.Post, int64, error) {
@@ -113,6 +134,9 @@ func (r *PostRepo) List(ctx context.Context, f domain.PostListFilter) ([]*domain
 	for i := range models {
 		items[i] = toDomainPost(&models[i])
 	}
+	if err := r.attachTags(ctx, items...); err != nil {
+		return nil, 0, err
+	}
 	return items, total, nil
 }
 
@@ -120,4 +144,65 @@ func (r *PostRepo) IncrementViews(ctx context.Context, id int64) error {
 	return mapErr(r.db.WithContext(ctx).Model(&PostModel{}).
 		Where("id = ?", id).
 		UpdateColumn("view_count", gorm.Expr("view_count + 1")).Error)
+}
+
+// setPostTags replaces a post's tag associations inside the given transaction.
+// A non-existent tag id triggers a foreign-key violation, which mapErr turns
+// into domain.ErrInvalidReference (→ HTTP 400).
+func setPostTags(tx *gorm.DB, postID int64, tagIDs []int64) error {
+	if err := tx.Where("post_id = ?", postID).Delete(&PostTagModel{}).Error; err != nil {
+		return err
+	}
+	if len(tagIDs) == 0 {
+		return nil
+	}
+	seen := make(map[int64]bool, len(tagIDs))
+	rows := make([]PostTagModel, 0, len(tagIDs))
+	for _, id := range tagIDs {
+		if !seen[id] {
+			seen[id] = true
+			rows = append(rows, PostTagModel{PostID: postID, TagID: id})
+		}
+	}
+	return tx.Create(&rows).Error
+}
+
+// attachTags loads the tags for the given posts in a single query and fills
+// each post's Tags and TagIDs (avoiding N+1).
+func (r *PostRepo) attachTags(ctx context.Context, posts ...*domain.Post) error {
+	if len(posts) == 0 {
+		return nil
+	}
+	ids := make([]int64, 0, len(posts))
+	byID := make(map[int64]*domain.Post, len(posts))
+	for _, p := range posts {
+		p.Tags = []domain.Tag{}
+		p.TagIDs = []int64{}
+		ids = append(ids, p.ID)
+		byID[p.ID] = p
+	}
+
+	var rows []struct {
+		PostID int64
+		ID     int64
+		Name   string
+		Slug   string
+	}
+	if err := r.db.WithContext(ctx).
+		Table("post_tags").
+		Select("post_tags.post_id, tags.id, tags.name, tags.slug").
+		Joins("JOIN tags ON tags.id = post_tags.tag_id").
+		Where("post_tags.post_id IN ?", ids).
+		Order("tags.name ASC").
+		Scan(&rows).Error; err != nil {
+		return mapErr(err)
+	}
+
+	for _, row := range rows {
+		if p, ok := byID[row.PostID]; ok {
+			p.Tags = append(p.Tags, domain.Tag{ID: row.ID, Name: row.Name, Slug: row.Slug})
+			p.TagIDs = append(p.TagIDs, row.ID)
+		}
+	}
+	return nil
 }

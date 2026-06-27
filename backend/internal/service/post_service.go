@@ -26,14 +26,16 @@ func NewPostService(repo domain.PostRepository, rdr *render.Renderer) *PostServi
 
 // SavePostInput is the payload for creating or updating a post.
 type SavePostInput struct {
-	Title     string
-	Slug      string
-	Summary   string
-	ContentMD string
-	CoverURL  string
-	Status    domain.PostStatus
-	Pinned    bool
-	AuthorID  int64
+	Title      string
+	Slug       string
+	Summary    string
+	ContentMD  string
+	CoverURL   string
+	Status     domain.PostStatus
+	Pinned     bool
+	AuthorID   int64
+	CategoryID *int64
+	TagIDs     []int64
 }
 
 // Create renders the Markdown, derives a unique slug, and persists the post.
@@ -52,6 +54,8 @@ func (s *PostService) Create(ctx context.Context, in SavePostInput) (*domain.Pos
 		Status:      normalizeStatus(in.Status),
 		Pinned:      in.Pinned,
 		AuthorID:    in.AuthorID,
+		CategoryID:  in.CategoryID,
+		TagIDs:      in.TagIDs,
 	}
 	if p.Slug == "" {
 		p.Slug = Slugify(in.Title)
@@ -95,6 +99,8 @@ func (s *PostService) Update(ctx context.Context, id int64, in SavePostInput) (*
 	existing.ContentHTML = html
 	existing.CoverURL = in.CoverURL
 	existing.Pinned = in.Pinned
+	existing.CategoryID = in.CategoryID
+	existing.TagIDs = in.TagIDs
 	if s := strings.TrimSpace(in.Slug); s != "" {
 		existing.Slug = s
 	}

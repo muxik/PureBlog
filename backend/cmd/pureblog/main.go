@@ -19,13 +19,13 @@ import (
 	"github.com/pressly/goose/v3"
 )
 
-//	@title			PureBlog API
-//	@version		3.0
-//	@description	PureBlog v3 backend API.
-//	@BasePath		/api/v1
-//	@securityDefinitions.apikey	BearerAuth
-//	@in				header
-//	@name			Authorization
+// @title			PureBlog API
+// @version		3.0
+// @description	PureBlog v3 backend API.
+// @BasePath		/api/v1
+// @securityDefinitions.apikey	BearerAuth
+// @in				header
+// @name			Authorization
 func main() {
 	cfg := config.Load()
 
