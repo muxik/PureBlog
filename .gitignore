@@ -1,0 +1,37 @@
+# ---- Go (backend) ----
+/backend/pureblog
+/backend/pureblog.exe
+/backend/bin/
+/backend/tmp/
+/backend/coverage.out
+# swag-generated OpenAPI (regenerate with `make swag`)
+/backend/docs/docs.go
+# converted OpenAPI 3 intermediate (regenerate with `pnpm gen:api`)
+/frontend/packages/api-types/openapi.json
+
+# ---- Node / pnpm (frontend) ----
+node_modules/
+.pnpm-store/
+.turbo/
+dist/
+.output/
+.nuxt/
+.nitro/
+.cache/
+*.tsbuildinfo
+
+# ---- env & secrets ----
+.env
+.env.*
+!.env.example
+
+# ---- editors / OS ----
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# ---- data / volumes ----
+/deploy/pgdata/
+/deploy/caddy_data/
+/uploads/

@@ -1,0 +1,19 @@
+{
+  "name": "@pureblog/api-types",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "gen": "swagger2openapi ../../../backend/docs/swagger.json -o ./openapi.json && openapi-typescript ./openapi.json -o ./src/schema.ts"
+  },
+  "files": ["src"],
+  "devDependencies": {
+    "openapi-typescript": "^7.4.4",
+    "swagger2openapi": "^7.0.8"
+  }
+}

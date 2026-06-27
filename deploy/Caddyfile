@@ -1,0 +1,18 @@
+# PureBlog v3 reverse proxy.
+# Public site at the root domain; admin at the admin.* subdomain.
+# In local dev, *.localhost resolves to 127.0.0.1 automatically (Chrome/Firefox).
+
+{$PUBLIC_DOMAIN:localhost} {
+	# API → Go backend
+	handle /api/* {
+		reverse_proxy backend:8080
+	}
+	# everything else → Nuxt SSR
+	handle {
+		reverse_proxy web:3000
+	}
+}
+
+admin.{$PUBLIC_DOMAIN:localhost} {
+	reverse_proxy admin:80
+}

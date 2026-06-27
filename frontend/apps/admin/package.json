@@ -1,0 +1,26 @@
+{
+  "name": "@pureblog/admin",
+  "version": "3.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --port 5173",
+    "build": "vue-tsc --noEmit && vite build",
+    "preview": "vite preview --port 5173",
+    "typecheck": "vue-tsc --noEmit"
+  },
+  "dependencies": {
+    "@pureblog/api-types": "workspace:*",
+    "@pureblog/ui": "workspace:*",
+    "pinia": "^2.3.0",
+    "vditor": "^3.10.9",
+    "vue": "^3.5.13",
+    "vue-router": "^4.5.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.2.1",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.7",
+    "vue-tsc": "^2.2.0"
+  }
+}

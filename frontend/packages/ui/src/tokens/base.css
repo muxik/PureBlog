@@ -1,0 +1,143 @@
+/* ──────────────────────────────────────────────────────────────
+   BASE & PROSE UTILITIES
+   The core differentiator: Chinese typography done correctly.
+   Mixed CJK/Latin spacing, reading measure, punctuation handling,
+   accent links. Class-based so consumers opt in.
+   ────────────────────────────────────────────────────────────── */
+
+/* Global reset just enough to be predictable */
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text-body);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: var(--leading-body);
+  letter-spacing: var(--tracking-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  transition: background var(--dur-theme) var(--ease),
+              color var(--dur-theme) var(--ease);
+}
+
+/* Selection — a quiet cinnabar wash */
+::selection { background: color-mix(in srgb, var(--accent) 22%, transparent); }
+
+/* ── Reading column ── */
+.measure { max-width: var(--measure); }
+.content { max-width: var(--content-width); margin-inline: auto; }
+
+/* ── Prose: the article body ── */
+.prose {
+  max-width: var(--measure);
+  color: var(--text-body);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: var(--leading-body);
+  letter-spacing: var(--tracking-body);
+  /* 标点挤压 / 避头尾 — punctuation kerning + line-break rules */
+  text-spacing: normal;
+  text-spacing-trim: trim-start;
+  line-break: strict;
+  word-break: normal;
+  overflow-wrap: break-word;
+}
+
+/* Paragraphs: spacing rhythm, NO first-line indent (web default) */
+.prose p { margin: 0 0 1.2em; }
+
+/* Optional literati variant: first-line indent, no gap. Mutually exclusive. */
+.prose--indent p { margin: 0; text-indent: 2em; }
+
+/* 中英混排留白 — "盘古之白": ~0.12em between CJK and Latin runs */
+.prose :lang(en),
+.zh-latin { margin-inline: 0.12em; }
+/* helper span you can wrap latin/number runs with */
+.tex { margin-inline: 0.08em; font-family: var(--font-latin); }
+
+/* ── Headings — top margin 2× bottom for visual grouping ── */
+.prose h1, .prose h2, .prose h3, .prose h4 {
+  font-family: var(--font-display);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-heading);
+  letter-spacing: var(--tracking-heading);
+  color: var(--text-body);
+  text-wrap: balance;
+}
+.prose h1 { font-size: var(--text-h1); margin: 1.6em 0 0.8em; }
+.prose h2 { font-size: var(--text-h2); margin: 1.6em 0 0.8em; }
+.prose h3 { font-size: var(--text-h3); margin: 1.4em 0 0.7em; }
+.prose > :first-child { margin-top: 0; }
+
+/* ── Links — cinnabar text + thin underline, never a color block ── */
+a, .link {
+  color: var(--accent);
+  text-decoration: none;
+  border-bottom: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
+  padding-bottom: 0.05em;
+  text-underline-offset: 0.2em;
+  transition: border-color var(--dur-fast) var(--ease);
+}
+a:hover, .link:hover { border-bottom-color: var(--accent); }
+a:focus-visible, .link:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--accent) 50%, transparent);
+  outline-offset: 2px;
+  border-radius: 1px;
+}
+
+/* ── Blockquote — cinnabar hairline rule, muted ink ── */
+.prose blockquote {
+  margin: 1.4em 0;
+  padding: 0.1em 0 0.1em 1.2em;
+  border-left: var(--rule-accent);
+  color: var(--text-muted);
+}
+.prose blockquote :lang(en), .prose blockquote em { font-style: italic; }
+
+/* ── Inline code & code blocks ── */
+.prose code {
+  font-family: var(--font-mono);
+  font-size: 0.88em;
+  background: var(--bg-subtle);
+  padding: 0.1em 0.35em;
+  border-radius: var(--radius-sm);
+}
+.prose pre {
+  font-family: var(--font-mono);
+  background: var(--bg-subtle);
+  border: var(--border-hair);
+  border-radius: var(--radius-md);
+  padding: var(--space-4) var(--space-6);
+  overflow-x: auto;
+  line-height: 1.7;
+  letter-spacing: 0;
+  font-size: var(--text-sm);
+}
+.prose pre code { background: none; padding: 0; font-size: inherit; }
+
+/* ── Rules & images ── */
+.prose hr {
+  border: none;
+  border-top: var(--border-hair);
+  margin: var(--space-8) 0;
+}
+.prose img {
+  max-width: 100%;
+  border-radius: var(--radius-md);
+  display: block;
+  margin: var(--space-6) 0;
+}
+
+/* ── Meta line — small, muted ── */
+.meta {
+  font-size: var(--text-sm);
+  line-height: var(--leading-meta);
+  color: var(--text-muted);
+  letter-spacing: var(--tracking-body);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}

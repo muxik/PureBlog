@@ -1,0 +1,845 @@
+basePath: /api/v1
+definitions:
+  http.categoryListResponse:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/http.categoryResponse'
+        type: array
+    type: object
+  http.categoryResponse:
+    properties:
+      description:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      parentId:
+        type: integer
+      slug:
+        type: string
+      sort:
+        type: integer
+    type: object
+  http.commentListResponse:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/http.commentResponse'
+        type: array
+    type: object
+  http.commentResponse:
+    properties:
+      authorName:
+        type: string
+      content:
+        type: string
+      createdAt:
+        type: string
+      id:
+        type: integer
+      parentId:
+        type: integer
+      postId:
+        type: integer
+      status:
+        type: string
+    type: object
+  http.createCommentRequest:
+    properties:
+      authorEmail:
+        type: string
+      authorName:
+        type: string
+      content:
+        type: string
+      parentId:
+        type: integer
+    required:
+    - authorName
+    - content
+    type: object
+  http.errorResponse:
+    properties:
+      error:
+        type: string
+    type: object
+  http.listResponse:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/http.postResponse'
+        type: array
+      page:
+        type: integer
+      pageSize:
+        type: integer
+      total:
+        type: integer
+    type: object
+  http.loginRequest:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  http.moderateCommentRequest:
+    properties:
+      status:
+        enum:
+        - approved
+        - pending
+        type: string
+    required:
+    - status
+    type: object
+  http.postResponse:
+    properties:
+      contentHtml:
+        type: string
+      contentMd:
+        type: string
+      coverUrl:
+        type: string
+      createdAt:
+        type: string
+      id:
+        type: integer
+      pinned:
+        type: boolean
+      publishedAt:
+        type: string
+      slug:
+        type: string
+      status:
+        type: string
+      summary:
+        type: string
+      title:
+        type: string
+      updatedAt:
+        type: string
+      viewCount:
+        type: integer
+    type: object
+  http.refreshRequest:
+    properties:
+      refreshToken:
+        type: string
+    required:
+    - refreshToken
+    type: object
+  http.renderRequest:
+    properties:
+      markdown:
+        type: string
+    type: object
+  http.renderResponse:
+    properties:
+      html:
+        type: string
+    type: object
+  http.saveCategoryRequest:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+      parentId:
+        type: integer
+      slug:
+        type: string
+      sort:
+        type: integer
+    required:
+    - name
+    type: object
+  http.savePostRequest:
+    properties:
+      contentMd:
+        type: string
+      coverUrl:
+        type: string
+      pinned:
+        type: boolean
+      slug:
+        type: string
+      status:
+        type: string
+      summary:
+        type: string
+      title:
+        type: string
+    required:
+    - title
+    type: object
+  http.saveTagRequest:
+    properties:
+      name:
+        type: string
+      slug:
+        type: string
+    required:
+    - name
+    type: object
+  http.settingsResponse:
+    properties:
+      aboutMd:
+        type: string
+      author:
+        type: string
+      defaultDateFormat:
+        type: string
+      description:
+        type: string
+      siteName:
+        type: string
+      social:
+        additionalProperties:
+          type: string
+        type: object
+    type: object
+  http.tagListResponse:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/http.tagResponse'
+        type: array
+    type: object
+  http.tagResponse:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      slug:
+        type: string
+    type: object
+  http.tokenResponse:
+    properties:
+      accessToken:
+        type: string
+      refreshToken:
+        type: string
+      user:
+        $ref: '#/definitions/http.userResponse'
+    type: object
+  http.updateSettingsRequest:
+    properties:
+      aboutMd:
+        type: string
+      author:
+        type: string
+      defaultDateFormat:
+        type: string
+      description:
+        type: string
+      siteName:
+        type: string
+      social:
+        additionalProperties:
+          type: string
+        type: object
+    type: object
+  http.userResponse:
+    properties:
+      displayName:
+        type: string
+      id:
+        type: integer
+      role:
+        type: string
+      username:
+        type: string
+    type: object
+info:
+  contact: {}
+  description: PureBlog v3 backend API.
+  title: PureBlog API
+  version: "3.0"
+paths:
+  /admin/categories:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: category
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/http.saveCategoryRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/http.categoryResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create a category
+      tags:
+      - admin
+  /admin/categories/{id}:
+    delete:
+      parameters:
+      - description: category id
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "204":
+          description: no content
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete a category
+      tags:
+      - admin
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: category id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: category
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/http.saveCategoryRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.categoryResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update a category
+      tags:
+      - admin
+  /admin/comments:
+    get:
+      parameters:
+      - description: 'pending|approved (default: all)'
+        in: query
+        name: status
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.commentListResponse'
+      security:
+      - BearerAuth: []
+      summary: List comments (admin)
+      tags:
+      - admin
+  /admin/comments/{id}:
+    delete:
+      parameters:
+      - description: comment id
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "204":
+          description: no content
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete a comment
+      tags:
+      - admin
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: comment id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: status
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/http.moderateCommentRequest'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: no content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Moderate a comment
+      tags:
+      - admin
+  /admin/posts:
+    get:
+      parameters:
+      - description: 'draft|published (default: any)'
+        in: query
+        name: status
+        type: string
+      - description: page (1-based)
+        in: query
+        name: page
+        type: integer
+      - description: page size
+        in: query
+        name: pageSize
+        type: integer
+      - description: search query
+        in: query
+        name: q
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.listResponse'
+      security:
+      - BearerAuth: []
+      summary: List posts (admin)
+      tags:
+      - admin
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: post
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/http.savePostRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/http.postResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create a post
+      tags:
+      - admin
+  /admin/posts/{id}:
+    delete:
+      parameters:
+      - description: post id
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "204":
+          description: no content
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete a post
+      tags:
+      - admin
+    get:
+      parameters:
+      - description: post id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.postResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get a post by id (admin)
+      tags:
+      - admin
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: post id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: post
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/http.savePostRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.postResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update a post
+      tags:
+      - admin
+  /admin/render:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: markdown
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/http.renderRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.renderResponse'
+      security:
+      - BearerAuth: []
+      summary: Render Markdown preview
+      tags:
+      - admin
+  /admin/settings:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: settings
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/http.updateSettingsRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.settingsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Replace site settings
+      tags:
+      - admin
+  /admin/tags:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: tag
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/http.saveTagRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/http.tagResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create a tag
+      tags:
+      - admin
+  /admin/tags/{id}:
+    delete:
+      parameters:
+      - description: tag id
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "204":
+          description: no content
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete a tag
+      tags:
+      - admin
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: credentials
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/http.loginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.tokenResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/http.errorResponse'
+      summary: Log in
+      tags:
+      - auth
+  /auth/logout:
+    post:
+      responses:
+        "204":
+          description: no content
+      summary: Log out
+      tags:
+      - auth
+  /auth/refresh:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: refresh token
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/http.refreshRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.tokenResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/http.errorResponse'
+      summary: Refresh tokens
+      tags:
+      - auth
+  /categories:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.categoryListResponse'
+      summary: List categories
+      tags:
+      - categories
+  /posts:
+    get:
+      parameters:
+      - description: page (1-based)
+        in: query
+        name: page
+        type: integer
+      - description: page size
+        in: query
+        name: pageSize
+        type: integer
+      - description: search query
+        in: query
+        name: q
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.listResponse'
+      summary: List published posts
+      tags:
+      - posts
+  /posts/{slug}:
+    get:
+      parameters:
+      - description: post slug
+        in: path
+        name: slug
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.postResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.errorResponse'
+      summary: Get a published post by slug
+      tags:
+      - posts
+  /posts/{slug}/comments:
+    get:
+      parameters:
+      - description: post slug
+        in: path
+        name: slug
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.commentListResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.errorResponse'
+      summary: List approved comments for a post
+      tags:
+      - comments
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: post slug
+        in: path
+        name: slug
+        required: true
+        type: string
+      - description: comment
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/http.createCommentRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/http.commentResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.errorResponse'
+      summary: Submit a comment on a post
+      tags:
+      - comments
+  /settings:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.settingsResponse'
+      summary: Get site settings
+      tags:
+      - settings
+  /tags:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.tagListResponse'
+      summary: List tags
+      tags:
+      - tags
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

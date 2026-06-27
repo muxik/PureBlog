@@ -1,0 +1,59 @@
+/* ──────────────────────────────────────────────────────────────
+   TYPOGRAPHY
+   Chinese-first. Serif for literati warmth; weight & size carry
+   hierarchy, never letter-spacing on CJK headings.
+   Base 18px, modular scale 1.25.
+   ────────────────────────────────────────────────────────────── */
+
+:root {
+  /* ── Font stacks ── */
+  --font-kai:    "LXGW WenKai Screen", "LXGW WenKai", "Kaiti SC", "STKaiti", serif;
+  --font-serif:  "Noto Serif SC", "Source Han Serif SC", "Songti SC", serif;
+  --font-latin:  "Newsreader", "EB Garamond", Georgia, serif;
+  --font-sans:   "Noto Sans SC", "Source Han Sans SC", system-ui, sans-serif;
+  --font-mono:   "JetBrains Mono", "Cascadia Code", "Sarasa Mono SC", monospace;
+
+  /* Body = warm kai for CJK; Latin serif first so digits/英文 pick it up. */
+  --font-body:   "Newsreader", "LXGW WenKai Screen", "LXGW WenKai", "Kaiti SC", Georgia, serif;
+  /* Headings = strong 宋体 for a kai-body / song-title contrast. */
+  --font-display: "Newsreader", "Noto Serif SC", "Source Han Serif SC", "Songti SC", Georgia, serif;
+
+  /* ── Type scale (base 18px · ratio 1.25) ── */
+  --text-xs:   0.778rem; /* 14px — captions */
+  --text-sm:   0.875rem; /* 15.75px — meta */
+  --text-base: 1rem;     /* 18px — body */
+  --text-h3:   1.25rem;  /* 22.5px */
+  --text-h2:   1.5rem;   /* 27px */
+  --text-h1:   2rem;     /* 36px */
+  --text-title:2.5rem;   /* 45px — article title */
+  --text-display: 3.25rem;
+
+  /* ── Line heights ── */
+  --leading-body:    1.85; /* CJK body — generous */
+  --leading-meta:    1.6;
+  --leading-heading: 1.3;
+  --leading-tight:   1.15;
+
+  /* ── Tracking ── */
+  --tracking-body:    0.02em; /* slight loosening aids CJK reading */
+  --tracking-heading: 0;      /* never track CJK headings */
+  --tracking-mono:    0;
+
+  /* ── Weights ── */
+  --weight-light:   300;
+  --weight-regular: 400;
+  --weight-medium:  500;
+  --weight-semibold:600;
+  --weight-bold:    700;
+  --weight-black:   900;
+
+  /* ── Reading measure ── */
+  --measure: 35em; /* ~33–38 漢字 / line */
+  --content-width: 680px;
+}
+
+html { font-size: 18px; }
+
+@media (max-width: 640px) {
+  html { font-size: 17px; } /* mobile body 17px */
+}

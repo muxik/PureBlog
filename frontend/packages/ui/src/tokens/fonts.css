@@ -1,0 +1,16 @@
+/* ──────────────────────────────────────────────────────────────
+   Webfonts — loaded from CDN.
+
+   Body CJK: "LXGW WenKai Screen" (霞鹜文楷·屏幕版) — an open-source
+   kai-style face, warm and calligraphic, screen-optimized. Loaded
+   from jsDelivr.
+   Headings CJK: "Noto Serif SC" (= Source Han Serif SC) — strong 宋体.
+   Latin/numerals: "Newsreader". Mono: "JetBrains Mono".
+
+   SUBSTITUTION NOTE: the original brief asked for Source Han Serif SC
+   body; per the owner's preference the body now uses 霞鹜文楷. Send
+   self-hosted binaries to replace either CDN if you prefer.
+   ────────────────────────────────────────────────────────────── */
+
+@import url('https://cdn.jsdelivr.net/npm/lxgw-wenkai-screen-webfont@1.7.0/style.css');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700;900&family=Noto+Sans+SC:wght@400;500;700&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,400&family=JetBrains+Mono:wght@400;500;700&display=swap');

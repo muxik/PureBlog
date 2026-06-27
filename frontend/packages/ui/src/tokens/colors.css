@@ -1,0 +1,76 @@
+/* ──────────────────────────────────────────────────────────────
+   COLOR — 黛 Dài
+   "文人纸张 / 黛色落款" — warm paper ground, near-black ink,
+   exactly one accent across the whole system: 黛青 (water-element
+   deep indigo). Chosen to favour 水/金 over the 火 red it replaces.
+   Base palette + semantic aliases. Light + dark.
+   ────────────────────────────────────────────────────────────── */
+
+:root {
+  /* ── Base palette (light) ── */
+  --paper:        #FAF8F2; /* 暖纸白 — body ground */
+  --paper-subtle: #F1ECE0; /* 卡片 / 代码块底 */
+  --ink:          #1F1D1A; /* 正文墨色 — never pure black */
+  --ink-2:        #6B655C; /* 次要文字 / 元信息 */
+  --ink-3:        #A39C8F; /* 占位 / 禁用 */
+  --dai:          #235A73; /* 黛青 — the ONLY accent (水) */
+  --dai-ink:      #FAF8F2; /* text on a 黛青 fill */
+  --line:         #E6E0D3; /* 分割线 / 边框 */
+
+  /* Back-compat alias (older cards reference --cinnabar) */
+  --cinnabar:     var(--dai);
+  --cinnabar-ink: var(--dai-ink);
+
+  /* ── Semantic aliases (consume these) ── */
+  --bg:          var(--paper);
+  --bg-subtle:   var(--paper-subtle);
+  --text-body:   var(--ink);
+  --text-muted:  var(--ink-2);
+  --text-faint:  var(--ink-3);
+  --accent:      var(--dai);
+  --accent-on:   var(--dai-ink);
+  --border:      var(--line);
+
+  color-scheme: light;
+}
+
+/* ── Dark mode — automatic (no manual override set) ── */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper:        #14161A;
+    --paper-subtle: #1D2026;
+    --ink:          #E4E7EA;
+    --ink-2:        #9AA0A6;
+    --ink-3:        #62686E;
+    --dai:          #79B0C9; /* 深色下黛青提亮 */
+    --dai-ink:      #14161A;
+    --line:         #2C3036;
+    color-scheme: dark;
+  }
+}
+
+/* ── Manual overrides — declared last so the toggle always wins ── */
+:root[data-theme="dark"] {
+  --paper:        #14161A;
+  --paper-subtle: #1D2026;
+  --ink:          #E4E7EA;
+  --ink-2:        #9AA0A6;
+  --ink-3:        #62686E;
+  --dai:          #79B0C9;
+  --dai-ink:      #14161A;
+  --line:         #2C3036;
+  color-scheme: dark;
+}
+
+/* Force light even on a dark-OS preference when the user picks 浅色 */
+:root[data-theme="light"] {
+  --paper:        #FAF8F2;
+  --paper-subtle: #F1ECE0;
+  --ink:          #1F1D1A;
+  --ink-2:        #6B655C;
+  --ink-3:        #A39C8F;
+  --dai:          #235A73;
+  --dai-ink:      #FAF8F2;
+  --line:         #E6E0D3;
+  color-scheme: light;
+}

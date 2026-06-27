@@ -1,0 +1,36 @@
+/* ──────────────────────────────────────────────────────────────
+   SPACING · RADIUS · BORDERS · MOTION
+   4px base scale. Near-square corners (paper feel). NO shadows.
+   ────────────────────────────────────────────────────────────── */
+
+:root {
+  /* ── Spacing scale (4px base) ── */
+  --space-1:   4px;
+  --space-2:   8px;
+  --space-3:   12px;
+  --space-4:   16px;
+  --space-6:   24px;
+  --space-8:   32px;
+  --space-12:  48px;
+  --space-16:  64px;
+  --space-24:  96px;
+  --space-32:  128px;
+
+  /* ── Radius — almost square ── */
+  --radius-sm: 2px; /* default — chips, inputs, code */
+  --radius-md: 4px; /* max — cards, images */
+  --radius-full: 999px;
+
+  /* ── Borders ── */
+  --border-hair: 1px solid var(--line);
+  --border-rule: 1px solid var(--line);
+  --rule-accent: 2px solid var(--accent); /* blockquote / seal lines */
+
+  /* ── Shadows: DISABLED by design. Use --line or --bg-subtle for depth. ── */
+  --shadow-none: none;
+
+  /* ── Motion — extremely restrained ── */
+  --ease: cubic-bezier(0.2, 0, 0.2, 1); /* @kind other */
+  --dur-fast:  150ms; /* @kind other */ /* link underline */
+  --dur-theme: 200ms; /* @kind other */ /* light/dark swap */
+}

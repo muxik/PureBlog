@@ -1,0 +1,72 @@
+name: pureblog
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-pureblog}
+      POSTGRES_DB: ${POSTGRES_DB:-pureblog}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-pureblog}']
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  backend:
+    build:
+      context: ../backend
+    environment:
+      POSTGRES_HOST: db
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-pureblog}
+      POSTGRES_DB: ${POSTGRES_DB:-pureblog}
+      JWT_SECRET: ${JWT_SECRET:-change-me-to-a-long-random-string}
+      ADMIN_USERNAME: ${ADMIN_USERNAME:-muxi}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-change-me}
+      CORS_ORIGINS: '${PUBLIC_ORIGIN:-http://localhost},http://admin.${PUBLIC_DOMAIN:-localhost}'
+    depends_on:
+      db:
+        condition: service_healthy
+
+  web:
+    build:
+      context: ../frontend
+      dockerfile: apps/web/Dockerfile
+    environment:
+      NUXT_PUBLIC_API_BASE: '${PUBLIC_ORIGIN:-http://localhost}/api/v1'
+      NUXT_API_BASE_SERVER: http://backend:8080/api/v1
+    depends_on:
+      - backend
+
+  admin:
+    build:
+      context: ../frontend
+      dockerfile: apps/admin/Dockerfile
+      args:
+        VITE_API_BASE: '${PUBLIC_ORIGIN:-http://localhost}/api/v1'
+    depends_on:
+      - backend
+
+  caddy:
+    image: caddy:2-alpine
+    environment:
+      PUBLIC_DOMAIN: ${PUBLIC_DOMAIN:-localhost}
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - web
+      - admin
+      - backend
+
+volumes:
+  pgdata:
+  caddy_data:
+  caddy_config:
