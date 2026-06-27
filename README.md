@@ -1,73 +1,124 @@
+<div align="center">
+
 # PureBlog v3
 
-> 一个克制的中文博客系统。**辨识度来自排版、留白与唯一的强调色（黛青 `#235A73`），而非装饰。**
+**一个克制的中文博客系统。**
 
-PureBlog v3 是一次**断代重写**:与 v2(PHP / ThinkPHP / MySQL)没有代码或数据上的延续,只继承项目名与产品形态(文章 / 多级分类 / 多级评论 / 写作后台)。
+辨识度来自排版、留白与唯一的强调色 —— 黛青 `#235A73`,而非装饰。
+
+[![Go](https://img.shields.io/badge/Go-1.22+-00ADD8?logo=go&logoColor=white)](https://go.dev)
+[![Gin](https://img.shields.io/badge/Gin-JSON_API-008ECF)](https://gin-gonic.com)
+[![Vue 3](https://img.shields.io/badge/Vue-3-42b883?logo=vuedotjs&logoColor=white)](https://vuejs.org)
+[![Nuxt 3](https://img.shields.io/badge/Nuxt-3_SSR-00DC82?logo=nuxtdotjs&logoColor=white)](https://nuxt.com)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?logo=postgresql&logoColor=white)](https://www.postgresql.org)
+[![License](https://img.shields.io/badge/License-Apache_2.0-D22128)](./LICENSE)
+
+</div>
+
+---
+
+## 这是什么
+
+PureBlog 是一个**为中文写作而生**的个人博客系统:正文用 [霞鹜文楷](https://github.com/lxgw/LxgwWenKai),标题用宋体,35em 的舒适行宽,中英之间留出「盘古之白」。没有花哨的卡片、阴影和渐变 —— 把注意力还给文字本身。
+
+> v3 是一次**断代重写**。v2 是 PHP / ThinkPHP / MySQL;v3 只继承项目名与产品形态,代码与数据完全重来。
+
+## 为什么值得一看
+
+不只是又一个博客,它是一份**现代全栈工程的范本**:
+
+- 🏛️ **干净的后端架构** —— Go 六边形分层(`domain / service / store / http`),依赖一律指向内层领域。`domain` 既不认识 GORM 也不认识 Gin,换 ORM、加 GraphQL 都不动核心。
+- 🔗 **前后端类型贯通** —— 后端用 swaggo 产出 OpenAPI,前端由它**自动生成 TypeScript 类型**。接口改了,前端编译期就报错,告别手抄 DTO。
+- ⚡ **SEO 友好的 SSR 前台** —— Nuxt 3 服务端渲染,每篇文章一个真 URL、一份真 HTML;后台是独立的 Vue SPA,各取所长。
+- ✍️ **所见即所发** —— Markdown 由后端 goldmark 渲染并净化,后台 [Vditor](https://b3log.org/vditor/) 预览调用**同一个**渲染端点,预览和发布逐字一致。
+- 📦 **一条命令起全栈** —— `docker compose up` 拉起 Postgres + Go + Nuxt + 后台 + Caddy(自动 HTTPS)。
+- 🈶 **中文优先** —— 内置公历↔农历换算、CJK 排版令牌;字体自托管(规划中含子集化)。
+
+## 设计系统 · 黛 Dài
+
+| | |
+|---|---|
+| **底色** | 暖纸 `#FAF8F2`,墨色三级 |
+| **强调色** | 仅一种 —— 黛青 `#235A73`(深色模式提亮为 `#79B0C9`) |
+| **字体** | 正文 霞鹜文楷 · 标题 Noto Serif SC · 拉丁 Newsreader · 等宽 JetBrains Mono |
+| **排版** | 35em 行宽 · 行高 1.85 · 盘古之白 · 避头尾 · 无阴影无渐变 |
 
 ## 技术栈
 
 | 层 | 选型 |
 |---|---|
-| 后端 | **Go + Gin**(JSON API)· **GORM** · **goose** 迁移 · **PostgreSQL** |
+| 后端 | **Go + Gin** · **GORM** · **goose** 迁移 · **PostgreSQL** |
 | 渲染 | Markdown → HTML 由 **goldmark + bluemonday** 服务端完成 |
 | 鉴权 | **JWT**(access + refresh 轮换)· argon2 |
-| 前台 | **Nuxt 3**(SSR,SEO/RSS/sitemap) |
+| 前台 | **Nuxt 3**(SSR) |
 | 后台 | **Vue 3 + Vite** SPA · 编辑器 **Vditor** |
-| 设计 | 黛 Dài 设计系统(`frontend/packages/ui`) |
-| 部署 | **docker-compose** + **Caddy**(自动 HTTPS) |
+| 工程 | pnpm 工作区 · OpenAPI → TS 代码生成 · Docker Compose + Caddy |
 
-## 目录结构
+## 功能
 
-```
-PureBlog/
-├─ backend/      Go · Gin · GORM(六边形:domain/service/store/http/auth/render/config)
-├─ frontend/     pnpm 工作区
-│  ├─ apps/web        Nuxt 3(前台,SSR)
-│  ├─ apps/admin      Vue 3 + Vite(后台 SPA)
-│  └─ packages/       ui(黛设计) · api-types(由后端 OpenAPI 生成)
-├─ deploy/       docker-compose · Caddyfile · .env.example
-└─ docs/
-```
+**已实现**
+- ✅ 文章:增删改查、草稿/发布、置顶、浏览计数、slug 自动生成
+- ✅ 多级分类(树形)、标签
+- ✅ 评论:访客提交(默认待审)、后台审核、多级回复
+- ✅ 站点设置(站名 / 简介 / 社交 / 关于页 / 默认日期格式)
+- ✅ JWT 鉴权后台、Markdown 渲染与净化、实时预览端点
+- ✅ Nuxt SSR 前台(文章列表 + 详情)、Vue 后台(登录 / 管理 / 写作)
+- ✅ 自动生成的 OpenAPI 文档与前端类型
 
-## 本地开发
+**路线图**
+- 🚧 文章 ↔ 分类 / 标签 关联;分类 / 标签 / 评论的前台与后台界面
+- 🚧 农历显示、深浅色切换、无限滚动、站内搜索(`pg_trgm` → MeiliSearch)
+- 🚧 RSS / sitemap / Open Graph;字体自托管 + 子集化
+- 🚧 GitHub Actions CI;界面截图
 
-前置:Go ≥ 1.22 · Node ≥ 20 · pnpm ≥ 9 · Docker。
+## 快速开始
+
+前置:Go ≥ 1.22 · Node ≥ 20 · pnpm ≥ 9 · PostgreSQL(或 Docker)。
+
+### 本地开发
 
 ```bash
-# 1) 起一个本地 Postgres(或用你自己的)
-docker run -d --name pureblog-pg -e POSTGRES_PASSWORD=pureblog \
-  -e POSTGRES_DB=pureblog -p 5432:5432 postgres:16-alpine
-
-# 2) 后端
+# 1) 后端(自动迁移并按 .env 播种管理员)
 cd backend
-cp .env.example .env          # 按需修改;首启会用 ADMIN_USERNAME/ADMIN_PASSWORD 建管理员
-go run ./cmd/pureblog         # 启动时自动跑 goose 迁移并播种管理员
+cp .env.example .env        # 改成你的数据库连接
+go run ./cmd/pureblog        # API 默认 :8080
 
-# 3) 前端
+# 2) 前端
 cd ../frontend
 pnpm install
-pnpm dev                      # 同时起 web(Nuxt) 与 admin(Vite)
+pnpm dev                     # 前台 :3000 · 后台 :5173
 ```
 
-- 前台:<http://localhost:3000>
-- 后台:<http://localhost:5173>(默认账号见 `backend/.env.example`)
-- API:<http://localhost:8080/api/v1>
-
-## 一键起全栈
+### 一条命令起全栈
 
 ```bash
 cd deploy
 cp .env.example .env
-docker compose up -d
+docker compose up -d         # Postgres + Go + Nuxt + 后台 + Caddy
 ```
 
-## 生成 API 类型 / OpenAPI
+### 前后端类型同步
 
 ```bash
-cd backend && make swag       # 生成 docs/swagger.json
-cd ../frontend && pnpm gen:api  # swagger.json → packages/api-types
+cd backend && make swag        # 生成 docs/swagger.json
+cd ../frontend && pnpm gen:api  # swagger → packages/api-types
 ```
+
+## 项目结构
+
+```
+PureBlog/
+├─ backend/        Go · Gin · GORM(六边形:domain/service/store/http/auth/render/config)
+├─ frontend/       pnpm 工作区
+│  ├─ apps/web         Nuxt 3 前台(SSR)
+│  ├─ apps/admin       Vue 3 + Vite 后台(SPA)
+│  └─ packages/        ui(黛 设计系统) · api-types(由 OpenAPI 生成)
+├─ deploy/         docker-compose · Caddyfile
+└─ docs/           架构说明
+```
+
+详见 [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md)。
 
 ## 许可
 
-[Apache-2.0](./LICENSE)。
+[Apache-2.0](./LICENSE) © muxik
