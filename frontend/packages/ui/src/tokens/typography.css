@@ -7,16 +7,20 @@
 
 :root {
   /* ── Font stacks ── */
+  /* Self-hosted (see tokens/fonts.css): the variable Newsreader is exposed by
+     @fontsource as "Newsreader Variable"; the plain "Newsreader" name is kept
+     as a fallback for locally-installed copies. */
   --font-kai:    "LXGW WenKai Screen", "LXGW WenKai", "Kaiti SC", "STKaiti", serif;
   --font-serif:  "Noto Serif SC", "Source Han Serif SC", "Songti SC", serif;
-  --font-latin:  "Newsreader", "EB Garamond", Georgia, serif;
-  --font-sans:   "Noto Sans SC", "Source Han Sans SC", system-ui, sans-serif;
+  --font-latin:  "Newsreader Variable", "Newsreader", "EB Garamond", Georgia, serif;
+  /* Noto Sans SC is not self-hosted (unused as a webfont) — system sans only. */
+  --font-sans:   "Source Han Sans SC", system-ui, sans-serif;
   --font-mono:   "JetBrains Mono", "Cascadia Code", "Sarasa Mono SC", monospace;
 
   /* Body = warm kai for CJK; Latin serif first so digits/英文 pick it up. */
-  --font-body:   "Newsreader", "LXGW WenKai Screen", "LXGW WenKai", "Kaiti SC", Georgia, serif;
+  --font-body:   "Newsreader Variable", "Newsreader", "LXGW WenKai Screen", "LXGW WenKai", "Kaiti SC", Georgia, serif;
   /* Headings = strong 宋体 for a kai-body / song-title contrast. */
-  --font-display: "Newsreader", "Noto Serif SC", "Source Han Serif SC", "Songti SC", Georgia, serif;
+  --font-display: "Newsreader Variable", "Newsreader", "Noto Serif SC", "Source Han Serif SC", "Songti SC", Georgia, serif;
 
   /* ── Type scale (base 18px · ratio 1.25) ── */
   --text-xs:   0.778rem; /* 14px — captions */

@@ -1,16 +1,41 @@
 /* ──────────────────────────────────────────────────────────────
-   Webfonts — loaded from CDN.
+   Webfonts — self-hosted via npm (@fontsource / lxgw-wenkai-screen-webfont).
 
-   Body CJK: "LXGW WenKai Screen" (霞鹜文楷·屏幕版) — an open-source
-   kai-style face, warm and calligraphic, screen-optimized. Loaded
-   from jsDelivr.
-   Headings CJK: "Noto Serif SC" (= Source Han Serif SC) — strong 宋体.
-   Latin/numerals: "Newsreader". Mono: "JetBrains Mono".
+   No third-party CDN: every face below is bundled by Vite from
+   node_modules and fingerprinted into the app's own asset output, so
+   there is no render-blocking request to fonts.googleapis.com or
+   jsDelivr and no FOUC beyond the first cold load.
 
-   SUBSTITUTION NOTE: the original brief asked for Source Han Serif SC
-   body; per the owner's preference the body now uses 霞鹜文楷. Send
-   self-hosted binaries to replace either CDN if you prefer.
+   Each package ships the face pre-sliced by unicode-range, so the
+   browser only downloads the slices whose glyphs actually appear on
+   the page — i.e. CJK "subsetting" without a build-time pass over the
+   (dynamic) post content. All faces use font-display: swap.
+
+     Body CJK   "LXGW WenKai Screen" (霞鹜文楷·屏幕版) — warm kai face.
+                Only the non-GB "screen" variant is imported (the CDN
+                bundle shipped four; the others are GB/rounded forms).
+     Heading CJK "Noto Serif SC" — strong 宋体; weight 700 only (every
+                heading in the design renders --font-display/serif at 700,
+                so the other weights would ship ~4× the CJK slices for faces
+                the browser never requests).
+     Latin/num  "Newsreader Variable" — variable wght, normal + italic.
+     Mono       "JetBrains Mono" — 400/500/700.
+
+   Noto Sans SC is intentionally NOT loaded: --font-sans is unused as a
+   webfont and falls back to the system sans stack.
    ────────────────────────────────────────────────────────────── */
 
-@import url('https://cdn.jsdelivr.net/npm/lxgw-wenkai-screen-webfont@1.7.0/style.css');
-@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700;900&family=Noto+Sans+SC:wght@400;500;700&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,400&family=JetBrains+Mono:wght@400;500;700&display=swap');
+/* Latin / numerals — Newsreader (variable: weight axis, normal + italic). */
+@import '@fontsource-variable/newsreader/index.css';
+@import '@fontsource-variable/newsreader/wght-italic.css';
+
+/* Headings CJK — Noto Serif SC (only weight 700 is ever applied). */
+@import '@fontsource/noto-serif-sc/700.css';
+
+/* Mono — JetBrains Mono. */
+@import '@fontsource/jetbrains-mono/400.css';
+@import '@fontsource/jetbrains-mono/500.css';
+@import '@fontsource/jetbrains-mono/700.css';
+
+/* Body CJK — LXGW WenKai Screen (non-GB screen variant only). */
+@import 'lxgw-wenkai-screen-webfont/lxgwwenkaiscreen.css';
