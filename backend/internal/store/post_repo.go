@@ -102,8 +102,14 @@ func (r *PostRepo) List(ctx context.Context, f domain.PostListFilter) ([]*domain
 		q = q.Where("posts.status = ?", string(f.Status))
 	}
 	if s := strings.TrimSpace(f.Query); s != "" {
+		// Substring match across title, summary, and body. The leading-wildcard
+		// ILIKE is index-backed by the pg_trgm GIN indexes (see migration 00003),
+		// so widening to content_md does not force a sequential scan.
 		like := "%" + s + "%"
-		q = q.Where("posts.title ILIKE ? OR posts.summary ILIKE ?", like, like)
+		q = q.Where(
+			"posts.title ILIKE ? OR posts.summary ILIKE ? OR posts.content_md ILIKE ?",
+			like, like, like,
+		)
 	}
 	if ts := strings.TrimSpace(f.TagSlug); ts != "" {
 		// Use EXISTS to avoid duplicate rows from the many-to-many join table.

@@ -185,28 +185,30 @@ func TestPostRepo_ListFilters(t *testing.T) {
 	goTag := seedTag(t, db, "Go", "go")
 	seedTag(t, db, "Vue", "vue")
 
-	mustCreate := func(slug, title, summary string, status domain.PostStatus, pinned bool, tags []int64) {
+	mustCreate := func(slug, title, summary, contentMD string, status domain.PostStatus, pinned bool, tags []int64) {
 		t.Helper()
 		ts := time.Now()
 		p := &domain.Post{
-			Slug: slug, Title: title, Summary: summary, Status: status,
+			Slug: slug, Title: title, Summary: summary, ContentMD: contentMD, Status: status,
 			Pinned: pinned, AuthorID: author, PublishedAt: &ts, TagIDs: tags,
 		}
 		if err := repo.Create(ctx, p); err != nil {
 			t.Fatalf("create %s: %v", slug, err)
 		}
 	}
-	mustCreate("a-published", "Alpha", "about go", domain.StatusPublished, false, []int64{goTag})
-	mustCreate("b-pinned", "Bravo", "pinned one", domain.StatusPublished, true, nil)
-	mustCreate("c-draft", "Charlie", "secret", domain.StatusDraft, false, nil)
+	mustCreate("a-published", "Alpha", "about go", "", domain.StatusPublished, false, []int64{goTag})
+	mustCreate("b-pinned", "Bravo", "pinned one", "", domain.StatusPublished, true, nil)
+	mustCreate("c-draft", "Charlie", "secret", "", domain.StatusDraft, false, nil)
+	// Body-only term: appears in neither title nor summary, only content_md.
+	mustCreate("d-body", "Delta", "no keyword here", "deep in the **xyzzy** paragraph", domain.StatusPublished, false, nil)
 
-	// Status filter: only the two published posts.
+	// Status filter: the three published posts (a, b, d); c is a draft.
 	items, total, err := repo.List(ctx, domain.PostListFilter{Status: domain.StatusPublished, Page: 1, PageSize: 10})
 	if err != nil {
 		t.Fatalf("list published: %v", err)
 	}
-	if total != 2 || len(items) != 2 {
-		t.Fatalf("expected 2 published, got total=%d len=%d", total, len(items))
+	if total != 3 || len(items) != 3 {
+		t.Fatalf("expected 3 published, got total=%d len=%d", total, len(items))
 	}
 	// Pinned post sorts first.
 	if items[0].Slug != "b-pinned" {
@@ -222,6 +224,15 @@ func TestPostRepo_ListFilters(t *testing.T) {
 		t.Fatalf("query 'go' should match one post, got total=%d items=%+v", total, items)
 	}
 
+	// Query filter also reaches the post body (content_md), not just title/summary.
+	items, total, err = repo.List(ctx, domain.PostListFilter{Query: "xyzzy", Page: 1, PageSize: 10})
+	if err != nil {
+		t.Fatalf("list body query: %v", err)
+	}
+	if total != 1 || items[0].Slug != "d-body" {
+		t.Fatalf("query 'xyzzy' should match the body-only post, got total=%d items=%+v", total, items)
+	}
+
 	// Tag filter via the EXISTS subquery.
 	items, total, err = repo.List(ctx, domain.PostListFilter{TagSlug: "go", Page: 1, PageSize: 10})
 	if err != nil {
@@ -231,13 +242,13 @@ func TestPostRepo_ListFilters(t *testing.T) {
 		t.Fatalf("tag 'go' should match one post, got total=%d items=%+v", total, items)
 	}
 
-	// No filter returns all three.
+	// No filter returns all four.
 	_, total, err = repo.List(ctx, domain.PostListFilter{Page: 1, PageSize: 10})
 	if err != nil {
 		t.Fatalf("list all: %v", err)
 	}
-	if total != 3 {
-		t.Fatalf("expected 3 total, got %d", total)
+	if total != 4 {
+		t.Fatalf("expected 4 total, got %d", total)
 	}
 }
 
