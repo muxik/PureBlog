@@ -758,6 +758,18 @@
                         "description": "search query",
                         "name": "q",
                         "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "filter by category slug",
+                        "name": "categorySlug",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "filter by tag slug",
+                        "name": "tagSlug",
+                        "in": "query"
                     }
                 ],
                 "responses": {

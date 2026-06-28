@@ -738,6 +738,14 @@ paths:
         in: query
         name: q
         type: string
+      - description: filter by category slug
+        in: query
+        name: categorySlug
+        type: string
+      - description: filter by tag slug
+        in: query
+        name: tagSlug
+        type: string
       produces:
       - application/json
       responses:

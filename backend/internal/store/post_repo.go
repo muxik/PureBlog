@@ -100,11 +100,22 @@ func (r *PostRepo) GetBySlug(ctx context.Context, slug string) (*domain.Post, er
 func (r *PostRepo) List(ctx context.Context, f domain.PostListFilter) ([]*domain.Post, int64, error) {
 	q := r.db.WithContext(ctx).Model(&PostModel{})
 	if f.Status != "" {
-		q = q.Where("status = ?", string(f.Status))
+		q = q.Where("posts.status = ?", string(f.Status))
 	}
 	if s := strings.TrimSpace(f.Query); s != "" {
 		like := "%" + s + "%"
-		q = q.Where("title ILIKE ? OR summary ILIKE ?", like, like)
+		q = q.Where("posts.title ILIKE ? OR posts.summary ILIKE ?", like, like)
+	}
+	if cs := strings.TrimSpace(f.CategorySlug); cs != "" {
+		q = q.Joins("JOIN categories ON categories.id = posts.category_id").
+			Where("categories.slug = ?", cs)
+	}
+	if ts := strings.TrimSpace(f.TagSlug); ts != "" {
+		// Use EXISTS to avoid duplicate rows from the many-to-many join table.
+		q = q.Where(
+			"EXISTS (SELECT 1 FROM post_tags JOIN tags ON tags.id = post_tags.tag_id WHERE post_tags.post_id = posts.id AND tags.slug = ?)",
+			ts,
+		)
 	}
 
 	var total int64
@@ -123,7 +134,7 @@ func (r *PostRepo) List(ctx context.Context, f domain.PostListFilter) ([]*domain
 
 	var models []PostModel
 	if err := q.
-		Order("pinned DESC, COALESCE(published_at, created_at) DESC").
+		Order("posts.pinned DESC, COALESCE(posts.published_at, posts.created_at) DESC").
 		Limit(size).
 		Offset((page - 1) * size).
 		Find(&models).Error; err != nil {

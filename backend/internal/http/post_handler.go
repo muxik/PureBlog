@@ -15,17 +15,21 @@ import (
 //	@Summary	List published posts
 //	@Tags		posts
 //	@Produce	json
-//	@Param		page		query	int		false	"page (1-based)"
-//	@Param		pageSize	query	int		false	"page size"
-//	@Param		q			query	string	false	"search query"
+//	@Param		page			query	int		false	"page (1-based)"
+//	@Param		pageSize		query	int		false	"page size"
+//	@Param		q				query	string	false	"search query"
+//	@Param		categorySlug	query	string	false	"filter by category slug"
+//	@Param		tagSlug			query	string	false	"filter by tag slug"
 //	@Success	200	{object}	listResponse
 //	@Router		/posts [get]
 func (s *Server) listPosts(c *gin.Context) {
 	f := domain.PostListFilter{
-		Status:   domain.StatusPublished,
-		Query:    c.Query("q"),
-		Page:     atoiDefault(c.Query("page"), 1),
-		PageSize: atoiDefault(c.Query("pageSize"), 10),
+		Status:       domain.StatusPublished,
+		Query:        c.Query("q"),
+		CategorySlug: c.Query("categorySlug"),
+		TagSlug:      c.Query("tagSlug"),
+		Page:         atoiDefault(c.Query("page"), 1),
+		PageSize:     atoiDefault(c.Query("pageSize"), 10),
 	}
 	items, total, err := s.posts.List(c.Request.Context(), f)
 	if err != nil {

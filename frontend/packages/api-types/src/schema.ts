@@ -814,6 +814,10 @@ export interface paths {
                     pageSize?: number;
                     /** @description search query */
                     q?: string;
+                    /** @description filter by category slug */
+                    categorySlug?: string;
+                    /** @description filter by tag slug */
+                    tagSlug?: string;
                 };
                 header?: never;
                 path?: never;
