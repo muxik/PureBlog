@@ -4,129 +4,6 @@
  */
 
 export interface paths {
-    "/admin/categories": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Create a category */
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody: components["requestBodies"]["http.saveCategoryRequest"];
-            responses: {
-                /** @description Created */
-                201: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["http.categoryResponse"];
-                    };
-                };
-                /** @description Bad Request */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["http.errorResponse"];
-                    };
-                };
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/admin/categories/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        /** Update a category */
-        put: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    /** @description category id */
-                    id: number;
-                };
-                cookie?: never;
-            };
-            requestBody: components["requestBodies"]["http.saveCategoryRequest"];
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["http.categoryResponse"];
-                    };
-                };
-                /** @description Not Found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["http.errorResponse"];
-                    };
-                };
-            };
-        };
-        post?: never;
-        /** Delete a category */
-        delete: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    /** @description category id */
-                    id: number;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description no content */
-                204: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Not Found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "*/*": components["schemas"]["http.errorResponse"];
-                    };
-                };
-            };
-        };
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/admin/comments": {
         parameters: {
             query?: never;
@@ -761,42 +638,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/categories": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** List categories */
-        get: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["http.categoryListResponse"];
-                    };
-                };
-            };
-        };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/posts": {
         parameters: {
             query?: never;
@@ -814,8 +655,6 @@ export interface paths {
                     pageSize?: number;
                     /** @description search query */
                     q?: string;
-                    /** @description filter by category slug */
-                    categorySlug?: string;
                     /** @description filter by tag slug */
                     tagSlug?: string;
                 };
@@ -1062,17 +901,6 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
-        "http.categoryListResponse": {
-            items?: components["schemas"]["http.categoryResponse"][];
-        };
-        "http.categoryResponse": {
-            description?: string;
-            id?: number;
-            name?: string;
-            parentId?: number;
-            slug?: string;
-            sort?: number;
-        };
         "http.commentListResponse": {
             items?: components["schemas"]["http.commentResponse"][];
         };
@@ -1109,7 +937,6 @@ export interface components {
             status: "approved" | "pending";
         };
         "http.postResponse": {
-            categoryId?: number;
             contentHtml?: string;
             contentMd?: string;
             coverUrl?: string;
@@ -1134,15 +961,7 @@ export interface components {
         "http.renderResponse": {
             html?: string;
         };
-        "http.saveCategoryRequest": {
-            description?: string;
-            name: string;
-            parentId?: number;
-            slug?: string;
-            sort?: number;
-        };
         "http.savePostRequest": {
-            categoryId?: number;
             contentMd?: string;
             coverUrl?: string;
             pinned?: boolean;
@@ -1203,12 +1022,6 @@ export interface components {
         "http.savePostRequest": {
             content: {
                 "application/json": components["schemas"]["http.savePostRequest"];
-            };
-        };
-        /** @description category */
-        "http.saveCategoryRequest": {
-            content: {
-                "application/json": components["schemas"]["http.saveCategoryRequest"];
             };
         };
     };

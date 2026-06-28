@@ -35,7 +35,6 @@ type Post struct {
 	ContentMD   string
 	ContentHTML string
 	CoverURL    string
-	CategoryID  *int64
 	Status      PostStatus
 	Pinned      bool
 	AuthorID    int64
@@ -51,12 +50,11 @@ type Post struct {
 
 // PostListFilter parameterises a paginated post listing.
 type PostListFilter struct {
-	Status       PostStatus // empty = any status
-	Query        string     // free-text search over title/summary
-	CategorySlug string     // filter to posts whose category has this slug
-	TagSlug      string     // filter to posts that have a tag with this slug
-	Page         int        // 1-based
-	PageSize     int
+	Status   PostStatus // empty = any status
+	Query    string     // free-text search over title/summary
+	TagSlug  string     // filter to posts that have a tag with this slug
+	Page     int        // 1-based
+	PageSize int
 }
 
 // PostRepository is the persistence port for posts, defined where it is

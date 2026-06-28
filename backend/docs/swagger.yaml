@@ -1,27 +1,5 @@
 basePath: /api/v1
 definitions:
-  http.categoryListResponse:
-    properties:
-      items:
-        items:
-          $ref: '#/definitions/http.categoryResponse'
-        type: array
-    type: object
-  http.categoryResponse:
-    properties:
-      description:
-        type: string
-      id:
-        type: integer
-      name:
-        type: string
-      parentId:
-        type: integer
-      slug:
-        type: string
-      sort:
-        type: integer
-    type: object
   http.commentListResponse:
     properties:
       items:
@@ -100,8 +78,6 @@ definitions:
     type: object
   http.postResponse:
     properties:
-      categoryId:
-        type: integer
       contentHtml:
         type: string
       contentMd:
@@ -150,25 +126,8 @@ definitions:
       html:
         type: string
     type: object
-  http.saveCategoryRequest:
-    properties:
-      description:
-        type: string
-      name:
-        type: string
-      parentId:
-        type: integer
-      slug:
-        type: string
-      sort:
-        type: integer
-    required:
-    - name
-    type: object
   http.savePostRequest:
     properties:
-      categoryId:
-        type: integer
       contentMd:
         type: string
       coverUrl:
@@ -275,84 +234,6 @@ info:
   title: PureBlog API
   version: "3.0"
 paths:
-  /admin/categories:
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: category
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/http.saveCategoryRequest'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/http.categoryResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/http.errorResponse'
-      security:
-      - BearerAuth: []
-      summary: Create a category
-      tags:
-      - admin
-  /admin/categories/{id}:
-    delete:
-      parameters:
-      - description: category id
-        in: path
-        name: id
-        required: true
-        type: integer
-      responses:
-        "204":
-          description: no content
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/http.errorResponse'
-      security:
-      - BearerAuth: []
-      summary: Delete a category
-      tags:
-      - admin
-    put:
-      consumes:
-      - application/json
-      parameters:
-      - description: category id
-        in: path
-        name: id
-        required: true
-        type: integer
-      - description: category
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/http.saveCategoryRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/http.categoryResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/http.errorResponse'
-      security:
-      - BearerAuth: []
-      summary: Update a category
-      tags:
-      - admin
   /admin/comments:
     get:
       parameters:
@@ -711,18 +592,6 @@ paths:
       summary: Refresh tokens
       tags:
       - auth
-  /categories:
-    get:
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/http.categoryListResponse'
-      summary: List categories
-      tags:
-      - categories
   /posts:
     get:
       parameters:
@@ -737,10 +606,6 @@ paths:
       - description: search query
         in: query
         name: q
-        type: string
-      - description: filter by category slug
-        in: query
-        name: categorySlug
         type: string
       - description: filter by tag slug
         in: query

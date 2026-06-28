@@ -42,7 +42,6 @@ func (r *PostRepo) Update(ctx context.Context, p *domain.Post) error {
 			"content_md":   p.ContentMD,
 			"content_html": p.ContentHTML,
 			"cover_url":    p.CoverURL,
-			"category_id":  p.CategoryID,
 			"status":       string(p.Status),
 			"pinned":       p.Pinned,
 			"published_at": p.PublishedAt,
@@ -105,10 +104,6 @@ func (r *PostRepo) List(ctx context.Context, f domain.PostListFilter) ([]*domain
 	if s := strings.TrimSpace(f.Query); s != "" {
 		like := "%" + s + "%"
 		q = q.Where("posts.title ILIKE ? OR posts.summary ILIKE ?", like, like)
-	}
-	if cs := strings.TrimSpace(f.CategorySlug); cs != "" {
-		q = q.Joins("JOIN categories ON categories.id = posts.category_id").
-			Where("categories.slug = ?", cs)
 	}
 	if ts := strings.TrimSpace(f.TagSlug); ts != "" {
 		// Use EXISTS to avoid duplicate rows from the many-to-many join table.

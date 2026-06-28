@@ -15,7 +15,6 @@ type PostModel struct {
 	ContentMD   string     `gorm:"column:content_md"`
 	ContentHTML string     `gorm:"column:content_html"`
 	CoverURL    string     `gorm:"column:cover_url"`
-	CategoryID  *int64     `gorm:"column:category_id;index"`
 	Status      string     `gorm:"column:status;index;size:20"`
 	Pinned      bool       `gorm:"column:pinned"`
 	AuthorID    int64      `gorm:"column:author_id;index"`
@@ -46,7 +45,6 @@ func toDomainPost(m *PostModel) *domain.Post {
 		ContentMD:   m.ContentMD,
 		ContentHTML: m.ContentHTML,
 		CoverURL:    m.CoverURL,
-		CategoryID:  m.CategoryID,
 		Status:      domain.PostStatus(m.Status),
 		Pinned:      m.Pinned,
 		AuthorID:    m.AuthorID,
@@ -66,7 +64,6 @@ func fromDomainPost(p *domain.Post) *PostModel {
 		ContentMD:   p.ContentMD,
 		ContentHTML: p.ContentHTML,
 		CoverURL:    p.CoverURL,
-		CategoryID:  p.CategoryID,
 		Status:      string(p.Status),
 		Pinned:      p.Pinned,
 		AuthorID:    p.AuthorID,

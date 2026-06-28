@@ -18,18 +18,16 @@ import (
 //	@Param		page			query	int		false	"page (1-based)"
 //	@Param		pageSize		query	int		false	"page size"
 //	@Param		q				query	string	false	"search query"
-//	@Param		categorySlug	query	string	false	"filter by category slug"
 //	@Param		tagSlug			query	string	false	"filter by tag slug"
 //	@Success	200	{object}	listResponse
 //	@Router		/posts [get]
 func (s *Server) listPosts(c *gin.Context) {
 	f := domain.PostListFilter{
-		Status:       domain.StatusPublished,
-		Query:        c.Query("q"),
-		CategorySlug: c.Query("categorySlug"),
-		TagSlug:      c.Query("tagSlug"),
-		Page:         atoiDefault(c.Query("page"), 1),
-		PageSize:     atoiDefault(c.Query("pageSize"), 10),
+		Status:   domain.StatusPublished,
+		Query:    c.Query("q"),
+		TagSlug:  c.Query("tagSlug"),
+		Page:     atoiDefault(c.Query("page"), 1),
+		PageSize: atoiDefault(c.Query("pageSize"), 10),
 	}
 	items, total, err := s.posts.List(c.Request.Context(), f)
 	if err != nil {
@@ -212,15 +210,14 @@ func (s *Server) renderMarkdown(c *gin.Context) {
 
 func (s *Server) toInput(req savePostRequest, authorID int64) service.SavePostInput {
 	return service.SavePostInput{
-		Title:      req.Title,
-		Slug:       req.Slug,
-		Summary:    req.Summary,
-		ContentMD:  req.ContentMD,
-		CoverURL:   req.CoverURL,
-		Status:     domain.PostStatus(req.Status),
-		Pinned:     req.Pinned,
-		AuthorID:   authorID,
-		CategoryID: req.CategoryID,
-		TagIDs:     req.TagIDs,
+		Title:     req.Title,
+		Slug:      req.Slug,
+		Summary:   req.Summary,
+		ContentMD: req.ContentMD,
+		CoverURL:  req.CoverURL,
+		Status:    domain.PostStatus(req.Status),
+		Pinned:    req.Pinned,
+		AuthorID:  authorID,
+		TagIDs:    req.TagIDs,
 	}
 }

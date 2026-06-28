@@ -25,15 +25,14 @@ type renderRequest struct {
 }
 
 type savePostRequest struct {
-	Title      string  `json:"title" binding:"required"`
-	Slug       string  `json:"slug"`
-	Summary    string  `json:"summary"`
-	ContentMD  string  `json:"contentMd"`
-	CoverURL   string  `json:"coverUrl"`
-	Status     string  `json:"status"`
-	Pinned     bool    `json:"pinned"`
-	CategoryID *int64  `json:"categoryId"`
-	TagIDs     []int64 `json:"tagIds"`
+	Title     string  `json:"title" binding:"required"`
+	Slug      string  `json:"slug"`
+	Summary   string  `json:"summary"`
+	ContentMD string  `json:"contentMd"`
+	CoverURL  string  `json:"coverUrl"`
+	Status    string  `json:"status"`
+	Pinned    bool    `json:"pinned"`
+	TagIDs    []int64 `json:"tagIds"`
 }
 
 // ---- responses ----
@@ -63,7 +62,6 @@ type postResponse struct {
 	ContentMD   string        `json:"contentMd,omitempty"`
 	ContentHTML string        `json:"contentHtml,omitempty"`
 	CoverURL    string        `json:"coverUrl"`
-	CategoryID  *int64        `json:"categoryId"`
 	Status      string        `json:"status"`
 	Pinned      bool          `json:"pinned"`
 	ViewCount   int64         `json:"viewCount"`
@@ -97,7 +95,6 @@ func toPostResponse(p *domain.Post, includeContent bool) postResponse {
 		Title:       p.Title,
 		Summary:     p.Summary,
 		CoverURL:    p.CoverURL,
-		CategoryID:  p.CategoryID,
 		Status:      string(p.Status),
 		Pinned:      p.Pinned,
 		ViewCount:   p.ViewCount,

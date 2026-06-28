@@ -46,7 +46,6 @@ func main() {
 	postRepo := store.NewPostRepo(db)
 	postSvc := service.NewPostService(postRepo, rdr)
 	authSvc := service.NewAuthService(store.NewUserRepo(db), tokens)
-	categorySvc := service.NewCategoryService(store.NewCategoryRepo(db))
 	tagSvc := service.NewTagService(store.NewTagRepo(db))
 	commentSvc := service.NewCommentService(store.NewCommentRepo(db), postRepo)
 	settingsSvc := service.NewSettingsService(store.NewSettingsRepo(db))
@@ -57,7 +56,7 @@ func main() {
 		fatal("seed admin", err)
 	}
 
-	srv := httpapi.NewServer(cfg, postSvc, authSvc, tokens, categorySvc, tagSvc, commentSvc, settingsSvc)
+	srv := httpapi.NewServer(cfg, postSvc, authSvc, tokens, tagSvc, commentSvc, settingsSvc)
 	slog.Info("PureBlog API listening", "addr", ":"+cfg.Port)
 	if err := srv.Router().Run(":" + cfg.Port); err != nil {
 		fatal("serve", err)

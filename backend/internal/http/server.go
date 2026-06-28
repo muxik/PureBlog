@@ -15,26 +15,24 @@ import (
 // Server wires the HTTP handlers to the application services.
 type Server struct {
 	cfg        config.Config
-	posts      *service.PostService
-	authS      *service.AuthService
-	tokens     *auth.TokenManager
-	categories *service.CategoryService
-	tags       *service.TagService
-	comments   *service.CommentService
-	settings   *service.SettingsService
+	posts    *service.PostService
+	authS    *service.AuthService
+	tokens   *auth.TokenManager
+	tags     *service.TagService
+	comments *service.CommentService
+	settings *service.SettingsService
 }
 
 // NewServer builds a Server.
-func NewServer(cfg config.Config, posts *service.PostService, authS *service.AuthService, tokens *auth.TokenManager, categories *service.CategoryService, tags *service.TagService, comments *service.CommentService, settings *service.SettingsService) *Server {
+func NewServer(cfg config.Config, posts *service.PostService, authS *service.AuthService, tokens *auth.TokenManager, tags *service.TagService, comments *service.CommentService, settings *service.SettingsService) *Server {
 	return &Server{
-		cfg:        cfg,
-		posts:      posts,
-		authS:      authS,
-		tokens:     tokens,
-		categories: categories,
-		tags:       tags,
-		comments:   comments,
-		settings:   settings,
+		cfg:      cfg,
+		posts:    posts,
+		authS:    authS,
+		tokens:   tokens,
+		tags:     tags,
+		comments: comments,
+		settings: settings,
 	}
 }
 
@@ -52,7 +50,6 @@ func (s *Server) Router() *gin.Engine {
 		// public
 		v1.GET("/posts", s.listPosts)
 		v1.GET("/posts/:slug", s.getPostBySlug)
-		v1.GET("/categories", s.listCategories)
 		v1.GET("/tags", s.listTags)
 		v1.GET("/settings", s.getSettings)
 		v1.GET("/posts/:slug/comments", s.listPostComments)
@@ -73,10 +70,6 @@ func (s *Server) Router() *gin.Engine {
 			admin.PUT("/posts/:id", s.updatePost)
 			admin.DELETE("/posts/:id", s.deletePost)
 			admin.POST("/render", s.renderMarkdown)
-
-			admin.POST("/categories", s.createCategory)
-			admin.PUT("/categories/:id", s.updateCategory)
-			admin.DELETE("/categories/:id", s.deleteCategory)
 
 			admin.POST("/tags", s.createTag)
 			admin.DELETE("/tags/:id", s.deleteTag)
