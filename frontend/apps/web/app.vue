@@ -2,6 +2,10 @@
   <div class="site">
     <header class="site-header">
       <NuxtLink to="/" class="brand">PureBlog</NuxtLink>
+      <nav class="site-nav">
+        <NuxtLink to="/categories" class="nav-link">分类</NuxtLink>
+        <NuxtLink to="/tags" class="nav-link">标签</NuxtLink>
+      </nav>
     </header>
     <main class="site-main">
       <NuxtPage />
@@ -18,6 +22,9 @@
 }
 .site-header {
   padding: 1rem 0 2.5rem;
+  display: flex;
+  align-items: baseline;
+  gap: 1.5rem;
 }
 .brand {
   font-family: var(--font-serif, serif);
@@ -25,6 +32,18 @@
   color: var(--accent, #235a73);
   text-decoration: none;
   letter-spacing: 0.04em;
+}
+.site-nav {
+  display: flex;
+  gap: 1rem;
+}
+.nav-link {
+  font-size: 0.9rem;
+  color: var(--ink-2, #6b655c);
+  text-decoration: none;
+}
+.nav-link:hover {
+  color: var(--accent, #235a73);
 }
 .site-footer {
   margin-top: 4rem;

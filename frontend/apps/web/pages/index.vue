@@ -1,8 +1,18 @@
 <script setup lang="ts">
-import type { PostListResponse } from '@pureblog/api-types'
+import type { PostListResponse, CategoryListResponse } from '@pureblog/api-types'
 
 const { data } = await useFetch<PostListResponse>(`${useApiBase()}/posts`, {
   query: { pageSize: 20 },
+})
+const { data: cats } = await useFetch<CategoryListResponse>(`${useApiBase()}/categories`)
+
+// id → { name, slug } map for resolving post.categoryId to a link
+const catMap = computed(() => {
+  const m = new Map<number, { name: string; slug: string }>()
+  for (const c of cats.value?.items ?? []) {
+    if (c.id != null) m.set(c.id, { name: c.name ?? '', slug: c.slug ?? '' })
+  }
+  return m
 })
 </script>
 
@@ -14,6 +24,19 @@ const { data } = await useFetch<PostListResponse>(`${useApiBase()}/posts`, {
           <span class="post-title">{{ p.title }}</span>
           <span v-if="p.summary" class="post-summary">{{ p.summary }}</span>
         </NuxtLink>
+        <div v-if="(p.categoryId != null && catMap.get(p.categoryId)) || p.tags?.length" class="post-meta">
+          <NuxtLink
+            v-if="p.categoryId != null && catMap.get(p.categoryId)"
+            :to="`/categories/${catMap.get(p.categoryId)?.slug}`"
+            class="meta-cat"
+          >{{ catMap.get(p.categoryId)?.name }}</NuxtLink>
+          <NuxtLink
+            v-for="t in p.tags ?? []"
+            :key="t.id"
+            :to="`/tags/${t.slug}`"
+            class="meta-tag"
+          >{{ t.name }}</NuxtLink>
+        </div>
       </li>
     </ul>
   </section>
@@ -46,6 +69,40 @@ const { data } = await useFetch<PostListResponse>(`${useApiBase()}/posts`, {
   font-size: 0.95rem;
 }
 .post-row:hover .post-title {
+  color: var(--accent, #235a73);
+}
+.post-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.5rem;
+}
+.meta-cat {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  background: color-mix(in srgb, var(--accent, #235a73) 10%, transparent);
+  color: var(--accent, #235a73);
+  border-radius: 2px;
+  font-size: 0.8rem;
+  text-decoration: none;
+  border-bottom: none;
+  line-height: 1.5;
+}
+.meta-cat:hover {
+  background: color-mix(in srgb, var(--accent, #235a73) 18%, transparent);
+}
+.meta-tag {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  background: var(--paper-subtle, #f1ece0);
+  color: var(--ink-2, #6b655c);
+  border-radius: 2px;
+  font-size: 0.8rem;
+  text-decoration: none;
+  border-bottom: none;
+  line-height: 1.5;
+}
+.meta-tag:hover {
   color: var(--accent, #235a73);
 }
 </style>
