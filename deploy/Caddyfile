@@ -7,6 +7,10 @@ http://{$PUBLIC_DOMAIN:localhost} {
 	handle /api/* {
 		reverse_proxy backend:8080
 	}
+	# Uploaded images are served by the backend from its upload volume.
+	handle /uploads/* {
+		reverse_proxy backend:8080
+	}
 	# everything else → Nuxt SSR
 	handle {
 		reverse_proxy web:3000

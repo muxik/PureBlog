@@ -66,6 +66,18 @@ definitions:
     - password
     - username
     type: object
+  http.mediaItem:
+    properties:
+      filename:
+        type: string
+      modified:
+        description: Modified is an RFC3339 timestamp of the file's last modification.
+        type: string
+      size:
+        type: integer
+      url:
+        type: string
+    type: object
   http.moderateCommentRequest:
     properties:
       status:
@@ -216,6 +228,15 @@ definitions:
         additionalProperties:
           type: string
         type: object
+    type: object
+  http.uploadResponse:
+    properties:
+      filename:
+        type: string
+      size:
+        type: integer
+      url:
+        type: string
     type: object
   http.userResponse:
     properties:
@@ -532,6 +553,67 @@ paths:
       security:
       - BearerAuth: []
       summary: Delete a tag
+      tags:
+      - admin
+  /admin/uploads:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/http.mediaItem'
+            type: array
+      security:
+      - BearerAuth: []
+      summary: List uploaded images
+      tags:
+      - admin
+    post:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - description: image file
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/http.uploadResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Upload an image
+      tags:
+      - admin
+  /admin/uploads/{name}:
+    delete:
+      parameters:
+      - description: stored filename
+        in: path
+        name: name
+        required: true
+        type: string
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete an uploaded image
       tags:
       - admin
   /auth/login:

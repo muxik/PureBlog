@@ -22,3 +22,19 @@ export async function api<T>(path: string, opts: Options = {}): Promise<T> {
   if (res.status === 204) return undefined as T
   return (await res.json()) as T
 }
+
+export type UploadResult = { url: string; filename: string; size: number }
+
+// Upload a file via multipart/form-data. Kept separate from api() because the
+// browser must set the multipart boundary itself — we must NOT send a
+// Content-Type header here.
+export async function uploadFile(file: File): Promise<UploadResult> {
+  const form = new FormData()
+  form.append('file', file)
+  const headers: Record<string, string> = {}
+  const token = localStorage.getItem(ACCESS_KEY)
+  if (token) headers.Authorization = `Bearer ${token}`
+  const res = await fetch(BASE + '/admin/uploads', { method: 'POST', headers, body: form })
+  if (!res.ok) throw new Error(`API ${res.status}`)
+  return (await res.json()) as UploadResult
+}

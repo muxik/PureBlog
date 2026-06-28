@@ -17,6 +17,13 @@ type Config struct {
 	AdminUsername   string
 	AdminPassword   string
 	CORSOrigins     []string
+	// UploadDir is the filesystem directory where uploaded images are stored
+	// and served from under /uploads.
+	UploadDir string
+	// PublicBaseURL is the externally reachable origin of the site, used to
+	// build absolute URLs for uploaded images so they resolve from both the
+	// public site and the admin preview (which lives on a different host).
+	PublicBaseURL string
 }
 
 // Load reads configuration from the environment, applying sane defaults for
@@ -31,6 +38,8 @@ func Load() Config {
 		AdminUsername:   env("ADMIN_USERNAME", "muxi"),
 		AdminPassword:   env("ADMIN_PASSWORD", "muxi-change-me"),
 		CORSOrigins:     splitAndTrim(env("CORS_ORIGINS", "http://localhost:3000,http://localhost:5173")),
+		UploadDir:       env("UPLOAD_DIR", "./uploads"),
+		PublicBaseURL:   strings.TrimRight(env("PUBLIC_ORIGIN", "http://localhost:8080"), "/"),
 	}
 }
 

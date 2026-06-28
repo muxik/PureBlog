@@ -45,6 +45,10 @@ func (s *Server) Router() *gin.Engine {
 		c.JSON(http.StatusOK, gin.H{"status": "ok"})
 	})
 
+	// Serve uploaded images publicly: they are embedded in published posts and
+	// must be reachable without authentication.
+	r.Static("/uploads", s.cfg.UploadDir)
+
 	v1 := r.Group("/api/v1")
 	{
 		// public
@@ -70,6 +74,10 @@ func (s *Server) Router() *gin.Engine {
 			admin.PUT("/posts/:id", s.updatePost)
 			admin.DELETE("/posts/:id", s.deletePost)
 			admin.POST("/render", s.renderMarkdown)
+
+			admin.POST("/uploads", s.uploadImage)
+			admin.GET("/uploads", s.listUploads)
+			admin.DELETE("/uploads/:name", s.deleteUpload)
 
 			admin.POST("/tags", s.createTag)
 			admin.DELETE("/tags/:id", s.deleteTag)

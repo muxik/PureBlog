@@ -8,7 +8,7 @@ import type {
   TagListResponse,
   RenderResponse,
 } from '@pureblog/api-types'
-import { api } from '../api'
+import { api, uploadFile } from '../api'
 
 const route = useRoute()
 const router = useRouter()
@@ -34,6 +34,8 @@ const tagChips = ref<string[]>([])  // parsed chips shown below the input
 // We do NOT bind :value on the textarea — Vue never patches value during
 // re-renders, so Chinese IME composition and caret position are preserved.
 const textareaEl = ref<HTMLTextAreaElement | null>(null)
+const fileInputEl = ref<HTMLInputElement | null>(null)
+const uploading = ref(false)
 
 /* ── Display date ─────────────────────────────────────────────────── */
 function formatDate(d: Date): string {
@@ -83,9 +85,78 @@ function linePrefix(prefix: string) {
   try { t.setSelectionRange(s + prefix.length, s + prefix.length) } catch {}
 }
 
+/* ── Image upload ─────────────────────────────────────────────────── */
+// Insert text at the current caret (mirrors wrap(), but with no selection).
+function insertAtCursor(text: string) {
+  const t = textareaEl.value
+  if (!t) {
+    body.value = (body.value || '') + text
+    return
+  }
+  const s = t.selectionStart
+  const e = t.selectionEnd
+  const v = t.value
+  t.value = v.slice(0, s) + text + v.slice(e)
+  body.value = t.value
+  wordCount.value = t.value.replace(/\s/g, '').length
+  t.focus()
+  const pos = s + text.length
+  try { t.setSelectionRange(pos, pos) } catch {}
+}
+
+// The "图" toolbar button opens the OS file picker.
 function insertImage() {
-  // No upload backend — insert a URL placeholder template
-  wrap('![', '](https://)')
+  fileInputEl.value?.click()
+}
+
+// Upload one image file and insert its Markdown at the caret.
+async function uploadAndInsert(file: File) {
+  if (!file.type.startsWith('image/')) return
+  uploading.value = true
+  try {
+    const { url } = await uploadFile(file)
+    insertAtCursor(`![](${url})`)
+  } catch {
+    insertAtCursor(`\n<!-- 图片上传失败，请重试 -->\n`)
+  } finally {
+    uploading.value = false
+  }
+}
+
+async function onFilePicked(e: Event) {
+  const input = e.target as HTMLInputElement
+  const file = input.files?.[0]
+  if (file) await uploadAndInsert(file)
+  input.value = '' // allow re-picking the same file
+}
+
+// Paste an image straight from the clipboard.
+async function onPaste(e: ClipboardEvent) {
+  const item = Array.from(e.clipboardData?.items ?? []).find((i) => i.type.startsWith('image/'))
+  if (!item) return
+  const file = item.getAsFile()
+  if (!file) return
+  e.preventDefault()
+  await uploadAndInsert(file)
+}
+
+// Cover image: upload a file and set coverUrl to the returned URL.
+const coverInputEl = ref<HTMLInputElement | null>(null)
+async function onCoverPicked(e: Event) {
+  const input = e.target as HTMLInputElement
+  const file = input.files?.[0]
+  if (file && file.type.startsWith('image/')) {
+    uploading.value = true
+    try {
+      const { url } = await uploadFile(file)
+      coverUrl.value = url
+    } catch {
+      /* leave coverUrl unchanged on failure */
+    } finally {
+      uploading.value = false
+    }
+  }
+  input.value = ''
 }
 
 /* ── Preview toggle (structural — re-renders) ─────────────────────── */
@@ -231,7 +302,19 @@ async function drawerSave(status: 'draft' | 'published') {
       <button class="tool-btn" title="列表" @click="linePrefix('- ')">•</button>
       <button class="tool-btn" title="代码" @click="wrap('`', '`')">‹›</button>
       <button class="tool-btn" title="链接" @click="wrap('[', '](https://)')">链</button>
-      <button class="tool-btn" title="插入图片" @click="insertImage()">图</button>
+      <button
+        class="tool-btn"
+        :title="uploading ? '上传中…' : '插入图片'"
+        :disabled="uploading"
+        @click="insertImage()"
+      >{{ uploading ? '…' : '图' }}</button>
+      <input
+        ref="fileInputEl"
+        type="file"
+        accept="image/png,image/jpeg,image/gif,image/webp"
+        style="display:none"
+        @change="onFilePicked"
+      />
       <span class="toolbar-spacer"></span>
       <button
         class="preview-btn"
@@ -272,8 +355,9 @@ async function drawerSave(status: 'draft' | 'published') {
       <textarea
         ref="textareaEl"
         class="editor__body"
-        placeholder="开始写。Markdown 可用。慢一点，长一点。"
+        placeholder="开始写。Markdown 可用。慢一点，长一点。可粘贴图片。"
         @input="onBodyInput"
+        @paste="onPaste"
       ></textarea>
     </template>
   </div>
@@ -313,6 +397,20 @@ async function drawerSave(status: 'draft' | 'published') {
             type="text"
             placeholder="https://example.com/cover.jpg"
             style="margin-top:8px"
+          />
+          <button
+            class="linkbtn"
+            type="button"
+            style="margin-top:8px"
+            :disabled="uploading"
+            @click="coverInputEl?.click()"
+          >{{ uploading ? '上传中…' : '上传图片 ↑' }}</button>
+          <input
+            ref="coverInputEl"
+            type="file"
+            accept="image/png,image/jpeg,image/gif,image/webp"
+            style="display:none"
+            @change="onCoverPicked"
           />
         </label>
 

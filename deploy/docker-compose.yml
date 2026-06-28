@@ -27,6 +27,12 @@ services:
       ADMIN_USERNAME: ${ADMIN_USERNAME:-muxi}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD:-change-me}
       CORS_ORIGINS: '${PUBLIC_ORIGIN:-http://localhost},http://admin.${PUBLIC_DOMAIN:-localhost}'
+      # Absolute base for uploaded-image URLs; must be the public root origin so
+      # images resolve from both the site and the admin preview.
+      PUBLIC_ORIGIN: '${PUBLIC_ORIGIN:-http://localhost}'
+      UPLOAD_DIR: /data/uploads
+    volumes:
+      - uploads:/data
     depends_on:
       db:
         condition: service_healthy
@@ -68,5 +74,6 @@ services:
 
 volumes:
   pgdata:
+  uploads:
   caddy_data:
   caddy_config:
