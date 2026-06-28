@@ -502,6 +502,13 @@ ul.muxi-list li { margin: 0.3em 0; }
   outline: none;
 }
 .search-input:focus { border-color: var(--accent); }
+/* Matched search terms inside result titles/excerpts. */
+.hl {
+  background: color-mix(in srgb, var(--accent) 18%, transparent);
+  color: var(--accent);
+  border-radius: 2px;
+  padding: 0 1px;
+}
 .search-meta {
   display: flex;
   align-items: center;

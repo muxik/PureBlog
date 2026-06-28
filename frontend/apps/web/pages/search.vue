@@ -53,6 +53,29 @@ watch(
   },
 )
 
+// Highlight matched terms in result text. We split the original text on the
+// query terms (so the match casing is preserved), HTML-escape every segment,
+// then wrap the matched ones in <mark> — escaping first keeps v-html safe.
+function escapeHtml(s: string): string {
+  return s.replace(
+    /[&<>"']/g,
+    c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!,
+  )
+}
+function escapeRegExp(s: string): string {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+}
+function highlight(text: string, query: string): string {
+  const tokens = query.trim().split(/\s+/).filter(Boolean).map(escapeRegExp)
+  if (!tokens.length) return escapeHtml(text)
+  // Capturing group → split keeps the delimiters; matches land on odd indices.
+  const re = new RegExp(`(${tokens.join('|')})`, 'i')
+  return text
+    .split(re)
+    .map((seg, i) => (i % 2 === 1 ? `<mark class="hl">${escapeHtml(seg)}</mark>` : escapeHtml(seg)))
+    .join('')
+}
+
 // Debounce: update the authoritative query and URL ~250 ms after the user stops typing.
 let debounceTimer: ReturnType<typeof setTimeout> | null = null
 
@@ -96,10 +119,17 @@ function onInput(e: Event) {
           class="row post-summary"
           style="margin-top: 12px"
         >
-          <h3 class="post-summary__title" data-title="" style="margin-bottom: 6px">
-            {{ p.title }}
-          </h3>
-          <p class="post-summary__excerpt" style="white-space: normal">{{ p.excerpt }}</p>
+          <h3
+            class="post-summary__title"
+            data-title=""
+            style="margin-bottom: 6px"
+            v-html="highlight(p.title, searchQ)"
+          ></h3>
+          <p
+            class="post-summary__excerpt"
+            style="white-space: normal"
+            v-html="highlight(p.excerpt, searchQ)"
+          ></p>
           <div class="post-summary__meta">{{ p.metaLine }}</div>
         </NuxtLink>
       </template>
