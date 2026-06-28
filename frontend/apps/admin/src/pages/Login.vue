@@ -15,24 +15,38 @@ async function submit() {
     await auth.login({ username: username.value, password: password.value })
     router.push('/manage')
   } catch {
-    error.value = '用户名或密码错误'
+    error.value = '用户名或密码不对，再试试。'
   }
 }
 </script>
 
 <template>
-  <div class="login">
-    <h1>PureBlog 后台</h1>
-    <form @submit.prevent="submit">
-      <input v-model="username" placeholder="用户名" autocomplete="username" />
-      <input
-        v-model="password"
-        type="password"
-        placeholder="密码"
-        autocomplete="current-password"
-      />
-      <button type="submit">登录</button>
-      <p v-if="error" class="err">{{ error }}</p>
-    </form>
+  <div class="login-wrap">
+    <div class="login-card">
+      <div class="login-head">
+        <span class="seal" style="width:40px;height:40px;font-size:24px;">博</span>
+        <h1 class="login-title">PureBlog 后台</h1>
+        <p class="login-sub">写作后台 · 请登录</p>
+      </div>
+      <form class="login-form" @submit.prevent="submit">
+        <input
+          v-model="username"
+          class="admin-input"
+          type="text"
+          placeholder="用户名"
+          autocomplete="username"
+        />
+        <input
+          v-model="password"
+          class="admin-input"
+          type="password"
+          placeholder="密码"
+          autocomplete="current-password"
+        />
+        <p v-if="error" class="login-error">{{ error }}</p>
+        <button class="btn-solid" type="submit" style="margin-top:4px;">登录</button>
+      </form>
+      <p class="login-hint">PureBlog · 写作后台</p>
+    </div>
   </div>
 </template>

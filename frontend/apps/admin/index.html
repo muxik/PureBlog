@@ -4,6 +4,13 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PureBlog 后台</title>
+    <!-- Apply the saved theme before first paint to avoid dark-mode FOUC -->
+    <script>
+      try {
+        var t = localStorage.getItem("muxi:theme");
+        if (t) document.documentElement.setAttribute("data-theme", t);
+      } catch (e) {}
+    </script>
   </head>
   <body>
     <div id="app"></div>

@@ -55,28 +55,34 @@ onMounted(load)
 </script>
 
 <template>
-  <div class="manage-comments">
-    <RouterLink to="/manage" class="back">← 返回文章</RouterLink>
-    <h1>评论审核</h1>
+  <section class="admin-section">
+    <div class="manage-head">
+      <h1 class="section-title">评论审核</h1>
+    </div>
 
-    <div class="filters">
+    <!-- ── Status filter ── -->
+    <div class="seg-group">
       <button
-        :class="{ active: filter === 'pending' }"
+        class="seg"
+        :class="{ 'is-active': filter === 'pending' }"
         @click="setFilter('pending')"
       >待审</button>
       <button
-        :class="{ active: filter === 'approved' }"
+        class="seg"
+        :class="{ 'is-active': filter === 'approved' }"
         @click="setFilter('approved')"
       >已通过</button>
       <button
-        :class="{ active: filter === 'all' }"
+        class="seg"
+        :class="{ 'is-active': filter === 'all' }"
         @click="setFilter('all')"
       >全部</button>
     </div>
 
-    <p v-if="error" class="err">{{ error }}</p>
+    <p v-if="error" class="cmt-err">{{ error }}</p>
 
-    <p v-if="!comments.length && !error" class="empty">
+    <!-- ── Empty state ── -->
+    <p v-if="!comments.length && !error" class="manage-empty">
       {{
         filter === 'pending'
           ? '没有待审评论'
@@ -86,114 +92,58 @@ onMounted(load)
       }}
     </p>
 
-    <div v-for="c in comments" :key="c.id" class="comment-card">
-      <div class="comment-meta">
-        <span class="author">{{ c.authorName }}</span>
-        <span
-          :class="['badge', c.status === 'approved' ? 'badge--approved' : 'badge--pending']"
-        >{{ c.status === 'approved' ? '已通过' : '待审' }}</span>
-        <span class="date">{{
-          c.createdAt ? new Date(c.createdAt).toLocaleString('zh-CN') : ''
-        }}</span>
-        <span class="post-ref">文章 #{{ c.postId }}</span>
-        <span v-if="c.parentId" class="reply-ref">↳ 回复 #{{ c.parentId }}</span>
-      </div>
-      <div class="comment-content">{{ c.content }}</div>
-      <div class="comment-actions">
-        <button v-if="c.status !== 'approved'" @click="moderate(c.id, 'approved')">通过</button>
-        <button v-if="c.status === 'approved'" @click="moderate(c.id, 'pending')">撤回</button>
-        <button class="ghost" @click="remove(c.id)">删除</button>
+    <!-- ── Comment list ── -->
+    <div class="manage-list">
+      <div v-for="c in comments" :key="c.id" class="manage-row cmt-row">
+        <div class="manage-row__main">
+          <div class="manage-row__titlerow">
+            <span class="manage-row__title cmt-author">{{ c.authorName }}</span>
+            <span v-if="c.status !== 'approved'" class="badge-draft">待审</span>
+            <span v-else class="badge-pin">已通过</span>
+          </div>
+          <div class="manage-row__tags">
+            {{ c.createdAt ? new Date(c.createdAt).toLocaleString('zh-CN') : '' }}
+            · 文章 #{{ c.postId }}
+            <template v-if="c.parentId"> · 回复 #{{ c.parentId }}</template>
+          </div>
+          <div class="cmt-body">{{ c.content }}</div>
+        </div>
+        <div class="manage-row__acts">
+          <button v-if="c.status !== 'approved'" class="act-btn" @click="moderate(c.id, 'approved')">通过</button>
+          <button v-if="c.status === 'approved'" class="act-btn" @click="moderate(c.id, 'pending')">撤回</button>
+          <button class="act-btn act-btn--del" @click="remove(c.id)">删除</button>
+        </div>
       </div>
     </div>
-  </div>
+  </section>
 </template>
 
 <style scoped>
-.back {
-  display: inline-block;
-  margin-bottom: 0.5rem;
-  color: var(--accent, #235a73);
-  text-decoration: none;
-  font-size: 0.9rem;
+/* Comments have multi-line content so align to top, not baseline */
+.cmt-row {
+  align-items: flex-start;
 }
-.back:hover {
-  text-decoration: underline;
+
+/* Author name is display only — override pointer cursor from global manage-row__title */
+.cmt-author {
+  cursor: default;
+  font-family: var(--font-body);
+  font-size: var(--text-base);
 }
-.filters {
-  display: flex;
-  margin: 1rem 0;
-  border: 1px solid var(--border, #e7e2d6);
-  border-radius: 4px;
-  overflow: hidden;
-  width: fit-content;
-}
-.filters button {
-  border: none;
-  border-radius: 0;
-  margin: 0;
-  background: var(--paper, #faf8f2);
-  color: var(--accent, #235a73);
-  padding: 0.4rem 1rem;
-}
-.filters button + button {
-  border-left: 1px solid var(--border, #e7e2d6);
-}
-.filters button.active {
-  background: var(--accent, #235a73);
-  color: #fff;
-}
-.empty {
-  color: var(--ink-2, #8a857a);
-  margin-top: 1.5rem;
-}
-.comment-card {
-  border: 1px solid var(--border, #e7e2d6);
-  border-radius: 6px;
-  padding: 0.9rem 1rem;
-  margin-top: 1rem;
-  background: var(--paper-subtle, #f5f2ea);
-}
-.comment-meta {
-  display: flex;
-  align-items: center;
-  gap: 0.7rem;
-  flex-wrap: wrap;
-  margin-bottom: 0.5rem;
-  font-size: 0.85rem;
-}
-.author {
-  font-weight: 600;
-}
-.badge {
-  padding: 0.15rem 0.5rem;
-  border-radius: 99px;
-  font-size: 0.75rem;
-}
-.badge--pending {
-  background: #fef3c7;
-  color: #92400e;
-}
-.badge--approved {
-  background: #d1fae5;
-  color: #065f46;
-}
-.date {
-  color: var(--ink-2, #8a857a);
-}
-.post-ref {
-  color: var(--ink-2, #8a857a);
-}
-.reply-ref {
-  color: var(--accent, #235a73);
-  font-size: 0.8rem;
-}
-.comment-content {
-  margin-bottom: 0.75rem;
-  line-height: 1.5;
+
+/* Comment body text */
+.cmt-body {
+  margin-top: 8px;
+  font-size: var(--text-base);
+  line-height: 1.6;
+  color: var(--text-body);
   white-space: pre-wrap;
   word-break: break-word;
 }
-.comment-actions {
-  display: flex;
+
+.cmt-err {
+  font-size: var(--text-sm);
+  color: #b23b3b;
+  margin: 12px 0 0;
 }
 </style>

@@ -134,162 +134,116 @@ onMounted(load)
 </script>
 
 <template>
-  <div class="manage-cat">
-    <RouterLink to="/manage" class="back">← 返回文章</RouterLink>
-    <h1>分类管理</h1>
+  <section class="admin-section">
+    <div class="manage-head">
+      <h1 class="section-title">分类管理</h1>
+    </div>
 
-    <p v-if="error" class="err">{{ error }}</p>
-
-    <!-- ── form ── -->
-    <section class="form-box">
-      <h2 class="form-title">{{ editingId !== null ? '编辑分类' : '新建分类' }}</h2>
+    <!-- ── Create / Edit Form ── -->
+    <div class="cat-form">
+      <h2 class="panel-h">{{ editingId !== null ? '编辑分类' : '新建分类' }}</h2>
+      <p v-if="error" class="cat-err">{{ error }}</p>
       <form @submit.prevent="submit">
-        <label class="lbl">名称 <span class="req">*</span></label>
-        <input v-model="formName" placeholder="分类名称" />
-
-        <label class="lbl">Slug <span class="hint">（留空自动生成）</span></label>
-        <input v-model="formSlug" placeholder="url-friendly-slug" />
-
-        <label class="lbl">描述</label>
-        <input v-model="formDescription" placeholder="可选描述" />
-
-        <label class="lbl">父分类</label>
-        <select v-model="formParentId" class="sel">
-          <option value="">（无 / 顶级）</option>
-          <option
-            v-for="cat in items"
-            :key="cat.id"
-            :value="String(cat.id)"
-            :disabled="cat.id === editingId"
-          >
-            {{ cat.name }}
-          </option>
-        </select>
-
-        <label class="lbl">排序</label>
-        <input v-model.number="formSort" type="number" placeholder="0" />
-
-        <div class="form-actions">
-          <button type="submit" :disabled="submitting">
+        <div class="field-stack field-stack--tight">
+          <label class="field">
+            <span class="field-label">名称<span class="cat-req"> *</span></span>
+            <input class="admin-input" v-model="formName" placeholder="分类名称" />
+          </label>
+          <label class="field">
+            <span class="field-label">Slug（留空自动生成）</span>
+            <input class="admin-input" v-model="formSlug" placeholder="url-friendly-slug" />
+          </label>
+          <label class="field">
+            <span class="field-label">描述</span>
+            <input class="admin-input" v-model="formDescription" placeholder="可选描述" />
+          </label>
+          <label class="field">
+            <span class="field-label">父分类</span>
+            <select class="admin-input cat-select" v-model="formParentId">
+              <option value="">（无 / 顶级）</option>
+              <option
+                v-for="cat in items"
+                :key="cat.id"
+                :value="String(cat.id)"
+                :disabled="cat.id === editingId"
+              >{{ cat.name }}</option>
+            </select>
+          </label>
+          <label class="field">
+            <span class="field-label">排序</span>
+            <input class="admin-input" v-model.number="formSort" type="number" placeholder="0" />
+          </label>
+        </div>
+        <div class="save-row cat-actions">
+          <button class="btn-solid--save" type="submit" :disabled="submitting">
             {{ editingId !== null ? '保存' : '创建' }}
           </button>
-          <button type="button" class="ghost" @click="resetForm">
+          <button class="btn-ghost" type="button" @click="resetForm">
             {{ editingId !== null ? '取消' : '清空' }}
           </button>
         </div>
       </form>
-    </section>
+    </div>
 
-    <!-- ── list ── -->
-    <table class="list">
-      <tbody>
-        <tr v-for="{ cat, level } in tree" :key="cat.id">
-          <td class="t">
-            <span :style="{ paddingLeft: `${level * 1.5}rem` }">
-              <span v-if="level > 0" class="indent-mark">└ </span>{{ cat.name }}
-            </span>
-          </td>
-          <td class="slug">{{ cat.slug }}</td>
-          <td class="a">
-            <button class="ghost" @click="startEdit(cat)">编辑</button>
-            <button class="ghost" @click="remove(cat.id)">删除</button>
-          </td>
-        </tr>
-        <tr v-if="tree.length === 0">
-          <td colspan="3" class="empty">暂无分类</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+    <!-- ── Category Tree List ── -->
+    <div class="manage-list">
+      <div v-for="{ cat, level } in tree" :key="cat.id" class="manage-row">
+        <div class="manage-row__main">
+          <div class="manage-row__titlerow">
+            <button
+              class="manage-row__title"
+              type="button"
+              :style="level > 0 ? { paddingLeft: `${level * 1.5}rem` } : {}"
+              @click="startEdit(cat)"
+            >
+              <span v-if="level > 0" class="cat-indent">└ </span>{{ cat.name }}
+            </button>
+          </div>
+          <div class="manage-row__tags">
+            {{ cat.slug }}<template v-if="cat.parentId != null"> · 父级 #{{ cat.parentId }}</template>
+          </div>
+        </div>
+        <div class="manage-row__acts">
+          <button class="act-btn" type="button" @click="startEdit(cat)">编辑</button>
+          <button class="act-btn act-btn--del" type="button" @click="remove(cat.id)">删除</button>
+        </div>
+      </div>
+      <p v-if="tree.length === 0" class="manage-empty">暂无分类</p>
+    </div>
+  </section>
 </template>
 
 <style scoped>
-.back {
-  display: inline-block;
-  font-size: 0.9rem;
-  color: var(--accent, #235a73);
-  text-decoration: none;
-  margin-bottom: 0.25rem;
-}
-.back:hover {
-  text-decoration: underline;
-}
-h1 {
-  margin-top: 0.4rem;
-  margin-bottom: 1.25rem;
+.cat-form {
+  background: var(--bg-subtle);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm, 4px);
+  padding: 20px 24px 24px;
+  margin: 24px 0 32px;
+  max-width: 540px;
 }
 
-/* form */
-.form-box {
-  background: var(--paper-subtle, #f5f2eb);
-  border: 1px solid var(--border, #e7e2d6);
-  border-radius: 6px;
-  padding: 1rem 1.25rem 1.25rem;
-  margin-bottom: 1.75rem;
-}
-.form-title {
-  margin: 0 0 0.75rem;
-  font-size: 1rem;
-  font-weight: 600;
-}
-.lbl {
-  display: block;
-  font-size: 0.83rem;
-  color: var(--ink-2, #5c5750);
-  margin-top: 0.65rem;
-}
-.req {
+.cat-err {
+  font-size: var(--text-sm);
   color: #b23b3b;
-}
-.hint {
-  font-weight: normal;
-  color: var(--ink-2, #5c5750);
-}
-.sel {
-  display: block;
-  width: 100%;
-  padding: 0.5rem 0.7rem;
-  margin: 0.4rem 0;
-  border: 1px solid var(--border, #e7e2d6);
-  border-radius: 4px;
-  background: var(--paper, #faf8f2);
-  color: inherit;
-  font: inherit;
-}
-.form-actions {
-  margin-top: 1rem;
+  margin: 0 0 12px;
 }
 
-/* table */
-.list {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 0.25rem;
-}
-.list td {
-  padding: 0.7rem 0;
-  border-bottom: 1px solid var(--border, #e7e2d6);
-}
-.slug {
-  font-size: 0.85rem;
-  color: var(--ink-2, #5c5750);
-  width: 12rem;
-}
-.a {
-  width: 9rem;
-  text-align: right;
-}
-.indent-mark {
-  color: var(--ink-2, #5c5750);
-}
-.empty {
-  color: var(--ink-2, #5c5750);
-  text-align: center;
-  padding: 2rem 0;
-  font-size: 0.9rem;
-}
-.err {
+.cat-req {
   color: #b23b3b;
-  margin-bottom: 1rem;
+}
+
+.cat-indent {
+  color: var(--ink-2, #5c5750);
+}
+
+.cat-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.cat-select {
+  cursor: pointer;
 }
 </style>

@@ -1,94 +1,61 @@
 <script setup lang="ts">
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from './stores/auth'
+import { useTheme, applyStoredTheme } from './utils/theme'
 
 const route = useRoute()
 const router = useRouter()
 const auth = useAuthStore()
+const { label: themeLabel, toggle: toggleTheme } = useTheme()
+
+// Sync stored theme on mount (the head script already ran before first paint;
+// this ensures the reactive composable state is consistent after hydration).
+applyStoredTheme()
 
 function logout() {
   auth.logout()
   router.push('/login')
 }
+
+// Nav entries: existing routes + the design's three core areas
+const navItems = [
+  { to: '/write',      label: '写作' },
+  { to: '/manage',     label: '文章' },
+  { to: '/categories', label: '分类' },
+  { to: '/tags',       label: '标签' },
+  { to: '/comments',   label: '评论' },
+  { to: '/settings',   label: '设置' },
+] as const
 </script>
 
 <template>
-  <div class="admin">
-    <nav v-if="auth.isAuthed && route.path !== '/login'" class="nav">
-      <div class="nav-links">
-        <RouterLink to="/manage">文章</RouterLink>
-        <RouterLink to="/categories">分类</RouterLink>
-        <RouterLink to="/tags">标签</RouterLink>
-        <RouterLink to="/comments">评论</RouterLink>
-        <RouterLink to="/settings">设置</RouterLink>
+  <!-- Authenticated shell -->
+  <div v-if="auth.isAuthed && route.path !== '/login'" class="admin">
+    <header class="admin-header">
+      <div class="admin-header__left">
+        <nav class="admin-nav">
+          <RouterLink
+            v-for="item in navItems"
+            :key="item.to"
+            :to="item.to"
+            class="admin-nav__btn"
+            :class="{ 'is-active': route.path === item.to || route.path.startsWith(item.to + '/') }"
+          >{{ item.label }}</RouterLink>
+        </nav>
       </div>
-      <button class="ghost logout" @click="logout">退出</button>
-    </nav>
-    <RouterView />
+      <div class="admin-header__right">
+        <button class="chrome-btn" aria-label="切换深浅色" @click="toggleTheme">
+          {{ themeLabel }}
+        </button>
+        <span class="vsep" />
+        <button class="chrome-btn" @click="logout">退出</button>
+      </div>
+    </header>
+    <main class="admin-main">
+      <RouterView />
+    </main>
   </div>
-</template>
 
-<style>
-.admin {
-  max-width: 48rem;
-  margin: 0 auto;
-  padding: 2rem 1.25rem;
-}
-.admin input,
-.admin button {
-  font: inherit;
-}
-.admin input {
-  display: block;
-  width: 100%;
-  padding: 0.5rem 0.7rem;
-  margin: 0.4rem 0;
-  border: 1px solid var(--border, #e7e2d6);
-  border-radius: 4px;
-  background: var(--paper, #faf8f2);
-  color: inherit;
-}
-.admin button {
-  padding: 0.45rem 1rem;
-  margin-right: 0.5rem;
-  border: 1px solid var(--accent, #235a73);
-  border-radius: 4px;
-  background: var(--accent, #235a73);
-  color: #fff;
-  cursor: pointer;
-}
-.admin button.ghost {
-  background: transparent;
-  color: var(--accent, #235a73);
-}
-.err {
-  color: #b23b3b;
-}
-.admin .nav {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  margin-bottom: 1.75rem;
-  padding-bottom: 0.75rem;
-  border-bottom: 1px solid var(--border, #e7e2d6);
-}
-.admin .nav-links {
-  display: flex;
-  gap: 1.25rem;
-}
-.admin .nav-links a {
-  color: var(--ink-2, #6b655c);
-  text-decoration: none;
-}
-.admin .nav-links a:hover {
-  color: var(--accent, #235a73);
-}
-.admin .nav-links a.router-link-active {
-  color: var(--accent, #235a73);
-}
-.admin .nav .logout {
-  margin-right: 0;
-  padding: 0.25rem 0.7rem;
-}
-</style>
+  <!-- Unauthenticated: just render the login route -->
+  <RouterView v-else />
+</template>
