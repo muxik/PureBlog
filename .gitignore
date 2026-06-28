@@ -35,3 +35,6 @@ Thumbs.db
 /deploy/pgdata/
 /deploy/caddy_data/
 /uploads/
+
+# ---- design source (not part of the app build) ----
+/muxi-blog-design/
