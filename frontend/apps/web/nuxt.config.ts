@@ -14,6 +14,9 @@ export default defineNuxtConfig({
     public: {
       // browser base; override: NUXT_PUBLIC_API_BASE
       apiBase: 'http://localhost:8080/api/v1',
+      // Public site origin, used for absolute URLs in sitemap.xml, feed.xml and
+      // Open Graph tags. Override in production: NUXT_PUBLIC_SITE_URL
+      siteUrl: 'http://localhost:3000',
     },
   },
   app: {
@@ -21,6 +24,10 @@ export default defineNuxtConfig({
       htmlAttrs: { lang: 'zh' },
       title: 'PureBlog',
       meta: [{ name: 'viewport', content: 'width=device-width, initial-scale=1' }],
+      link: [
+        // RSS auto-discovery — lets readers/browsers find the feed.
+        { rel: 'alternate', type: 'application/rss+xml', title: 'PureBlog', href: '/feed.xml' },
+      ],
       // Pre-paint theme script: apply the saved theme before first paint to
       // avoid a light→dark flash (FOUC). Verbatim from muxi-blog-design/index.html.
       script: [

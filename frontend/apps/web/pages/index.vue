@@ -9,8 +9,14 @@ const { format } = useDateFormat(
   dfmt === 'numeric' || dfmt === 'lunar' ? dfmt : undefined,
 )
 
-// ── Page title ─────────────────────────────────────────────────────────────
+// ── Page title & Open Graph ──────────────────────────────────────────────────
 useHead({ title: settings.value.siteName || 'PureBlog' })
+const siteUrl = (useRuntimeConfig().public.siteUrl as string).replace(/\/$/, '')
+useSeoMeta({
+  ogTitle: () => settings.value.siteName || 'PureBlog',
+  ogType: 'website',
+  ogUrl: siteUrl + '/',
+})
 
 // ── Layout variant ─────────────────────────────────────────────────────────
 const { variant, set } = useLayoutVariant()

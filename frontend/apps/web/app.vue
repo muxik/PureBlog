@@ -9,6 +9,21 @@ const settings = useSiteSettings()
 const siteName = computed(() => settings.value?.siteName ?? 'PureBlog')
 const currentYear = computed(() => new Date().getFullYear())
 
+// Site-wide Open Graph / Twitter defaults. Individual pages override title,
+// description and og:url via their own useSeoMeta() calls. Title is suffixed
+// with the site name unless the page title already is the site name.
+const siteUrl = (useRuntimeConfig().public.siteUrl as string).replace(/\/$/, '')
+useSeoMeta({
+  ogSiteName: () => siteName.value,
+  ogType: 'website',
+  twitterCard: 'summary_large_image',
+  description: () => settings.value?.description || undefined,
+})
+useHead({
+  titleTemplate: (t) => (t && t !== siteName.value ? `${t} · ${siteName.value}` : siteName.value),
+  link: [{ rel: 'canonical', href: () => `${siteUrl}${route.path}` }],
+})
+
 /**
  * Whether a nav link is "active" for the current route.
  * Home ("/") uses exact match; all other paths use startsWith.

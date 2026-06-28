@@ -20,6 +20,25 @@ const { data: postsListData } = await useFetch<PostListResponse>(`${apiBase}/pos
 
 useHead(() => ({ title: post.value?.title ?? 'PureBlog' }))
 
+// Open Graph — article-typed, with summary as description and cover as image.
+const siteUrl = (useRuntimeConfig().public.siteUrl as string).replace(/\/$/, '')
+const ogImage = computed(() => {
+  const c = post.value?.coverUrl
+  if (!c) return undefined
+  return /^https?:\/\//.test(c) ? c : `${siteUrl}${c.startsWith('/') ? '' : '/'}${c}`
+})
+useSeoMeta({
+  title: () => post.value?.title ?? 'PureBlog',
+  description: () => post.value?.summary || undefined,
+  ogTitle: () => post.value?.title ?? 'PureBlog',
+  ogDescription: () => post.value?.summary || undefined,
+  ogType: 'article',
+  ogUrl: `${siteUrl}/post/${slug}`,
+  ogImage: () => ogImage.value,
+  articlePublishedTime: () => post.value?.publishedAt || undefined,
+  articleModifiedTime: () => post.value?.updatedAt || undefined,
+})
+
 // Decorated display data (date, tagStr, readMin, …)
 const decorated = computed(() => {
   if (!post.value) return null
