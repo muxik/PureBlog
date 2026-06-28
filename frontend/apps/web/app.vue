@@ -1,55 +1,79 @@
+<script setup lang="ts">
+// Site chrome: header + main + footer.
+// Page agents own pages/*.vue; this file owns only the shared shell.
+
+const route = useRoute()
+const { toggle, label: themeLabel } = useTheme()
+const settings = useSiteSettings()
+
+const siteName = computed(() => settings.value?.siteName ?? 'PureBlog')
+const currentYear = computed(() => new Date().getFullYear())
+
+/**
+ * Whether a nav link is "active" for the current route.
+ * Home ("/") uses exact match; all other paths use startsWith.
+ */
+function isActive(path: string): boolean {
+  if (path === '/') return route.path === '/'
+  return route.path.startsWith(path)
+}
+</script>
+
 <template>
-  <div class="site">
-    <header class="site-header">
-      <NuxtLink to="/" class="brand">PureBlog</NuxtLink>
-      <nav class="site-nav">
-        <NuxtLink to="/categories" class="nav-link">分类</NuxtLink>
-        <NuxtLink to="/tags" class="nav-link">标签</NuxtLink>
+  <div class="app">
+    <header class="site-header wrap">
+      <NuxtLink class="masthead" to="/" aria-label="回到首页">
+        <span class="masthead__name">{{ siteName }}</span>
+      </NuxtLink>
+
+      <nav class="nav">
+        <NuxtLink
+          class="nav__link"
+          :class="{ 'is-active': isActive('/') }"
+          to="/"
+        >文章</NuxtLink>
+
+        <NuxtLink
+          class="nav__link"
+          :class="{ 'is-active': isActive('/archive') }"
+          to="/archive"
+        >归档</NuxtLink>
+
+        <NuxtLink
+          class="nav__link"
+          :class="{ 'is-active': isActive('/tags') }"
+          to="/tags"
+        >标签</NuxtLink>
+
+        <NuxtLink
+          class="nav__link"
+          :class="{ 'is-active': isActive('/about') }"
+          to="/about"
+        >关于</NuxtLink>
+
+        <NuxtLink
+          class="nav__link"
+          :class="{ 'is-active': isActive('/search') }"
+          to="/search"
+        >搜索</NuxtLink>
+
+        <span class="nav__sep" aria-hidden="true"></span>
+
+        <button
+          class="nav__toggle"
+          aria-label="切换深浅色"
+          @click="toggle"
+        >{{ themeLabel }}</button>
       </nav>
     </header>
+
     <main class="site-main">
       <NuxtPage />
     </main>
-    <footer class="site-footer">黛 · PureBlog v3</footer>
+
+    <footer class="site-footer wrap">
+      <span class="site-footer__dot" aria-hidden="true"></span>
+      <span>© {{ currentYear }} {{ siteName }} · 保留所有权利</span>
+    </footer>
   </div>
 </template>
-
-<style>
-.site {
-  max-width: 42rem;
-  margin: 0 auto;
-  padding: 2rem 1.25rem 4rem;
-}
-.site-header {
-  padding: 1rem 0 2.5rem;
-  display: flex;
-  align-items: baseline;
-  gap: 1.5rem;
-}
-.brand {
-  font-family: var(--font-serif, serif);
-  font-size: 1.25rem;
-  color: var(--accent, #235a73);
-  text-decoration: none;
-  letter-spacing: 0.04em;
-}
-.site-nav {
-  display: flex;
-  gap: 1rem;
-}
-.nav-link {
-  font-size: 0.9rem;
-  color: var(--ink-2, #6b655c);
-  text-decoration: none;
-}
-.nav-link:hover {
-  color: var(--accent, #235a73);
-}
-.site-footer {
-  margin-top: 4rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid var(--border, #e7e2d6);
-  color: var(--ink-3, #8a857a);
-  font-size: 0.85rem;
-}
-</style>

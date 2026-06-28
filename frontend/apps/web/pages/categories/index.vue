@@ -25,66 +25,53 @@ const tree = computed<CatNode[]>(() => {
   }
   return roots
 })
+
+useHead({ title: '分类 · PureBlog' })
 </script>
 
 <template>
-  <section>
+  <section class="section--pad wrap">
     <h1 class="page-title">分类</h1>
-    <ul v-if="tree.length" class="cat-list">
-      <li v-for="cat in tree" :key="cat.id" class="cat-item">
-        <NuxtLink :to="`/categories/${cat.slug}`" class="cat-link">{{ cat.name }}</NuxtLink>
-        <p v-if="cat.description" class="cat-desc">{{ cat.description }}</p>
-        <ul v-if="cat.children.length" class="cat-children">
-          <li v-for="child in cat.children" :key="child.id" class="cat-item cat-item--child">
-            <NuxtLink :to="`/categories/${child.slug}`" class="cat-link">{{ child.name }}</NuxtLink>
-            <p v-if="child.description" class="cat-desc">{{ child.description }}</p>
-          </li>
-        </ul>
-      </li>
-    </ul>
-    <p v-else class="empty">暂无分类。</p>
+    <p class="page-sub" style="margin: 8px 0 32px">按类别浏览全部文章。</p>
+
+    <div v-if="tree.length">
+      <div v-for="cat in tree" :key="cat.id" class="cat-group">
+        <div class="tags-grid">
+          <NuxtLink :to="`/categories/${cat.slug}`" class="chip cat-chip">
+            <span class="chip__name">{{ cat.name }}</span>
+          </NuxtLink>
+        </div>
+        <p v-if="cat.description" class="page-sub cat-desc">{{ cat.description }}</p>
+        <div v-if="cat.children.length" class="tags-grid cat-children">
+          <NuxtLink
+            v-for="child in cat.children"
+            :key="child.id"
+            :to="`/categories/${child.slug}`"
+            class="chip cat-chip"
+          >
+            <span class="chip__name">{{ child.name }}</span>
+          </NuxtLink>
+        </div>
+      </div>
+    </div>
+    <p v-else class="empty-note">暂无分类。</p>
   </section>
 </template>
 
 <style scoped>
-.page-title {
-  font-family: var(--font-serif, serif);
-  font-size: 1.5rem;
-  margin: 0 0 1.5rem;
-}
-.cat-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-.cat-item {
-  padding: 0.75rem 0;
-  border-bottom: 1px solid var(--border, #e6e0d3);
-}
-.cat-item--child {
-  border-bottom: none;
-  padding: 0.4rem 0;
-}
-.cat-link {
-  text-decoration: none;
-  color: var(--accent, #235a73);
-  font-family: var(--font-serif, serif);
-  font-size: 1.05rem;
-}
-.cat-link:hover {
-  text-decoration: underline;
+.cat-group {
+  margin-bottom: 28px;
 }
 .cat-desc {
-  margin: 0.25rem 0 0;
-  color: var(--ink-2, #6b655c);
-  font-size: 0.9rem;
+  margin: 6px 0 0;
+  font-size: var(--text-sm);
 }
 .cat-children {
-  list-style: none;
-  margin: 0.5rem 0 0 1.25rem;
-  padding: 0;
+  margin-top: 10px;
+  padding-left: 16px;
 }
-.empty {
-  color: var(--ink-3, #a39c8f);
+/* Reset anchor decoration so .chip looks like its button counterpart */
+.cat-chip {
+  text-decoration: none;
 }
 </style>

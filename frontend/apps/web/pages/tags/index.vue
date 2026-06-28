@@ -1,50 +1,61 @@
 <script setup lang="ts">
-import type { TagListResponse } from '@pureblog/api-types'
+import type { TagListResponse, PostListResponse } from '@pureblog/api-types'
 
-const { data } = await useFetch<TagListResponse>(`${useApiBase()}/tags`)
+const apiBase = useApiBase()
+
+// Fetch all tags and all posts (capped at 500) in parallel.
+// The posts fetch gives us per-tag counts without a dedicated endpoint.
+const [{ data: tagsData }, { data: postsData }] = await Promise.all([
+  useFetch<TagListResponse>(`${apiBase}/tags`),
+  useFetch<PostListResponse>(`${apiBase}/posts`, { query: { pageSize: 500 } }),
+])
+
+// Tally post count for each tag slug.
+const tagCounts = computed<Record<string, number>>(() => {
+  const counts: Record<string, number> = {}
+  for (const post of postsData.value?.items ?? []) {
+    for (const tag of post.tags ?? []) {
+      if (tag.slug) {
+        counts[tag.slug] = (counts[tag.slug] ?? 0) + 1
+      }
+    }
+  }
+  return counts
+})
+
+// Sort tags by count descending, then alphabetically within same count.
+const sortedTags = computed(() => {
+  const tags = [...(tagsData.value?.items ?? [])]
+  return tags.sort((a, b) => {
+    const ca = tagCounts.value[a.slug ?? ''] ?? 0
+    const cb = tagCounts.value[b.slug ?? ''] ?? 0
+    if (cb !== ca) return cb - ca
+    return (a.name ?? '').localeCompare(b.name ?? '', 'zh')
+  })
+})
 </script>
 
 <template>
-  <section>
-    <h1 class="page-title">标签</h1>
-    <div v-if="data?.items?.length" class="tag-cloud">
+  <section class="section--pad wrap">
+    <h1 class="page-title" style="margin: 0 0 6px">标签</h1>
+    <p class="page-sub" style="margin: 0 0 28px">
+      按主题翻阅。点一个标签，看看那一类里都写了些什么。
+    </p>
+
+    <div v-if="sortedTags.length" class="tags-grid">
       <NuxtLink
-        v-for="tag in data.items"
+        v-for="tag in sortedTags"
         :key="tag.id"
         :to="`/tags/${tag.slug}`"
-        class="tag-chip"
-      >{{ tag.name }}</NuxtLink>
+        class="chip"
+      >
+        <span class="chip__name">{{ tag.name }}</span>
+        <span v-if="tagCounts[tag.slug ?? '']" class="chip__count">
+          {{ tagCounts[tag.slug ?? ''] }}
+        </span>
+      </NuxtLink>
     </div>
-    <p v-else class="empty">暂无标签。</p>
+
+    <p v-else class="empty-note">暂无标签。</p>
   </section>
 </template>
-
-<style scoped>
-.page-title {
-  font-family: var(--font-serif, serif);
-  font-size: 1.5rem;
-  margin: 0 0 1.5rem;
-}
-.tag-cloud {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-.tag-chip {
-  display: inline-block;
-  padding: 0.25rem 0.65rem;
-  background: var(--paper-subtle, #f1ece0);
-  color: var(--ink-2, #6b655c);
-  border-radius: 2px;
-  font-size: 0.875rem;
-  text-decoration: none;
-  border-bottom: none;
-  line-height: 1.5;
-}
-.tag-chip:hover {
-  color: var(--accent, #235a73);
-}
-.empty {
-  color: var(--ink-3, #a39c8f);
-}
-</style>

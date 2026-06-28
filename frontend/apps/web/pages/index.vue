@@ -1,108 +1,180 @@
 <script setup lang="ts">
-import type { PostListResponse, CategoryListResponse } from '@pureblog/api-types'
+import type { Post, PostListResponse } from '@pureblog/api-types'
+import { decoratePost, groupByYear } from '~/composables/usePostView'
 
+// ── Settings & date format ──────────────────────────────────────────────────
+const settings = useSiteSettings()
+const dfmt = settings.value.defaultDateFormat
+const { format } = useDateFormat(
+  dfmt === 'numeric' || dfmt === 'lunar' ? dfmt : undefined,
+)
+
+// ── Page title ─────────────────────────────────────────────────────────────
+useHead({ title: settings.value.siteName || 'PureBlog' })
+
+// ── Layout variant ─────────────────────────────────────────────────────────
+const { variant, set } = useLayoutVariant()
+
+// ── Fetch posts (SSR + generous pageSize so SSR renders real content) ───────
 const { data } = await useFetch<PostListResponse>(`${useApiBase()}/posts`, {
-  query: { pageSize: 20 },
+  query: { pageSize: 50 },
 })
-const { data: cats } = await useFetch<CategoryListResponse>(`${useApiBase()}/categories`)
 
-// id → { name, slug } map for resolving post.categoryId to a link
-const catMap = computed(() => {
-  const m = new Map<number, { name: string; slug: string }>()
-  for (const c of cats.value?.items ?? []) {
-    if (c.id != null) m.set(c.id, { name: c.name ?? '', slug: c.slug ?? '' })
-  }
-  return m
+// ── Decorate & sort: pinned first, then preserve API order (date desc) ──────
+const allPosts = computed(() => {
+  const raw: Post[] = data.value?.items ?? []
+  const sorted = [...raw].sort((a, b) => {
+    if (a.pinned && !b.pinned) return -1
+    if (!a.pinned && b.pinned) return 1
+    return 0
+  })
+  return sorted.map((p) => decoratePost(p, format.value))
+})
+
+// ── Infinite-scroll pagination ─────────────────────────────────────────────
+const PAGE_SIZE = 6
+const page = ref(1)
+
+// Reset page when the user switches layout variants
+watch(variant, () => {
+  page.value = 1
+})
+
+const pagedPosts = computed(() => allPosts.value.slice(0, page.value * PAGE_SIZE))
+const hasMore = computed(() => pagedPosts.value.length < allPosts.value.length)
+
+// Year-grouped view for variant A — derived from the already-paged slice
+const groupedPosts = computed(() => groupByYear(pagedPosts.value))
+
+function loadMore() {
+  if (hasMore.value) page.value++
+}
+
+// ── Sentinel + IntersectionObserver (client-only) ───────────────────────────
+const sentinelEl = ref<HTMLElement | null>(null)
+
+onMounted(() => {
+  if (!import.meta.client || !('IntersectionObserver' in window)) return
+
+  const io = new IntersectionObserver(
+    (entries) => {
+      if (entries.some((e) => e.isIntersecting)) loadMore()
+    },
+    { rootMargin: '240px 0px' },
+  )
+
+  // Follow the sentinel element as it appears / disappears from the DOM
+  watch(
+    sentinelEl,
+    (el, prev) => {
+      if (prev) io.unobserve(prev)
+      if (el) io.observe(el)
+    },
+    { immediate: true },
+  )
+
+  onUnmounted(() => io.disconnect())
 })
 </script>
 
 <template>
-  <section>
-    <ul class="post-list">
-      <li v-for="p in data?.items ?? []" :key="p.id" class="post-row">
-        <NuxtLink :to="`/post/${p.slug}`" class="post-link">
-          <span class="post-title">{{ p.title }}</span>
-          <span v-if="p.summary" class="post-summary">{{ p.summary }}</span>
-        </NuxtLink>
-        <div v-if="(p.categoryId != null && catMap.get(p.categoryId)) || p.tags?.length" class="post-meta">
-          <NuxtLink
-            v-if="p.categoryId != null && catMap.get(p.categoryId)"
-            :to="`/categories/${catMap.get(p.categoryId)?.slug}`"
-            class="meta-cat"
-          >{{ catMap.get(p.categoryId)?.name }}</NuxtLink>
-          <NuxtLink
-            v-for="t in p.tags ?? []"
-            :key="t.id"
-            :to="`/tags/${t.slug}`"
-            class="meta-tag"
-          >{{ t.name }}</NuxtLink>
+  <!-- Intro lede -->
+  <section class="intro wrap">
+    <p class="intro__lede">
+      {{ settings.description || '这里记录一些思考与文字。慢一点，长一点。' }}
+    </p>
+  </section>
+
+  <!-- Posts section -->
+  <section class="section wrap">
+    <!-- Section header: title + segmented control -->
+    <div class="section-head">
+      <h2 class="section-head__title">文章</h2>
+      <div class="segmented">
+        <button
+          class="seg"
+          :class="{ 'is-active': variant === 'A' }"
+          @click="set('A')"
+        >年表</button>
+        <button
+          class="seg"
+          :class="{ 'is-active': variant === 'B' }"
+          @click="set('B')"
+        >摘要</button>
+        <button
+          class="seg"
+          :class="{ 'is-active': variant === 'C' }"
+          @click="set('C')"
+        >双栏</button>
+      </div>
+    </div>
+
+    <!-- Variant A: 年表 (Timeline grouped by year) -->
+    <template v-if="variant === 'A'">
+      <template v-for="group in groupedPosts" :key="group.year">
+        <div class="year-rule year-rule--timeline">
+          <span class="year-rule__label">{{ group.year }}</span>
+          <span class="year-rule__line"></span>
         </div>
-      </li>
-    </ul>
+        <NuxtLink
+          v-for="pv in group.posts"
+          :key="pv.slug"
+          :to="`/post/${pv.slug}`"
+          class="row post-row"
+        >
+          <time class="post-row__time">{{ pv.md }}</time>
+          <span class="post-row__title" data-title="">{{ pv.title }}</span>
+          <span v-if="pv.pinned" class="badge-pin">置顶</span>
+        </NuxtLink>
+      </template>
+    </template>
+
+    <!-- Variant B: 摘要 (Summary cards) -->
+    <div v-else-if="variant === 'B'" class="list-pad">
+      <NuxtLink
+        v-for="pv in pagedPosts"
+        :key="pv.slug"
+        :to="`/post/${pv.slug}`"
+        class="row post-summary"
+      >
+        <div class="post-summary__head">
+          <h3 class="post-summary__title" data-title="">{{ pv.title }}</h3>
+          <span v-if="pv.pinned" class="badge-pin">置顶</span>
+        </div>
+        <p class="post-summary__excerpt">{{ pv.excerpt }}</p>
+        <div class="post-summary__meta">{{ pv.metaLine }}</div>
+      </NuxtLink>
+    </div>
+
+    <!-- Variant C: 双栏 (Two-column date + title) -->
+    <div v-else class="list-pad">
+      <NuxtLink
+        v-for="pv in pagedPosts"
+        :key="pv.slug"
+        :to="`/post/${pv.slug}`"
+        class="row post-cols"
+      >
+        <div class="post-cols__date">{{ pv.date }}</div>
+        <div>
+          <div class="post-cols__head">
+            <span class="post-cols__title" data-title="">{{ pv.title }}</span>
+            <span v-if="pv.pinned" class="badge-pin">置顶</span>
+          </div>
+          <div class="post-cols__tags">{{ pv.tagStr }}</div>
+        </div>
+      </NuxtLink>
+    </div>
+
+    <!-- Infinite-scroll sentinel: visible while more posts remain -->
+    <div
+      v-if="hasMore"
+      id="sentinel"
+      ref="sentinelEl"
+      class="sentinel"
+      @click="loadMore"
+    >
+      <span class="sentinel__dot"></span>
+      <span class="sentinel__label">载入中……</span>
+    </div>
   </section>
 </template>
-
-<style scoped>
-.post-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-.post-row {
-  padding: 1.1rem 0;
-  border-bottom: 1px solid var(--border, #e7e2d6);
-}
-.post-link {
-  text-decoration: none;
-  color: inherit;
-  display: block;
-}
-.post-title {
-  display: block;
-  font-family: var(--font-serif, serif);
-  font-size: 1.15rem;
-}
-.post-summary {
-  display: block;
-  margin-top: 0.35rem;
-  color: var(--ink-2, #5c574e);
-  font-size: 0.95rem;
-}
-.post-row:hover .post-title {
-  color: var(--accent, #235a73);
-}
-.post-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem;
-  margin-top: 0.5rem;
-}
-.meta-cat {
-  display: inline-block;
-  padding: 0.15rem 0.5rem;
-  background: color-mix(in srgb, var(--accent, #235a73) 10%, transparent);
-  color: var(--accent, #235a73);
-  border-radius: 2px;
-  font-size: 0.8rem;
-  text-decoration: none;
-  border-bottom: none;
-  line-height: 1.5;
-}
-.meta-cat:hover {
-  background: color-mix(in srgb, var(--accent, #235a73) 18%, transparent);
-}
-.meta-tag {
-  display: inline-block;
-  padding: 0.15rem 0.5rem;
-  background: var(--paper-subtle, #f1ece0);
-  color: var(--ink-2, #6b655c);
-  border-radius: 2px;
-  font-size: 0.8rem;
-  text-decoration: none;
-  border-bottom: none;
-  line-height: 1.5;
-}
-.meta-tag:hover {
-  color: var(--accent, #235a73);
-}
-</style>
