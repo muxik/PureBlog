@@ -4,8 +4,6 @@ import { useRoute, useRouter } from 'vue-router'
 import type {
   Post,
   SavePostRequest,
-  Category,
-  CategoryListResponse,
   Tag,
   TagListResponse,
   RenderResponse,
@@ -28,13 +26,9 @@ const drawerOpen = ref(false)
 /* ── Drawer / publish-settings state ─────────────────────────────── */
 const summary = ref('')
 const coverUrl = ref('')
-const categoryId = ref<number | null>(null)
 const pinned = ref(false)
 const tagInput = ref('')        // raw space-separated names shown in the input
 const tagChips = ref<string[]>([])  // parsed chips shown below the input
-
-/* ── Dropdown data ────────────────────────────────────────────────── */
-const categories = ref<Category[]>([])
 
 /* ── DOM refs ─────────────────────────────────────────────────────── */
 // We do NOT bind :value on the textarea — Vue never patches value during
@@ -130,19 +124,13 @@ function closeDrawer() { drawerOpen.value = false }
 
 /* ── Mount: load data ─────────────────────────────────────────────── */
 onMounted(async () => {
-  const [catRes, postData] = await Promise.all([
-    api<CategoryListResponse>('/categories', { auth: false }),
-    id ? api<Post>(`/admin/posts/${id}`) : Promise.resolve(null as Post | null),
-  ])
-
-  categories.value = catRes.items ?? []
+  const postData = id ? await api<Post>(`/admin/posts/${id}`) : null
 
   let initialBody = ''
   if (postData) {
     title.value = postData.title ?? ''
     summary.value = postData.summary ?? ''
     coverUrl.value = postData.coverUrl ?? ''
-    categoryId.value = postData.categoryId != null ? Number(postData.categoryId) : null
     pinned.value = postData.pinned ?? false
     postStatus.value = (postData.status as 'draft' | 'published') ?? 'draft'
     initialBody = postData.contentMd ?? ''
@@ -214,7 +202,6 @@ async function save(status: 'draft' | 'published') {
     coverUrl: coverUrl.value,
     status,
     pinned: pinned.value,
-    categoryId: categoryId.value ?? undefined,
     tagIds: resolvedTagIds,
   }
 
@@ -342,15 +329,6 @@ async function drawerSave(status: 'draft' | 'published') {
           <div class="tag-chips">
             <span v-for="chip in tagChips" :key="chip" class="tag-chip">{{ chip }}</span>
           </div>
-        </label>
-
-        <!-- 分类 / category -->
-        <label class="field">
-          <span class="field-label">分类</span>
-          <select v-model="categoryId" class="admin-input">
-            <option :value="null">无分类</option>
-            <option v-for="cat in categories" :key="cat.id" :value="cat.id">{{ cat.name }}</option>
-          </select>
         </label>
 
         <!-- 日期 / date (read-only; backend sets publishedAt) -->

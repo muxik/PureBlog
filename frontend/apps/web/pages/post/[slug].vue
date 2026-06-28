@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Post, Comment, CommentListResponse, Category, CategoryListResponse, PostListResponse } from '@pureblog/api-types'
+import type { Post, Comment, CommentListResponse, PostListResponse } from '@pureblog/api-types'
 import { decoratePost } from '~/composables/usePostView'
 
 const route = useRoute()
@@ -13,27 +13,12 @@ const { format } = useDateFormat(initialFmt)
 
 // SSR fetches
 const { data: post } = await useFetch<Post>(`${apiBase}/posts/${slug}`)
-const { data: categoriesData } = await useFetch<CategoryListResponse>(`${apiBase}/categories`)
 const { data: commentsData } = await useFetch<CommentListResponse>(`${apiBase}/posts/${slug}/comments`)
 const { data: postsListData } = await useFetch<PostListResponse>(`${apiBase}/posts`, {
   query: { pageSize: 200 },
 })
 
 useHead(() => ({ title: post.value?.title ?? 'PureBlog' }))
-
-// Build id → category lookup
-const categoryMap = computed((): Map<number, Category> => {
-  const m = new Map<number, Category>()
-  for (const c of categoriesData.value?.items ?? []) {
-    if (c.id != null) m.set(c.id, c)
-  }
-  return m
-})
-
-const postCategory = computed((): Category | null => {
-  const id = post.value?.categoryId
-  return id != null ? (categoryMap.value.get(id) ?? null) : null
-})
 
 // Decorated display data (date, tagStr, readMin, …)
 const decorated = computed(() => {
@@ -163,13 +148,6 @@ async function submitComment(): Promise<void> {
 
         <!-- Estimated read time -->
         <span v-if="decorated.readMin" class="article__read">约 {{ decorated.readMin }} 分钟</span>
-
-        <!-- Category chip -->
-        <NuxtLink
-          v-if="postCategory?.slug && postCategory?.name"
-          :to="`/categories/${postCategory.slug}`"
-          class="chip cat-chip"
-        >{{ postCategory.name }}</NuxtLink>
       </div>
     </header>
 

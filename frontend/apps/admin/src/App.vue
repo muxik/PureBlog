@@ -21,7 +21,6 @@ function logout() {
 const navItems = [
   { to: '/write',      label: '写作' },
   { to: '/manage',     label: '文章' },
-  { to: '/categories', label: '分类' },
   { to: '/tags',       label: '标签' },
   { to: '/comments',   label: '评论' },
   { to: '/settings',   label: '设置' },
