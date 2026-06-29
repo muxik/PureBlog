@@ -15,14 +15,22 @@ type batchRequest struct {
 	IDs    []int64 `json:"ids"`
 }
 
-// batchResponse reports how many posts the action affected.
+// batchResponse reports how many posts the action affected and which ids failed.
 type batchResponse struct {
-	Affected int `json:"affected"`
+	Affected int          `json:"affected"`
+	Failed   []batchError `json:"failed"`
+}
+
+type batchError struct {
+	ID     int64  `json:"id"`
+	Reason string `json:"reason"`
 }
 
 // batchPosts applies a bulk action (delete / publish / draft) to the given post
-// ids. It stops at the first error so the client gets a clear failure rather
-// than a partial, silent result.
+// ids. It is non-transactional, so rather than aborting on the first error and
+// discarding what already succeeded, it applies every id and reports the exact
+// affected count and per-id failures — the client can reconcile instead of
+// blindly retrying a partially-applied operation.
 //
 //	@Summary	Bulk action over posts
 //	@Tags		admin
@@ -54,13 +62,13 @@ func (s *Server) batchPosts(c *gin.Context) {
 		return
 	}
 
-	affected := 0
+	resp := batchResponse{Failed: []batchError{}}
 	for _, id := range req.IDs {
 		if err := apply(id); err != nil {
-			s.fail(c, err)
-			return
+			resp.Failed = append(resp.Failed, batchError{ID: id, Reason: err.Error()})
+			continue
 		}
-		affected++
+		resp.Affected++
 	}
-	c.JSON(http.StatusOK, batchResponse{Affected: affected})
+	c.JSON(http.StatusOK, resp)
 }

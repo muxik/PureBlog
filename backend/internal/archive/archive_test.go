@@ -89,3 +89,29 @@ func TestBundlePathRewriteRoundTrip(t *testing.T) {
 		t.Fatalf("FromBundlePaths did not restore absolute URLs: %q", restored)
 	}
 }
+
+func TestFromBundlePathsDoesNotClobberForeignRefs(t *testing.T) {
+	base := "https://blog.example.com"
+	cases := []struct {
+		name string
+		in   string
+		want string // unchanged
+	}{
+		{"external image url", "![cat](https://cdn.other.com/images/cat.png)", "![cat](https://cdn.other.com/images/cat.png)"},
+		{"prose mention", "see the images/readme file for details", "see the images/readme file for details"},
+		{"foreign path", "path is /var/images/logo.svg here", "path is /var/images/logo.svg here"},
+	}
+	for _, c := range cases {
+		if got := FromBundlePaths(c.in, base); got != c.want {
+			t.Errorf("%s: FromBundlePaths clobbered a non-bundle reference\n in:   %q\n got:  %q\n want: %q", c.name, c.in, got, c.want)
+		}
+	}
+
+	// A genuine bundle reference (Markdown image, and a bare cover) IS rewritten.
+	if got := FromBundlePaths("![x](images/aaa.png)", base); got != "![x]("+base+"/uploads/aaa.png)" {
+		t.Errorf("markdown bundle ref not rewritten: %q", got)
+	}
+	if got := FromBundlePaths("images/cover.png", base); got != base+"/uploads/cover.png" {
+		t.Errorf("bare cover bundle ref not rewritten: %q", got)
+	}
+}

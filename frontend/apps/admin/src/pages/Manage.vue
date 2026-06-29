@@ -44,9 +44,15 @@ async function batch(action: 'delete' | 'publish' | 'draft') {
   if (action === 'delete' && !confirm(`确认删除选中的 ${selected.value.length} 篇文章?`)) return
   busy.value = true
   try {
-    await api('/admin/posts/batch', { method: 'POST', body: { action, ids: selected.value } })
+    const res = await api<{ affected: number; failed: { id: number; reason: string }[] }>(
+      '/admin/posts/batch',
+      { method: 'POST', body: { action, ids: selected.value } },
+    )
     selected.value = []
     await load()
+    if (res?.failed?.length) {
+      alert(`已处理 ${res.affected} 篇，${res.failed.length} 篇失败。`)
+    }
   } catch {
     alert('批量操作失败，请重试。')
   } finally {

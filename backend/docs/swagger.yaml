@@ -1,5 +1,12 @@
 basePath: /api/v1
 definitions:
+  http.batchError:
+    properties:
+      id:
+        type: integer
+      reason:
+        type: string
+    type: object
   http.batchRequest:
     properties:
       action:
@@ -14,6 +21,10 @@ definitions:
     properties:
       affected:
         type: integer
+      failed:
+        items:
+          $ref: '#/definitions/http.batchError'
+        type: array
     type: object
   http.commentListResponse:
     properties:

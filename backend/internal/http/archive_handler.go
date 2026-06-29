@@ -4,6 +4,7 @@ import (
 	"archive/zip"
 	"bytes"
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -198,12 +199,20 @@ func (s *Server) importPosts(c *gin.Context) {
 		summary.Images++
 	}
 
+	// Build the tag name→id cache once, up front, so the per-post resolution
+	// doesn't re-query the whole tags table for every file (N+1).
+	tagCache, err := s.loadTagCache(ctx)
+	if err != nil {
+		s.fail(c, err)
+		return
+	}
+
 	// Pass 2: upsert posts.
 	for _, f := range zr.File {
 		if f.FileInfo().IsDir() || !strings.HasPrefix(f.Name, "posts/") || !strings.HasSuffix(f.Name, ".md") {
 			continue
 		}
-		if err := s.importOnePost(ctx, f, authorID, &summary); err != nil {
+		if err := s.importOnePost(ctx, f, authorID, tagCache, &summary); err != nil {
 			summary.Errors = append(summary.Errors, importError{File: f.Name, Reason: err.Error()})
 		}
 	}
@@ -212,7 +221,7 @@ func (s *Server) importPosts(c *gin.Context) {
 }
 
 // importOnePost parses and upserts a single posts/*.md entry.
-func (s *Server) importOnePost(ctx context.Context, f *zip.File, authorID int64, summary *importSummary) error {
+func (s *Server) importOnePost(ctx context.Context, f *zip.File, authorID int64, tagCache map[string]int64, summary *importSummary) error {
 	rc, err := f.Open()
 	if err != nil {
 		return err
@@ -236,7 +245,21 @@ func (s *Server) importOnePost(ctx context.Context, f *zip.File, authorID int64,
 		return fmt.Errorf("missing title")
 	}
 
-	tagIDs, err := s.resolveTagIDsByName(ctx, fm.Tags)
+	// Look up the existing post first. Only a genuine "not found" means we
+	// should create; any other error (transient DB failure, cancellation) must
+	// abort, otherwise we'd fall through to Create and produce a duplicate
+	// "<slug>-2" instead of overwriting.
+	existing, err := s.posts.FindBySlug(ctx, slug)
+	switch {
+	case err == nil:
+		// found → update
+	case errors.Is(err, domain.ErrNotFound):
+		existing = nil
+	default:
+		return err
+	}
+
+	tagIDs, err := s.resolveTagIDsByName(ctx, tagCache, fm.Tags)
 	if err != nil {
 		return err
 	}
@@ -247,15 +270,14 @@ func (s *Server) importOnePost(ctx context.Context, f *zip.File, authorID int64,
 		Summary:     fm.Summary,
 		ContentMD:   archive.FromBundlePaths(body, s.cfg.PublicBaseURL),
 		CoverURL:    archive.FromBundlePaths(fm.Cover, s.cfg.PublicBaseURL),
-		Status:      domain.PostStatus(fm.Status),
+		Status:      importStatus(fm.Status, existing),
 		Pinned:      fm.Pinned,
 		AuthorID:    authorID,
 		TagIDs:      tagIDs,
 		PublishedAt: fm.Date,
 	}
 
-	existing, err := s.posts.FindBySlug(ctx, slug)
-	if err == nil && existing != nil {
+	if existing != nil {
 		if _, err := s.posts.Update(ctx, existing.ID, in); err != nil {
 			return err
 		}
@@ -269,11 +291,28 @@ func (s *Server) importOnePost(ctx context.Context, f *zip.File, authorID int64,
 	return nil
 }
 
-// resolveTagIDsByName maps tag names to ids, creating any that don't yet exist.
-func (s *Server) resolveTagIDsByName(ctx context.Context, names []string) ([]int64, error) {
-	if len(names) == 0 {
-		return nil, nil
+// importStatus resolves the status for an imported post. An explicit
+// "published"/"draft" is honored; anything else (empty or unrecognised) does
+// NOT silently unpublish — it preserves the existing post's status on update,
+// or defaults to published for a new post (export always writes an explicit
+// status, so an omitted one only occurs in hand-authored bundles).
+func importStatus(raw string, existing *domain.Post) domain.PostStatus {
+	switch strings.ToLower(strings.TrimSpace(raw)) {
+	case string(domain.StatusPublished):
+		return domain.StatusPublished
+	case string(domain.StatusDraft):
+		return domain.StatusDraft
+	default:
+		if existing != nil {
+			return existing.Status
+		}
+		return domain.StatusPublished
 	}
+}
+
+// loadTagCache reads all tags once into a name→id map for the import to reuse,
+// avoiding a full tags-table query per imported post.
+func (s *Server) loadTagCache(ctx context.Context) (map[string]int64, error) {
 	existing, err := s.tags.List(ctx)
 	if err != nil {
 		return nil, err
@@ -282,13 +321,22 @@ func (s *Server) resolveTagIDsByName(ctx context.Context, names []string) ([]int
 	for _, t := range existing {
 		byName[t.Name] = t.ID
 	}
+	return byName, nil
+}
+
+// resolveTagIDsByName maps tag names to ids using the shared cache, creating any
+// that don't yet exist (and adding them to the cache so later posts reuse them).
+func (s *Server) resolveTagIDsByName(ctx context.Context, cache map[string]int64, names []string) ([]int64, error) {
+	if len(names) == 0 {
+		return nil, nil
+	}
 	var ids []int64
 	for _, n := range names {
 		n = strings.TrimSpace(n)
 		if n == "" {
 			continue
 		}
-		if id, ok := byName[n]; ok {
+		if id, ok := cache[n]; ok {
 			ids = append(ids, id)
 			continue
 		}
@@ -296,14 +344,17 @@ func (s *Server) resolveTagIDsByName(ctx context.Context, names []string) ([]int
 		if err != nil {
 			return nil, err
 		}
-		byName[n] = created.ID
+		cache[n] = created.ID
 		ids = append(ids, created.ID)
 	}
 	return ids, nil
 }
 
-// writeZipEntry copies a zip file entry to dst, guarding against decompression
-// bombs via the size cap already applied to the request body.
+// writeZipEntry copies a zip file entry to dst, capping the DECOMPRESSED size at
+// maxUploadBytes. The request-body limit only bounds the compressed upload, so
+// without this a small archive with a high-ratio deflate entry (a zip bomb)
+// could expand without limit and fill the disk. A partially written file is
+// removed on any failure.
 func writeZipEntry(f *zip.File, dst string) error {
 	rc, err := f.Open()
 	if err != nil {
@@ -314,9 +365,16 @@ func writeZipEntry(f *zip.File, dst string) error {
 	if err != nil {
 		return err
 	}
-	_, err = io.Copy(out, rc)
+	// LimitReader to one byte past the cap so we can detect an oversize entry.
+	written, err := io.Copy(out, io.LimitReader(rc, maxUploadBytes+1))
+	if err == nil && written > maxUploadBytes {
+		err = fmt.Errorf("image exceeds %d MiB limit", maxUploadBytes>>20)
+	}
 	if cerr := out.Close(); err == nil {
 		err = cerr
+	}
+	if err != nil {
+		_ = os.Remove(dst)
 	}
 	return err
 }

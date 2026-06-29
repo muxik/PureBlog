@@ -1166,6 +1166,10 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        "http.batchError": {
+            id?: number;
+            reason?: string;
+        };
         "http.batchRequest": {
             /** @description Action is one of: "delete", "publish", "draft". */
             action?: string;
@@ -1173,6 +1177,7 @@ export interface components {
         };
         "http.batchResponse": {
             affected?: number;
+            failed?: components["schemas"]["http.batchError"][];
         };
         "http.commentListResponse": {
             items?: components["schemas"]["http.commentResponse"][];

@@ -33,7 +33,13 @@ type Frontmatter struct {
 var uploadRef = regexp.MustCompile(`(?:https?://[^/\s]+)?/uploads/([A-Za-z0-9._-]+)`)
 
 // bundleRef matches a reference rewritten for the export bundle: "images/<name>".
-var bundleRef = regexp.MustCompile(`images/([A-Za-z0-9._-]+)`)
+// It is anchored to a preceding delimiter — start-of-string (a bare cover
+// value), "(" (a Markdown image/link), or a quote (inline HTML) — so it does
+// NOT match "images/" embedded inside a foreign path like
+// "https://cdn.other.com/images/cat.png" (preceded by "/") or in prose
+// ("see images/readme", preceded by a space). The leading delimiter is
+// captured and re-emitted by FromBundlePaths.
+var bundleRef = regexp.MustCompile(`(^|[("'])images/([A-Za-z0-9._-]+)`)
 
 // MarshalPost renders frontmatter + body into the bytes of a .md file.
 func MarshalPost(fm Frontmatter, body string) ([]byte, error) {
@@ -101,5 +107,8 @@ func ToBundlePaths(s string) string {
 // "<baseURL>/uploads/<name>" on import.
 func FromBundlePaths(s, baseURL string) string {
 	base := strings.TrimRight(baseURL, "/")
-	return bundleRef.ReplaceAllString(s, base+"/uploads/$1")
+	// $1 is the captured leading delimiter (or empty for start-of-string); $2 is
+	// the filename. Re-emit the delimiter so only the "images/<name>" part is
+	// rewritten.
+	return bundleRef.ReplaceAllString(s, "${1}"+base+"/uploads/$2")
 }
