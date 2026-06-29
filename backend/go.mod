@@ -10,6 +10,7 @@ require (
 	github.com/swaggo/swag v1.16.6
 	github.com/yuin/goldmark v1.8.2
 	golang.org/x/crypto v0.53.0
+	gopkg.in/yaml.v2 v2.4.0
 	gorm.io/driver/postgres v1.6.0
 	gorm.io/gorm v1.31.2
 )
@@ -66,5 +67,4 @@ require (
 	golang.org/x/text v0.38.0 // indirect
 	golang.org/x/tools v0.45.0 // indirect
 	google.golang.org/protobuf v1.36.11 // indirect
-	gopkg.in/yaml.v2 v2.4.0 // indirect
 )

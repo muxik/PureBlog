@@ -133,6 +133,100 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/admin/export": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Export posts as a Markdown bundle */
+        get: {
+            parameters: {
+                query?: {
+                    /** @description comma-separated slugs; default all */
+                    slugs?: string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/zip": string;
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/import": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Import posts from a Markdown bundle */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "multipart/form-data": {
+                        /**
+                         * Format: binary
+                         * @description zip archive
+                         */
+                        file: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["http.importSummary"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["http.errorResponse"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/admin/posts": {
         parameters: {
             query?: never;
@@ -188,6 +282,56 @@ export interface paths {
                     };
                     content: {
                         "application/json": components["schemas"]["http.postResponse"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["http.errorResponse"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/posts/batch": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Bulk action over posts */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            /** @description action and ids */
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["http.batchRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["http.batchResponse"];
                     };
                 };
                 /** @description Bad Request */
@@ -1022,6 +1166,14 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        "http.batchRequest": {
+            /** @description Action is one of: "delete", "publish", "draft". */
+            action?: string;
+            ids?: number[];
+        };
+        "http.batchResponse": {
+            affected?: number;
+        };
         "http.commentListResponse": {
             items?: components["schemas"]["http.commentResponse"][];
         };
@@ -1042,6 +1194,16 @@ export interface components {
         };
         "http.errorResponse": {
             error?: string;
+        };
+        "http.importError": {
+            file?: string;
+            reason?: string;
+        };
+        "http.importSummary": {
+            created?: number;
+            errors?: components["schemas"]["http.importError"][];
+            images?: number;
+            updated?: number;
         };
         "http.listResponse": {
             items?: components["schemas"]["http.postResponse"][];

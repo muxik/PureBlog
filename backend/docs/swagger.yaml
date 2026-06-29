@@ -1,5 +1,20 @@
 basePath: /api/v1
 definitions:
+  http.batchRequest:
+    properties:
+      action:
+        description: 'Action is one of: "delete", "publish", "draft".'
+        type: string
+      ids:
+        items:
+          type: integer
+        type: array
+    type: object
+  http.batchResponse:
+    properties:
+      affected:
+        type: integer
+    type: object
   http.commentListResponse:
     properties:
       items:
@@ -42,6 +57,26 @@ definitions:
     properties:
       error:
         type: string
+    type: object
+  http.importError:
+    properties:
+      file:
+        type: string
+      reason:
+        type: string
+    type: object
+  http.importSummary:
+    properties:
+      created:
+        type: integer
+      errors:
+        items:
+          $ref: '#/definitions/http.importError'
+        type: array
+      images:
+        type: integer
+      updated:
+        type: integer
     type: object
   http.listResponse:
     properties:
@@ -327,6 +362,51 @@ paths:
       summary: Moderate a comment
       tags:
       - admin
+  /admin/export:
+    get:
+      parameters:
+      - description: comma-separated slugs; default all
+        in: query
+        name: slugs
+        type: string
+      produces:
+      - application/zip
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: file
+      security:
+      - BearerAuth: []
+      summary: Export posts as a Markdown bundle
+      tags:
+      - admin
+  /admin/import:
+    post:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - description: zip archive
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.importSummary'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Import posts from a Markdown bundle
+      tags:
+      - admin
   /admin/posts:
     get:
       parameters:
@@ -456,6 +536,33 @@ paths:
       security:
       - BearerAuth: []
       summary: Update a post
+      tags:
+      - admin
+  /admin/posts/batch:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: action and ids
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/http.batchRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.batchResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Bulk action over posts
       tags:
       - admin
   /admin/render:

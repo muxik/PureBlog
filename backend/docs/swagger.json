@@ -125,6 +125,80 @@
                 }
             }
         },
+        "/admin/export": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/zip"
+                ],
+                "tags": [
+                    "admin"
+                ],
+                "summary": "Export posts as a Markdown bundle",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "comma-separated slugs; default all",
+                        "name": "slugs",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "file"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/import": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin"
+                ],
+                "summary": "Import posts from a Markdown bundle",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "zip archive",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/http.importSummary"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/http.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/admin/posts": {
             "get": {
                 "security": [
@@ -206,6 +280,50 @@
                         "description": "Created",
                         "schema": {
                             "$ref": "#/definitions/http.postResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/http.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/posts/batch": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin"
+                ],
+                "summary": "Bulk action over posts",
+                "parameters": [
+                    {
+                        "description": "action and ids",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/http.batchRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/http.batchResponse"
                         }
                     },
                     "400": {
@@ -889,6 +1007,29 @@
         }
     },
     "definitions": {
+        "http.batchRequest": {
+            "type": "object",
+            "properties": {
+                "action": {
+                    "description": "Action is one of: \"delete\", \"publish\", \"draft\".",
+                    "type": "string"
+                },
+                "ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
+        "http.batchResponse": {
+            "type": "object",
+            "properties": {
+                "affected": {
+                    "type": "integer"
+                }
+            }
+        },
         "http.commentListResponse": {
             "type": "object",
             "properties": {
@@ -952,6 +1093,37 @@
             "properties": {
                 "error": {
                     "type": "string"
+                }
+            }
+        },
+        "http.importError": {
+            "type": "object",
+            "properties": {
+                "file": {
+                    "type": "string"
+                },
+                "reason": {
+                    "type": "string"
+                }
+            }
+        },
+        "http.importSummary": {
+            "type": "object",
+            "properties": {
+                "created": {
+                    "type": "integer"
+                },
+                "errors": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/http.importError"
+                    }
+                },
+                "images": {
+                    "type": "integer"
+                },
+                "updated": {
+                    "type": "integer"
                 }
             }
         },

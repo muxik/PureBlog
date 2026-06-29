@@ -129,8 +129,11 @@ func (r *PostRepo) List(ctx context.Context, f domain.PostListFilter) ([]*domain
 		page = 1
 	}
 	size := f.PageSize
-	if size < 1 || size > 100 {
+	if size < 1 {
 		size = 10
+	}
+	if size > 100 {
+		size = 100
 	}
 
 	var models []PostModel

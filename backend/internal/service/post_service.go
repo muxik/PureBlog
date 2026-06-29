@@ -35,6 +35,10 @@ type SavePostInput struct {
 	Pinned    bool
 	AuthorID  int64
 	TagIDs    []int64
+	// PublishedAt, when non-nil, sets the publish time explicitly instead of
+	// stamping time.Now() on the draft→published transition. Used by import to
+	// preserve the original date from a post's frontmatter.
+	PublishedAt *time.Time
 }
 
 // Create renders the Markdown, derives a unique slug, and persists the post.
@@ -61,6 +65,9 @@ func (s *PostService) Create(ctx context.Context, in SavePostInput) (*domain.Pos
 	if p.Status == domain.StatusPublished {
 		now := time.Now()
 		p.PublishedAt = &now
+	}
+	if in.PublishedAt != nil {
+		p.PublishedAt = in.PublishedAt
 	}
 
 	base := p.Slug
@@ -108,6 +115,9 @@ func (s *PostService) Update(ctx context.Context, id int64, in SavePostInput) (*
 		existing.PublishedAt = &now
 	}
 	existing.Status = newStatus
+	if in.PublishedAt != nil {
+		existing.PublishedAt = in.PublishedAt
+	}
 
 	if err := s.repo.Update(ctx, existing); err != nil {
 		return nil, err
@@ -120,6 +130,22 @@ func (s *PostService) Delete(ctx context.Context, id int64) error {
 	return s.repo.Delete(ctx, id)
 }
 
+// SetStatus changes only a post's status, stamping the publish time on the
+// draft→published transition. Used by batch operations in the admin.
+func (s *PostService) SetStatus(ctx context.Context, id int64, status domain.PostStatus) error {
+	existing, err := s.repo.GetByID(ctx, id)
+	if err != nil {
+		return err
+	}
+	newStatus := normalizeStatus(status)
+	if existing.Status != domain.StatusPublished && newStatus == domain.StatusPublished {
+		now := time.Now()
+		existing.PublishedAt = &now
+	}
+	existing.Status = newStatus
+	return s.repo.Update(ctx, existing)
+}
+
 // List returns posts matching the filter together with the total count.
 func (s *PostService) List(ctx context.Context, f domain.PostListFilter) ([]*domain.Post, int64, error) {
 	return s.repo.List(ctx, f)
@@ -128,6 +154,12 @@ func (s *PostService) List(ctx context.Context, f domain.PostListFilter) ([]*dom
 // GetByID returns any post by id (admin use).
 func (s *PostService) GetByID(ctx context.Context, id int64) (*domain.Post, error) {
 	return s.repo.GetByID(ctx, id)
+}
+
+// FindBySlug returns any post by slug regardless of status and without bumping
+// the view count. Used by import to upsert by slug.
+func (s *PostService) FindBySlug(ctx context.Context, slug string) (*domain.Post, error) {
+	return s.repo.GetBySlug(ctx, slug)
 }
 
 // GetPublishedBySlug returns a published post by slug and bumps its view count.

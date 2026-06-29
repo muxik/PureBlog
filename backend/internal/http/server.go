@@ -71,9 +71,13 @@ func (s *Server) Router() *gin.Engine {
 			admin.GET("/posts", s.adminListPosts)
 			admin.GET("/posts/:id", s.adminGetPost)
 			admin.POST("/posts", s.createPost)
+			admin.POST("/posts/batch", s.batchPosts)
 			admin.PUT("/posts/:id", s.updatePost)
 			admin.DELETE("/posts/:id", s.deletePost)
 			admin.POST("/render", s.renderMarkdown)
+
+			admin.GET("/export", s.exportPosts)
+			admin.POST("/import", s.importPosts)
 
 			admin.POST("/uploads", s.uploadImage)
 			admin.GET("/uploads", s.listUploads)

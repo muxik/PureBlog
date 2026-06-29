@@ -400,6 +400,58 @@ html, body { margin: 0; background: var(--bg); min-height: 100%; }
 }
 .act-btn:hover { color: var(--text-muted); }
 .act-btn--del:hover { color: var(--accent); }
+.act-btn:disabled { opacity: 0.4; cursor: default; }
+
+/* Import / export actions next to the page title. */
+.manage-head__acts { display: flex; align-items: center; gap: 16px; }
+
+/* Import result banner. */
+.import-note {
+  position: relative;
+  margin: 14px 0 0;
+  padding: 10px 32px 10px 14px;
+  background: var(--bg-subtle);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+}
+.import-note__err { color: var(--accent); }
+.import-note__list { margin: 6px 0 0; padding-left: 18px; font-size: var(--text-xs); }
+.import-note__close {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  border: none;
+  background: transparent;
+  color: var(--text-faint);
+  font-size: 16px;
+  cursor: pointer;
+  line-height: 1;
+}
+
+/* Select-all + batch action bar. */
+.batch-bar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 16px 0 0;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--line);
+}
+.batch-bar__all {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  cursor: pointer;
+}
+.batch-bar__spacer { flex: 1; }
+.manage-row__check { flex: none; align-self: center; cursor: pointer; }
+.manage-row.is-selected { background: var(--bg-subtle); }
 
 .badge-draft {
   font-family: var(--font-mono);

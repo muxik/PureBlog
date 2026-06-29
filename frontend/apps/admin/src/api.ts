@@ -38,3 +38,42 @@ export async function uploadFile(file: File): Promise<UploadResult> {
   if (!res.ok) throw new Error(`API ${res.status}`)
   return (await res.json()) as UploadResult
 }
+
+export type ImportSummary = {
+  created: number
+  updated: number
+  images: number
+  errors: { file: string; reason: string }[]
+}
+
+// Download the export bundle as a .zip and trigger a browser save. Optionally
+// restrict to specific slugs.
+export async function downloadExport(slugs?: string[]): Promise<void> {
+  const headers: Record<string, string> = {}
+  const token = localStorage.getItem(ACCESS_KEY)
+  if (token) headers.Authorization = `Bearer ${token}`
+  const qs = slugs && slugs.length ? `?slugs=${encodeURIComponent(slugs.join(','))}` : ''
+  const res = await fetch(BASE + '/admin/export' + qs, { headers })
+  if (!res.ok) throw new Error(`API ${res.status}`)
+  const blob = await res.blob()
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = 'pureblog-export.zip'
+  document.body.appendChild(a)
+  a.click()
+  a.remove()
+  URL.revokeObjectURL(url)
+}
+
+// Upload a .zip bundle to import posts. Returns the server's summary.
+export async function importBundle(file: File): Promise<ImportSummary> {
+  const form = new FormData()
+  form.append('file', file)
+  const headers: Record<string, string> = {}
+  const token = localStorage.getItem(ACCESS_KEY)
+  if (token) headers.Authorization = `Bearer ${token}`
+  const res = await fetch(BASE + '/admin/import', { method: 'POST', headers, body: form })
+  if (!res.ok) throw new Error(`API ${res.status}`)
+  return (await res.json()) as ImportSummary
+}
