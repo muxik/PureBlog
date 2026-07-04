@@ -1,41 +1,31 @@
 name: pureblog
 
 services:
-  db:
-    image: postgres:16-alpine
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER:-postgres}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-pureblog}
-      POSTGRES_DB: ${POSTGRES_DB:-pureblog}
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-    healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-pureblog}']
-      interval: 5s
-      timeout: 5s
-      retries: 12
-
   backend:
     build:
       context: ../backend
     environment:
-      POSTGRES_HOST: db
+      DATABASE_URL: ${DATABASE_URL:-}
+      POSTGRES_HOST: ${POSTGRES_HOST:-host.docker.internal}
+      POSTGRES_PORT: ${POSTGRES_PORT:-5432}
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-pureblog}
       POSTGRES_DB: ${POSTGRES_DB:-pureblog}
+      POSTGRES_SSLMODE: ${POSTGRES_SSLMODE:-disable}
       JWT_SECRET: ${JWT_SECRET:-change-me-to-a-long-random-string}
       ADMIN_USERNAME: ${ADMIN_USERNAME:-muxi}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD:-change-me}
-      CORS_ORIGINS: '${PUBLIC_ORIGIN:-http://localhost},http://admin.${PUBLIC_DOMAIN:-localhost}'
+      CORS_ORIGINS: '${PUBLIC_ORIGIN:-http://localhost},${ADMIN_ORIGIN:-http://localhost:8081}'
       # Absolute base for uploaded-image URLs; must be the public root origin so
       # images resolve from both the site and the admin preview.
       PUBLIC_ORIGIN: '${PUBLIC_ORIGIN:-http://localhost}'
       UPLOAD_DIR: /data/uploads
     volumes:
       - uploads:/data
-    depends_on:
-      db:
-        condition: service_healthy
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+    ports:
+      - '127.0.0.1:${BACKEND_PORT:-8080}:8080'
 
   web:
     build:
@@ -46,6 +36,8 @@ services:
       NUXT_API_BASE_SERVER: http://backend:8080/api/v1
     depends_on:
       - backend
+    ports:
+      - '127.0.0.1:${WEB_PORT:-3000}:3000'
 
   admin:
     build:
@@ -55,25 +47,8 @@ services:
         VITE_API_BASE: '${PUBLIC_ORIGIN:-http://localhost}/api/v1'
     depends_on:
       - backend
-
-  caddy:
-    image: caddy:2-alpine
-    environment:
-      PUBLIC_DOMAIN: ${PUBLIC_DOMAIN:-localhost}
     ports:
-      - '80:80'
-      - '443:443'
-    volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile:ro
-      - caddy_data:/data
-      - caddy_config:/config
-    depends_on:
-      - web
-      - admin
-      - backend
+      - '127.0.0.1:${ADMIN_PORT:-8081}:80'
 
 volumes:
-  pgdata:
   uploads:
-  caddy_data:
-  caddy_config:

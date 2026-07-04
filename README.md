@@ -51,7 +51,7 @@ v3 是从头重写的一版。v2 基于 PHP / ThinkPHP / MySQL,v3 只保留了�
 | 鉴权 | JWT(access + refresh 轮换),argon2 |
 | 前台 | Nuxt 3(SSR) |
 | 后台 | Vue 3 + Vite(SPA),原生 Markdown 编辑器 |
-| 工程 | pnpm 工作区,OpenAPI → TS 代码生成,Docker Compose + Caddy |
+| 工程 | pnpm 工作区,OpenAPI → TS 代码生成,Docker Compose + Nginx 反代示例 |
 
 后端按六边形分层(`domain / service / store / http`),依赖只指向内层:`domain` 不依赖 GORM 或 Gin,替换 ORM、加 GraphQL 都不影响核心。后端用 swaggo 生成 OpenAPI,前端据此生成 TypeScript 类型,接口改动在前端编译期就能发现。
 
@@ -98,13 +98,15 @@ pnpm install
 pnpm dev                     # 前台 :3000,后台 :5173
 ```
 
-### 一条命令起全栈
+### Docker 部署
 
 ```bash
 cd deploy
-cp .env.example .env
-docker compose up -d         # Postgres + Go + Nuxt + 后台 + Caddy
+cp .env.example .env        # 配置外部 PostgreSQL、PUBLIC_ORIGIN、ADMIN_ORIGIN
+docker compose up -d         # Go + Nuxt + 后台静态服务
 ```
+
+生产环境建议用外部 Nginx 反代到本机回环端口：`/api/*`、`/uploads/*` → `127.0.0.1:8080`，主站 → `127.0.0.1:3000`，后台域名 → `127.0.0.1:8081`。参考 `deploy/nginx.example.conf`。
 
 ### 前后端类型同步
 
@@ -122,7 +124,7 @@ PureBlog/
 │  ├─ apps/web         Nuxt 3 前台(SSR)
 │  ├─ apps/admin       Vue 3 + Vite 后台(SPA)
 │  └─ packages/        ui(黛 设计系统) · api-types(由 OpenAPI 生成)
-├─ deploy/         docker-compose · Caddyfile
+├─ deploy/         docker-compose · Nginx 示例配置
 └─ docs/           架构说明
 ```
 

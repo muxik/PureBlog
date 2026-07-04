@@ -31,13 +31,13 @@ packages/api-types  由后端 OpenAPI 生成的 TS 类型
 ```
 
 - **类型同步(day-1 codegen)**:`make swag`(Swagger 2.0)→ `swagger2openapi`(转 OpenAPI 3)→ `openapi-typescript` → `packages/api-types/src/schema.ts`。`pnpm gen:api` 一键跑完。
-- **前台双 API base**:`useApiBase()` 在 SSR 用 `apiBaseServer`(容器内直连 backend),在浏览器用 `public.apiBase`(经 Caddy)。
+- **前台双 API base**:`useApiBase()` 在 SSR 用 `apiBaseServer`(容器内直连 backend),在浏览器用 `public.apiBase`(经外部反代)。
 - 字体仍需自托管 + 子集化(`cn-font-split`)——见 README。
 
 ## 部署(`deploy/`)
 
-`docker compose`:`db`(Postgres)· `backend`(Go/distroless)· `web`(Nuxt SSR)· `admin`(静态,Caddy)· `caddy`(反代 + 自动 HTTPS)。
-Caddy:`/api/*`→backend,`/`→web,`admin.<域名>`→admin。
+`docker compose`:`backend`(Go/distroless)· `web`(Nuxt SSR)· `admin`(静态,Nginx)。PostgreSQL 和公网反代由外部环境提供。
+外部 Nginx:`/api/*`、`/uploads/*`→backend,`/`→web,后台域名→admin。
 
 ## 验证基线(本次脚手架)
 

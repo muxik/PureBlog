@@ -1,4 +1,4 @@
-# Vue 3 + Vite admin SPA, built to static and served by Caddy.
+# Vue 3 + Vite admin SPA, built to static and served by Nginx.
 # Build context = frontend/ (the pnpm workspace root).
 FROM node:22-alpine AS build
 RUN corepack enable
@@ -10,7 +10,7 @@ COPY . .
 RUN pnpm install --frozen-lockfile
 RUN pnpm --filter @pureblog/admin build
 
-FROM caddy:2-alpine AS run
-COPY --from=build /app/apps/admin/dist /srv
-RUN printf ':80 {\n\troot * /srv\n\tencode gzip\n\ttry_files {path} /index.html\n\tfile_server\n}\n' > /etc/caddy/Caddyfile
+FROM nginx:1.27-alpine AS run
+COPY --from=build /app/apps/admin/dist /usr/share/nginx/html
+RUN printf 'server {\n\tlisten 80;\n\tserver_name _;\n\troot /usr/share/nginx/html;\n\tindex index.html;\n\tgzip on;\n\tgzip_types text/plain text/css application/json application/javascript image/svg+xml;\n\n\tlocation / {\n\t\ttry_files $uri $uri/ /index.html;\n\t}\n}\n' > /etc/nginx/conf.d/default.conf
 EXPOSE 80
