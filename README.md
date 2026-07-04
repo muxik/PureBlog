@@ -100,13 +100,56 @@ pnpm dev                     # 前台 :3000,后台 :5173
 
 ### Docker 部署
 
+服务器需要 Docker 与 Docker Compose v2。脚本默认把项目部署到 `/opt/pureblog`,也可以用 `PUREBLOG_DEPLOY_DIR` 指定其他目录。
+
+一键部署(确保当前用户可以写入 `/opt/pureblog`):
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/muxik/PureBlog/main/deploy/docker-deploy.sh \
+  | PUREBLOG_DEPLOY_DIR=/opt/pureblog bash -s -- deploy
+```
+
+生产环境建议先创建部署目录并按步骤执行,方便在启动前修改 `.env`:
+
+```bash
+# 1. Create deployment directory
+sudo mkdir -p /opt/pureblog
+sudo chown "$USER":"$USER" /opt/pureblog
+
+# 2. Download and run deployment preparation script
+curl -fsSL https://raw.githubusercontent.com/muxik/PureBlog/main/deploy/docker-deploy.sh \
+  -o /tmp/pureblog-docker-deploy.sh
+chmod +x /tmp/pureblog-docker-deploy.sh
+PUREBLOG_DEPLOY_DIR=/opt/pureblog /tmp/pureblog-docker-deploy.sh prepare
+
+# 修改外部 PostgreSQL、PUBLIC_ORIGIN、ADMIN_ORIGIN、JWT_SECRET、ADMIN_PASSWORD
+vim /opt/pureblog/deploy/.env
+
+# 3. Start services
+/opt/pureblog/deploy/docker-deploy.sh up
+
+# 4. View logs
+/opt/pureblog/deploy/docker-deploy.sh logs
+```
+
+如果已经在仓库目录内,也可以直接使用本地脚本:
+
 ```bash
 cd deploy
 cp .env.example .env        # 配置外部 PostgreSQL、PUBLIC_ORIGIN、ADMIN_ORIGIN
-docker compose up -d         # Go + Nuxt + 后台静态服务
+./docker-deploy.sh up        # Go + Nuxt + 后台静态服务
 ```
 
 生产环境建议用外部 Nginx 反代到本机回环端口：`/api/*`、`/uploads/*` → `127.0.0.1:8080`，主站 → `127.0.0.1:3000`，后台域名 → `127.0.0.1:8081`。参考 `deploy/nginx.example.conf`。
+
+常用命令:
+
+```bash
+/opt/pureblog/deploy/docker-deploy.sh status
+/opt/pureblog/deploy/docker-deploy.sh tail
+/opt/pureblog/deploy/docker-deploy.sh restart
+/opt/pureblog/deploy/docker-deploy.sh down
+```
 
 ### 前后端类型同步
 
@@ -124,7 +167,7 @@ PureBlog/
 │  ├─ apps/web         Nuxt 3 前台(SSR)
 │  ├─ apps/admin       Vue 3 + Vite 后台(SPA)
 │  └─ packages/        ui(黛 设计系统) · api-types(由 OpenAPI 生成)
-├─ deploy/         docker-compose · Nginx 示例配置
+├─ deploy/         Docker Compose · 一键部署脚本 · Nginx 示例配置
 └─ docs/           架构说明
 ```
 
