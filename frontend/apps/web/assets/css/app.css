@@ -272,7 +272,7 @@ html, body { margin: 0; background: var(--bg); min-height: 100%; }
 /* Variant C · two column */
 .post-cols {
   display: grid;
-  grid-template-columns: 118px 1fr;
+  grid-template-columns: minmax(118px, max-content) minmax(0, 1fr);
   gap: 24px;
   align-items: baseline;
   padding: 18px 0;
@@ -283,12 +283,13 @@ html, body { margin: 0; background: var(--bg); min-height: 100%; }
   font-size: var(--text-xs);
   color: var(--text-faint);
   line-height: 1.6;
-  white-space: nowrap;
+  overflow-wrap: anywhere;
 }
 .post-cols__head {
   display: flex;
   align-items: baseline;
   gap: 10px;
+  min-width: 0;
 }
 .post-cols__title {
   font-family: var(--font-kai);
@@ -296,6 +297,7 @@ html, body { margin: 0; background: var(--bg); min-height: 100%; }
   font-weight: 500;
   color: var(--text-body);
   line-height: 1.5;
+  min-width: 0;
 }
 .post-cols__tags {
   font-family: var(--font-body);
@@ -602,7 +604,7 @@ ul.muxi-list li { margin: 0.3em 0; }
     gap: 14px;
   }
   .nav { justify-content: flex-start; gap: 16px; }
-  .post-cols { grid-template-columns: 92px 1fr; gap: 16px; }
+  .post-cols { grid-template-columns: minmax(0, 1fr); gap: 6px; }
   .article__title { font-size: 30px; }
   .about-title { font-size: 2rem; }
 }

@@ -111,15 +111,18 @@ const sorted = computed(() =>
   posts.value.slice().sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0))
 )
 
-function formatDate(p: Post): string {
+function formatDateParts(p: Post): { full: string; label: string } {
   const raw = p.publishedAt || p.createdAt || ''
-  if (!raw) return '—'
+  if (!raw) return { full: '—', label: '—' }
   const d = new Date(raw)
-  if (isNaN(d.getTime())) return raw
+  if (isNaN(d.getTime())) return { full: raw, label: raw }
   const y = d.getFullYear()
   const m = String(d.getMonth() + 1).padStart(2, '0')
   const day = String(d.getDate()).padStart(2, '0')
-  return `${y} · ${m} · ${day}`
+  return {
+    full: `${y}-${m}-${day}`,
+    label: `${y}.${m}.${day}`,
+  }
 }
 
 async function setFilter(f: 'all' | 'published' | 'draft') {
@@ -236,15 +239,23 @@ onMounted(load)
           :checked="isSelected(p.id)"
           @change="toggleSelect(p.id)"
         />
-        <time class="manage-row__date">{{ formatDate(p) }}</time>
         <div class="manage-row__main">
           <div class="manage-row__titlerow">
             <button class="manage-row__title" @click="edit(p.id)">{{ p.title || '无标题' }}</button>
             <span v-if="p.status === 'draft'" class="badge-draft">草稿</span>
             <span v-if="p.pinned" class="badge-pin">置顶</span>
           </div>
-          <div class="manage-row__tags">
-            {{ (p.tags ?? []).map((t) => t.name).filter(Boolean).join(' · ') || '—' }}
+          <div class="manage-row__meta">
+            <time
+              class="manage-row__meta-date"
+              :datetime="p.publishedAt || p.createdAt || undefined"
+              :title="formatDateParts(p).full"
+            >
+              {{ formatDateParts(p).label }}
+            </time>
+            <span class="manage-row__tags">
+              {{ (p.tags ?? []).map((t) => t.name).filter(Boolean).join(' · ') || '—' }}
+            </span>
           </div>
         </div>
         <div class="manage-row__acts">

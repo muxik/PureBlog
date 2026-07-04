@@ -1,11 +1,12 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import Login from './pages/Login.vue'
-import Manage from './pages/Manage.vue'
-import Write from './pages/Write.vue'
-import ManageTags from './pages/ManageTags.vue'
-import ManageComments from './pages/ManageComments.vue'
-import Settings from './pages/Settings.vue'
 import { useAuthStore } from './stores/auth'
+
+const Login = () => import('./pages/Login.vue')
+const Manage = () => import('./pages/Manage.vue')
+const Write = () => import('./pages/Write.vue')
+const ManageTags = () => import('./pages/ManageTags.vue')
+const ManageComments = () => import('./pages/ManageComments.vue')
+const Settings = () => import('./pages/Settings.vue')
 
 export const router = createRouter({
   history: createWebHistory(),

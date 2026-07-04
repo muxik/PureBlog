@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { nextTick, onMounted, ref } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import type {
   Post,
@@ -9,19 +9,31 @@ import type {
   RenderResponse,
 } from '@pureblog/api-types'
 import { api, uploadFile } from '../api'
+import MarkdownEditor from '../components/MarkdownEditor.vue'
 
 const route = useRoute()
 const router = useRouter()
 const id = route.params.id ? Number(route.params.id) : null
+type ViewMode = 'split' | 'source' | 'preview'
+const PREVIEW_TYPING_DELAY_MS = 900
+const PREVIEW_SETTLE_DELAY_MS = 220
 
 /* ── Core editor state ───────────────────────────────────────────── */
 const title = ref('')
-const body = ref('')        // synced from textarea on input / before save / before preview
+const body = ref('')
 const wordCount = ref(0)
 const postStatus = ref<'draft' | 'published'>('draft')
-const preview = ref(false)
+const viewMode = ref<ViewMode>('split')
+const previousMode = ref<ViewMode>('split')
 const previewHtml = ref('')
+const previewState = ref<'idle' | 'loading' | 'ready' | 'error'>('idle')
 const drawerOpen = ref(false)
+const showSourcePane = computed(() => viewMode.value !== 'preview')
+const showPreviewPane = computed(() => viewMode.value !== 'source')
+
+function isSourceView() {
+  return viewMode.value === 'source'
+}
 
 /* ── Drawer / publish-settings state ─────────────────────────────── */
 const summary = ref('')
@@ -31,11 +43,14 @@ const tagInput = ref('')        // raw space-separated names shown in the input
 const tagChips = ref<string[]>([])  // parsed chips shown below the input
 
 /* ── DOM refs ─────────────────────────────────────────────────────── */
-// We do NOT bind :value on the textarea — Vue never patches value during
-// re-renders, so Chinese IME composition and caret position are preserved.
-const textareaEl = ref<HTMLTextAreaElement | null>(null)
+const editorEl = ref<InstanceType<typeof MarkdownEditor> | null>(null)
 const fileInputEl = ref<HTMLInputElement | null>(null)
 const uploading = ref(false)
+let previewTimer: ReturnType<typeof setTimeout> | null = null
+let previewSeq = 0
+let previewRendering = false
+let previewPending = false
+let lastPreviewMarkdown = ''
 
 /* ── Display date ─────────────────────────────────────────────────── */
 function formatDate(d: Date): string {
@@ -44,64 +59,43 @@ function formatDate(d: Date): string {
 }
 const displayDate = ref(formatDate(new Date()))
 
-/* ── Body input handler (no structural re-render) ─────────────────── */
-function onBodyInput(e: Event) {
-  const val = (e.target as HTMLTextAreaElement).value
-  body.value = val
+function updateWordCount(val = body.value) {
   wordCount.value = val.replace(/\s/g, '').length
 }
 
-/* ── Toolbar helpers (operate on live textarea, no re-render) ──────── */
-function wrap(before: string, after: string) {
-  const t = textareaEl.value
-  if (!t) {
-    body.value = (body.value || '') + before + after
-    return
+async function ensureEditorVisible() {
+  if (viewMode.value === 'preview') {
+    viewMode.value = 'split'
+    await nextTick()
   }
-  const s = t.selectionStart
-  const e = t.selectionEnd
-  const v = t.value
-  const sel = v.slice(s, e)
-  t.value = v.slice(0, s) + before + sel + after + v.slice(e)
-  body.value = t.value
-  wordCount.value = t.value.replace(/\s/g, '').length
-  t.focus()
-  try { t.setSelectionRange(s + before.length, s + before.length + sel.length) } catch {}
+  editorEl.value?.focus()
 }
 
-function linePrefix(prefix: string) {
-  const t = textareaEl.value
-  if (!t) {
-    body.value = prefix + (body.value || '')
-    return
+function syncBodyFromEditor() {
+  const value = editorEl.value?.getValue()
+  if (value !== undefined && value !== body.value) {
+    body.value = value
   }
-  const s = t.selectionStart
-  const v = t.value
-  const lineStart = v.lastIndexOf('\n', s - 1) + 1
-  t.value = v.slice(0, lineStart) + prefix + v.slice(lineStart)
-  body.value = t.value
-  wordCount.value = t.value.replace(/\s/g, '').length
-  t.focus()
-  try { t.setSelectionRange(s + prefix.length, s + prefix.length) } catch {}
+}
+
+/* ── Toolbar helpers ──────────────────────────────────────────────── */
+async function wrap(before: string, after: string) {
+  await ensureEditorVisible()
+  if (editorEl.value) editorEl.value.wrapSelection(before, after)
+  else body.value = `${body.value}${before}${after}`
+}
+
+async function linePrefix(prefix: string) {
+  await ensureEditorVisible()
+  if (editorEl.value) editorEl.value.prefixLine(prefix)
+  else body.value = `${prefix}${body.value}`
 }
 
 /* ── Image upload ─────────────────────────────────────────────────── */
-// Insert text at the current caret (mirrors wrap(), but with no selection).
-function insertAtCursor(text: string) {
-  const t = textareaEl.value
-  if (!t) {
-    body.value = (body.value || '') + text
-    return
-  }
-  const s = t.selectionStart
-  const e = t.selectionEnd
-  const v = t.value
-  t.value = v.slice(0, s) + text + v.slice(e)
-  body.value = t.value
-  wordCount.value = t.value.replace(/\s/g, '').length
-  t.focus()
-  const pos = s + text.length
-  try { t.setSelectionRange(pos, pos) } catch {}
+async function insertAtCursor(text: string) {
+  await ensureEditorVisible()
+  if (editorEl.value) editorEl.value.insertMarkdown(text)
+  else body.value = `${body.value}${text}`
 }
 
 // The "图" toolbar button opens the OS file picker.
@@ -115,9 +109,9 @@ async function uploadAndInsert(file: File) {
   uploading.value = true
   try {
     const { url } = await uploadFile(file)
-    insertAtCursor(`![](${url})`)
+    await insertAtCursor(`![](${url})`)
   } catch {
-    insertAtCursor(`\n<!-- 图片上传失败，请重试 -->\n`)
+    await insertAtCursor(`\n<!-- 图片上传失败，请重试 -->\n`)
   } finally {
     uploading.value = false
   }
@@ -159,27 +153,120 @@ async function onCoverPicked(e: Event) {
   input.value = ''
 }
 
-/* ── Preview toggle (structural — re-renders) ─────────────────────── */
-async function togglePreview() {
-  if (!preview.value) {
-    // Sync body from textarea before switching away from it
-    if (textareaEl.value) body.value = textareaEl.value.value
-    try {
-      const res = await api<RenderResponse>('/admin/render', {
-        method: 'POST',
-        body: { markdown: body.value },
-      })
-      previewHtml.value = res.html ?? ''
-    } catch {
-      previewHtml.value = '<p style="color:var(--accent)">渲染失败，请检查网络或重试。</p>'
-    }
-    preview.value = true
-  } else {
-    preview.value = false
-    // After re-render the textarea is mounted again; restore its value
-    await nextTick()
-    if (textareaEl.value) textareaEl.value.value = body.value
+/* ── Live preview ─────────────────────────────────────────────────── */
+function clearPreviewTimer() {
+  if (!previewTimer) {
+    return
   }
+
+  clearTimeout(previewTimer)
+  previewTimer = null
+}
+
+async function renderPreview(seq: number, markdown = body.value) {
+  if (isSourceView()) {
+    return
+  }
+
+  if (markdown === lastPreviewMarkdown && previewState.value === 'ready') {
+    return
+  }
+
+  if (!markdown.trim()) {
+    if (seq === previewSeq) {
+      previewHtml.value = ''
+      previewState.value = 'ready'
+      lastPreviewMarkdown = markdown
+    }
+    return
+  }
+
+  previewRendering = true
+  if (!previewHtml.value) previewState.value = 'loading'
+
+  try {
+    const res = await api<RenderResponse>('/admin/render', {
+      method: 'POST',
+      body: { markdown },
+    })
+    if (seq !== previewSeq) return
+    previewHtml.value = res.html ?? ''
+    previewState.value = 'ready'
+    lastPreviewMarkdown = markdown
+  } catch {
+    if (seq !== previewSeq) return
+    previewHtml.value = ''
+    previewState.value = 'error'
+  } finally {
+    previewRendering = false
+    if (previewPending && !isSourceView()) {
+      previewPending = false
+      queuePreview(PREVIEW_SETTLE_DELAY_MS)
+    }
+  }
+}
+
+function queuePreview(delay = PREVIEW_TYPING_DELAY_MS) {
+  clearPreviewTimer()
+  const seq = ++previewSeq
+  if (isSourceView()) return
+
+  if (previewRendering) {
+    previewPending = true
+    return
+  }
+
+  if (body.value === lastPreviewMarkdown && previewState.value === 'ready') return
+
+  previewTimer = setTimeout(() => {
+    previewTimer = null
+    if (previewRendering) {
+      previewPending = true
+      return
+    }
+    void renderPreview(seq, body.value)
+  }, delay)
+}
+
+function refreshPreview() {
+  clearPreviewTimer()
+  const seq = ++previewSeq
+  if (previewRendering) {
+    previewPending = true
+    return
+  }
+  void renderPreview(seq, body.value)
+}
+
+async function setViewMode(mode: ViewMode) {
+  syncBodyFromEditor()
+  viewMode.value = mode
+  if (mode !== 'source') refreshPreview()
+  if (mode !== 'preview') {
+    await nextTick()
+    editorEl.value?.focus()
+  }
+}
+
+async function toggleSourceMode() {
+  syncBodyFromEditor()
+  if (viewMode.value === 'source') {
+    viewMode.value = previousMode.value === 'source' ? 'split' : previousMode.value
+    refreshPreview()
+  } else {
+    previousMode.value = viewMode.value
+    viewMode.value = 'source'
+  }
+  await nextTick()
+  if (viewMode.value !== 'preview') editorEl.value?.focus()
+}
+
+function onWriteKeydown(e: KeyboardEvent) {
+  if (e.defaultPrevented) return
+  if (e.key !== '/' || (!e.metaKey && !e.ctrlKey)) return
+  if ((e.target as Element | null)?.closest?.('.markdown-editor')) return
+  e.preventDefault()
+  void toggleSourceMode()
 }
 
 /* ── Tag input ────────────────────────────────────────────────────── */
@@ -195,6 +282,8 @@ function closeDrawer() { drawerOpen.value = false }
 
 /* ── Mount: load data ─────────────────────────────────────────────── */
 onMounted(async () => {
+  window.addEventListener('keydown', onWriteKeydown)
+
   const postData = id ? await api<Post>(`/admin/posts/${id}`) : null
 
   let initialBody = ''
@@ -219,11 +308,10 @@ onMounted(async () => {
   }
 
   body.value = initialBody
-  wordCount.value = initialBody.replace(/\s/g, '').length
+  updateWordCount(initialBody)
 
-  // Set textarea value after Vue has mounted the element
   await nextTick()
-  if (textareaEl.value) textareaEl.value.value = initialBody
+  if (showPreviewPane.value) refreshPreview()
 })
 
 /* ── Tag name → ID resolution ─────────────────────────────────────── */
@@ -256,8 +344,7 @@ async function resolveTagIds(): Promise<number[]> {
 
 /* ── Save / publish ───────────────────────────────────────────────── */
 async function save(status: 'draft' | 'published') {
-  // Always read the current textarea value before saving
-  if (textareaEl.value) body.value = textareaEl.value.value
+  syncBodyFromEditor()
 
   let resolvedTagIds: number[] = []
   try {
@@ -289,6 +376,16 @@ async function drawerSave(status: 'draft' | 'published') {
   drawerOpen.value = false
   await save(status)
 }
+
+watch(body, (value) => {
+  updateWordCount(value)
+  queuePreview()
+})
+
+onBeforeUnmount(() => {
+  clearPreviewTimer()
+  window.removeEventListener('keydown', onWriteKeydown)
+})
 </script>
 
 <template>
@@ -318,48 +415,62 @@ async function drawerSave(status: 'draft' | 'published') {
       <span class="toolbar-spacer"></span>
       <button
         class="preview-btn"
-        :class="{ 'is-on': preview }"
-        @click="togglePreview"
-      >{{ preview ? '继续写 ✎' : '预览 ◹' }}</button>
+        :class="{ 'is-on': viewMode === 'split' }"
+        @click="setViewMode('split')"
+      >双栏</button>
+      <button
+        class="preview-btn"
+        :class="{ 'is-on': viewMode === 'source' }"
+        @click="setViewMode('source')"
+      >源码</button>
+      <button
+        class="preview-btn"
+        :class="{ 'is-on': viewMode === 'preview' }"
+        @click="setViewMode('preview')"
+      >预览</button>
     </div>
   </div>
 
   <!-- ── Editor area ───────────────────────────────────────────────── -->
-  <div class="editor">
-    <!-- Preview mode -->
-    <template v-if="preview">
-      <div class="preview-block">
-        <div class="preview-label">预览</div>
-        <h1 class="preview-title">{{ title || '无标题' }}</h1>
-        <div class="prose" style="margin:0" v-html="previewHtml"></div>
-      </div>
-    </template>
+  <div class="editor" :class="[`editor--${viewMode}`]">
+    <div class="editor__workspace">
+      <section v-if="showSourcePane" class="editor__pane editor__pane--source">
+        <input
+          v-model="title"
+          class="editor__title"
+          type="text"
+          placeholder="无标题"
+        />
+        <div class="editor__meta">
+          <span>{{ displayDate }}</span>
+          <span>·</span>
+          <span>{{ postStatus === 'published' ? '已发布' : '草稿' }}</span>
+          <span>·</span>
+          <span>{{ wordCount }} 字</span>
+        </div>
+        <MarkdownEditor
+          ref="editorEl"
+          v-model="body"
+          class="editor__body"
+          placeholder="开始写。Markdown 可用。慢一点，长一点。可粘贴图片。"
+          :source-mode="viewMode === 'source'"
+          @mod-slash="toggleSourceMode"
+          @paste.capture="onPaste"
+        />
+      </section>
 
-    <!-- Edit mode -->
-    <template v-else>
-      <input
-        v-model="title"
-        class="editor__title"
-        type="text"
-        placeholder="无标题"
-      />
-      <div class="editor__meta">
-        <span>{{ displayDate }}</span>
-        <span>·</span>
-        <span>{{ postStatus === 'published' ? '已发布' : '草稿' }}</span>
-        <span>·</span>
-        <span>{{ wordCount }} 字</span>
-      </div>
-      <!-- No :value binding — Vue never patches this element's value during
-           re-renders, so Chinese IME composition and caret are never broken. -->
-      <textarea
-        ref="textareaEl"
-        class="editor__body"
-        placeholder="开始写。Markdown 可用。慢一点，长一点。可粘贴图片。"
-        @input="onBodyInput"
-        @paste="onPaste"
-      ></textarea>
-    </template>
+      <section v-if="showPreviewPane" class="editor__pane editor__pane--preview">
+        <div class="preview-block">
+          <div class="preview-label">
+            {{ previewState === 'loading' ? '预览更新中' : '预览' }}
+          </div>
+          <h1 class="preview-title">{{ title || '无标题' }}</h1>
+          <p v-if="previewState === 'error'" class="preview-empty">渲染失败，请检查网络或重试。</p>
+          <p v-else-if="!body.trim()" class="preview-empty">正文预览会出现在这里。</p>
+          <div v-else class="prose" style="margin:0" v-html="previewHtml"></div>
+        </div>
+      </section>
+    </div>
   </div>
 
   <!-- ── Edit bar (bottom sticky) ──────────────────────────────────── -->

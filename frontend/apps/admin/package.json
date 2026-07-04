@@ -10,6 +10,11 @@
     "typecheck": "vue-tsc --noEmit"
   },
   "dependencies": {
+    "@codemirror/commands": "^6.10.4",
+    "@codemirror/lang-markdown": "^6.5.0",
+    "@codemirror/language": "^6.12.4",
+    "@codemirror/state": "^6.7.0",
+    "@codemirror/view": "^6.43.4",
     "@pureblog/api-types": "workspace:*",
     "@pureblog/ui": "workspace:*",
     "pinia": "^2.3.0",

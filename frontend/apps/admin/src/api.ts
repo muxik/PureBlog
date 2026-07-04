@@ -7,9 +7,20 @@ export const REFRESH_KEY = 'pb:refresh'
 
 type Options = { method?: string; body?: unknown; auth?: boolean }
 
+function clearAuthAndRedirect() {
+  localStorage.removeItem(ACCESS_KEY)
+  localStorage.removeItem(REFRESH_KEY)
+  if (window.location.pathname !== '/login') window.location.assign('/login')
+}
+
+function handleUnauthorized(res: Response, authRequired: boolean) {
+  if (authRequired && res.status === 401) clearAuthAndRedirect()
+}
+
 export async function api<T>(path: string, opts: Options = {}): Promise<T> {
+  const authRequired = opts.auth !== false
   const headers: Record<string, string> = { 'Content-Type': 'application/json' }
-  if (opts.auth !== false) {
+  if (authRequired) {
     const token = localStorage.getItem(ACCESS_KEY)
     if (token) headers.Authorization = `Bearer ${token}`
   }
@@ -18,6 +29,7 @@ export async function api<T>(path: string, opts: Options = {}): Promise<T> {
     headers,
     body: opts.body !== undefined ? JSON.stringify(opts.body) : undefined,
   })
+  handleUnauthorized(res, authRequired)
   if (!res.ok) throw new Error(`API ${res.status}`)
   if (res.status === 204) return undefined as T
   return (await res.json()) as T
@@ -35,6 +47,7 @@ export async function uploadFile(file: File): Promise<UploadResult> {
   const token = localStorage.getItem(ACCESS_KEY)
   if (token) headers.Authorization = `Bearer ${token}`
   const res = await fetch(BASE + '/admin/uploads', { method: 'POST', headers, body: form })
+  handleUnauthorized(res, true)
   if (!res.ok) throw new Error(`API ${res.status}`)
   return (await res.json()) as UploadResult
 }
@@ -54,6 +67,7 @@ export async function downloadExport(slugs?: string[]): Promise<void> {
   if (token) headers.Authorization = `Bearer ${token}`
   const qs = slugs && slugs.length ? `?slugs=${encodeURIComponent(slugs.join(','))}` : ''
   const res = await fetch(BASE + '/admin/export' + qs, { headers })
+  handleUnauthorized(res, true)
   if (!res.ok) throw new Error(`API ${res.status}`)
   const blob = await res.blob()
   const url = URL.createObjectURL(blob)
@@ -74,6 +88,7 @@ export async function importBundle(file: File): Promise<ImportSummary> {
   const token = localStorage.getItem(ACCESS_KEY)
   if (token) headers.Authorization = `Bearer ${token}`
   const res = await fetch(BASE + '/admin/import', { method: 'POST', headers, body: form })
+  handleUnauthorized(res, true)
   if (!res.ok) throw new Error(`API ${res.status}`)
   return (await res.json()) as ImportSummary
 }
