@@ -1260,6 +1260,7 @@ export interface components {
             contentMd?: string;
             coverUrl?: string;
             pinned?: boolean;
+            publishedAt?: string;
             slug?: string;
             status?: string;
             summary?: string;

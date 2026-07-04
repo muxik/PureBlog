@@ -154,6 +154,7 @@ async function togglePin(id?: number) {
     status: post.status,
     tagIds: (post.tags ?? []).map((t) => t.id).filter((id): id is number => id !== undefined),
     pinned: !post.pinned,
+    publishedAt: post.publishedAt,
   }
   await api(`/admin/posts/${id}`, { method: 'PUT', body })
   await load()

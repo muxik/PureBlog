@@ -1304,6 +1304,9 @@
                 "pinned": {
                     "type": "boolean"
                 },
+                "publishedAt": {
+                    "type": "string"
+                },
                 "slug": {
                     "type": "string"
                 },

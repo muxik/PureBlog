@@ -52,12 +52,39 @@ let previewRendering = false
 let previewPending = false
 let lastPreviewMarkdown = ''
 
-/* ── Display date ─────────────────────────────────────────────────── */
-function formatDate(d: Date): string {
-  const pad = (n: number) => (n < 10 ? '0' + n : String(n))
-  return `${d.getFullYear()} · ${pad(d.getMonth() + 1)} · ${pad(d.getDate())}`
+/* ── Publish date ─────────────────────────────────────────────────── */
+function pad2(n: number): string {
+  return n < 10 ? '0' + n : String(n)
 }
-const displayDate = ref(formatDate(new Date()))
+
+function isValidDate(d: Date): boolean {
+  return !Number.isNaN(d.getTime())
+}
+
+function formatDateTime(d: Date): string {
+  return `${d.getFullYear()} · ${pad2(d.getMonth() + 1)} · ${pad2(d.getDate())} ${pad2(d.getHours())}:${pad2(d.getMinutes())}`
+}
+
+function toDatetimeLocalValue(d: Date): string {
+  if (!isValidDate(d)) return ''
+  return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}T${pad2(d.getHours())}:${pad2(d.getMinutes())}`
+}
+
+function parseDatetimeLocal(value: string): Date | null {
+  if (!value.trim()) return null
+  const d = new Date(value)
+  return isValidDate(d) ? d : null
+}
+
+const publishDateTime = ref(toDatetimeLocalValue(new Date()))
+const displayDate = computed(() => {
+  const d = parseDatetimeLocal(publishDateTime.value)
+  return d ? formatDateTime(d) : '发布时自动'
+})
+
+function publishedAtPayload(): string | undefined {
+  return parseDatetimeLocal(publishDateTime.value)?.toISOString()
+}
 
 function updateWordCount(val = body.value) {
   wordCount.value = val.replace(/\s/g, '').length
@@ -302,8 +329,9 @@ onMounted(async () => {
     tagChips.value = postTagNames
     tagInput.value = postTagNames.join(' ')
 
-    if (postData.publishedAt) {
-      displayDate.value = formatDate(new Date(postData.publishedAt))
+    const sourceDate = postData.publishedAt || (postData.status === 'published' ? postData.createdAt : '')
+    if (sourceDate) {
+      publishDateTime.value = toDatetimeLocalValue(new Date(sourceDate))
     }
   }
 
@@ -361,6 +389,7 @@ async function save(status: 'draft' | 'published') {
     status,
     pinned: pinned.value,
     tagIds: resolvedTagIds,
+    publishedAt: publishedAtPayload(),
   }
 
   if (id) {
@@ -540,16 +569,13 @@ onBeforeUnmount(() => {
           </div>
         </label>
 
-        <!-- 日期 / date (read-only; backend sets publishedAt) -->
+        <!-- 日期时间 / publishedAt -->
         <label class="field">
-          <span class="field-label">日期</span>
+          <span class="field-label">日期时间</span>
           <input
+            v-model="publishDateTime"
             class="admin-input"
-            type="text"
-            :value="displayDate"
-            placeholder="发布时自动"
-            disabled
-            readonly
+            type="datetime-local"
           />
         </label>
 

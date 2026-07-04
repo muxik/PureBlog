@@ -210,14 +210,15 @@ func (s *Server) renderMarkdown(c *gin.Context) {
 
 func (s *Server) toInput(req savePostRequest, authorID int64) service.SavePostInput {
 	return service.SavePostInput{
-		Title:     req.Title,
-		Slug:      req.Slug,
-		Summary:   req.Summary,
-		ContentMD: req.ContentMD,
-		CoverURL:  req.CoverURL,
-		Status:    domain.PostStatus(req.Status),
-		Pinned:    req.Pinned,
-		AuthorID:  authorID,
-		TagIDs:    req.TagIDs,
+		Title:       req.Title,
+		Slug:        req.Slug,
+		Summary:     req.Summary,
+		ContentMD:   req.ContentMD,
+		CoverURL:    req.CoverURL,
+		Status:      domain.PostStatus(req.Status),
+		Pinned:      req.Pinned,
+		AuthorID:    authorID,
+		TagIDs:      req.TagIDs,
+		PublishedAt: req.PublishedAt,
 	}
 }

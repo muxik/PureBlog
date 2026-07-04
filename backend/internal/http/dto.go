@@ -25,14 +25,15 @@ type renderRequest struct {
 }
 
 type savePostRequest struct {
-	Title     string  `json:"title" binding:"required"`
-	Slug      string  `json:"slug"`
-	Summary   string  `json:"summary"`
-	ContentMD string  `json:"contentMd"`
-	CoverURL  string  `json:"coverUrl"`
-	Status    string  `json:"status"`
-	Pinned    bool    `json:"pinned"`
-	TagIDs    []int64 `json:"tagIds"`
+	Title       string     `json:"title" binding:"required"`
+	Slug        string     `json:"slug"`
+	Summary     string     `json:"summary"`
+	ContentMD   string     `json:"contentMd"`
+	CoverURL    string     `json:"coverUrl"`
+	Status      string     `json:"status"`
+	Pinned      bool       `json:"pinned"`
+	TagIDs      []int64    `json:"tagIds"`
+	PublishedAt *time.Time `json:"publishedAt"`
 }
 
 // ---- responses ----

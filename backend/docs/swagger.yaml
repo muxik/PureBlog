@@ -192,6 +192,8 @@ definitions:
         type: string
       pinned:
         type: boolean
+      publishedAt:
+        type: string
       slug:
         type: string
       status:
