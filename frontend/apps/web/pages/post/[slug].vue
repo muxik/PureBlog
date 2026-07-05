@@ -97,6 +97,10 @@ function fmtDate(iso: string | undefined): string {
   return new Date(iso).toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' })
 }
 
+function commentDepthStyle(depth: number): Record<string, string> {
+  return { '--reply-depth': String(depth) }
+}
+
 // Comment form reactive state
 const formAuthorName = ref('')
 const formAuthorEmail = ref('')
@@ -214,7 +218,7 @@ async function submitComment(): Promise<void> {
           :key="node.comment.id"
           class="cmt__item"
           :class="{ 'cmt__item--reply': node.depth > 0 }"
-          :style="node.depth > 0 ? { paddingLeft: `${node.depth * 1.25}rem` } : {}"
+          :style="node.depth > 0 ? commentDepthStyle(node.depth) : undefined"
         >
           <div class="cmt__row">
             <span class="cmt__author">{{ node.comment.authorName ?? '匿名' }}</span>
@@ -378,12 +382,16 @@ async function submitComment(): Promise<void> {
   padding: 1rem 0;
   border-bottom: 1px solid var(--line);
 }
-.cmt__item--reply { border-left: 2px solid var(--line); }
+.cmt__item--reply {
+  border-left: 2px solid var(--line);
+  padding-left: min(calc(var(--reply-depth, 1) * 1.25rem), 3.5rem);
+}
 .cmt__row {
   display: flex;
   align-items: baseline;
   gap: 0.75rem;
   margin-bottom: 0.4rem;
+  flex-wrap: wrap;
 }
 .cmt__author {
   font-family: var(--font-body);
@@ -514,4 +522,31 @@ async function submitComment(): Promise<void> {
   cursor: not-allowed;
 }
 .cmt__submit:hover:not(:disabled) { opacity: 0.85; }
+
+@media (max-width: 640px) {
+  .prose :deep(pre) {
+    margin-left: -0.25rem;
+    margin-right: -0.25rem;
+    padding: 0.85rem 1rem;
+  }
+
+  .cmt {
+    margin-top: 52px;
+  }
+
+  .cmt__item--reply {
+    padding-left: min(calc(var(--reply-depth, 1) * 0.85rem), 1.75rem);
+  }
+
+  .cmt__form-title {
+    flex-wrap: wrap;
+    gap: 0.4rem 0.75rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .cmt__submit {
+    width: 100%;
+  }
+}
 </style>

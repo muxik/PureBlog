@@ -83,7 +83,7 @@ onMounted(load)
 
     <!-- ── Tag List ── -->
     <div class="manage-list">
-      <div v-for="tag in tags" :key="tag.id" class="manage-row">
+      <div v-for="tag in tags" :key="tag.id" class="manage-row manage-row--plain">
         <div class="manage-row__main">
           <div class="manage-row__titlerow">
             <span class="manage-row__title tag-name">{{ tag.name }}</span>

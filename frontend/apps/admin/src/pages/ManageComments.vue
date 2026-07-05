@@ -94,7 +94,7 @@ onMounted(load)
 
     <!-- ── Comment list ── -->
     <div class="manage-list">
-      <div v-for="c in comments" :key="c.id" class="manage-row cmt-row">
+      <div v-for="c in comments" :key="c.id" class="manage-row manage-row--plain cmt-row">
         <div class="manage-row__main">
           <div class="manage-row__titlerow">
             <span class="manage-row__title cmt-author">{{ c.authorName }}</span>

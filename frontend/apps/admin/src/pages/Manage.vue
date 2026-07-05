@@ -233,7 +233,12 @@ onMounted(load)
     </div>
 
     <div v-if="sorted.length" class="manage-list">
-      <div v-for="p in sorted" :key="p.id" class="manage-row" :class="{ 'is-selected': isSelected(p.id) }">
+      <div
+        v-for="p in sorted"
+        :key="p.id"
+        class="manage-row manage-row--selectable"
+        :class="{ 'is-selected': isSelected(p.id) }"
+      >
         <input
           class="manage-row__check"
           type="checkbox"

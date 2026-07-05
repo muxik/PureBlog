@@ -5,6 +5,7 @@
 const route = useRoute()
 const { toggle, label: themeLabel } = useTheme()
 const settings = useSiteSettings()
+const mobileNavOpen = ref(false)
 
 const siteName = computed(() => settings.value?.siteName ?? 'PureBlog')
 const currentYear = computed(() => new Date().getFullYear())
@@ -32,16 +33,36 @@ function isActive(path: string): boolean {
   if (path === '/') return route.path === '/'
   return route.path.startsWith(path)
 }
+
+watch(() => route.fullPath, () => {
+  mobileNavOpen.value = false
+})
 </script>
 
 <template>
   <div class="app">
     <header class="site-header wrap">
-      <NuxtLink class="masthead" to="/" aria-label="回到首页">
-        <span class="masthead__name">{{ siteName }}</span>
-      </NuxtLink>
+      <div class="site-header__bar">
+        <NuxtLink class="masthead" to="/" aria-label="回到首页">
+          <span class="masthead__name">{{ siteName }}</span>
+        </NuxtLink>
 
-      <nav class="nav">
+        <button
+          class="menu-button"
+          type="button"
+          :class="{ 'is-open': mobileNavOpen }"
+          aria-label="打开导航菜单"
+          :aria-expanded="mobileNavOpen"
+          aria-controls="site-nav"
+          @click="mobileNavOpen = !mobileNavOpen"
+        >
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+        </button>
+      </div>
+
+      <nav id="site-nav" class="nav" :class="{ 'is-open': mobileNavOpen }">
         <NuxtLink
           class="nav__link"
           :class="{ 'is-active': isActive('/') }"
