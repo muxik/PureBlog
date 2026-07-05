@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 import type { SiteSettings, UpdateSettingsRequest } from '@pureblog/api-types'
+import { short } from '@pureblog/ui/lunar'
 import { api } from '../api'
-import { short } from '../utils/lunar'
 
 // ── Active tab ────────────────────────────────────────────────
 const tab = ref<'site' | 'about' | 'social' | 'account'>('site')

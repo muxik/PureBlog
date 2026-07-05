@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Post, Comment, CommentListResponse, PostListResponse } from '@pureblog/api-types'
 import { decoratePost } from '~/composables/usePostView'
+import { full as lunarFull } from '~/utils/lunar'
 
 const route = useRoute()
 const slug = route.params.slug as string
@@ -8,8 +9,7 @@ const apiBase = useApiBase()
 
 // Site settings + date format
 const settings = useSiteSettings()
-const initialFmt: 'numeric' | 'lunar' = settings.value.defaultDateFormat === 'lunar' ? 'lunar' : 'numeric'
-const { format } = useDateFormat(initialFmt)
+const { format } = useSiteDateFormat()
 
 // SSR fetches
 const { data: post } = await useFetch<Post>(`${apiBase}/posts/${slug}`)
@@ -94,7 +94,10 @@ const commentNodes = computed(() => flattenComments(commentsData.value?.items ??
 
 function fmtDate(iso: string | undefined): string {
   if (!iso) return ''
-  return new Date(iso).toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' })
+  const date = new Date(iso)
+  if (Number.isNaN(date.getTime())) return ''
+  const numeric = date.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' })
+  return format.value === 'lunar' ? (lunarFull(date) ?? numeric) : numeric
 }
 
 function commentDepthStyle(depth: number): Record<string, string> {

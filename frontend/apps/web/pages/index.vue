@@ -4,10 +4,7 @@ import { decoratePost, groupByYear } from '~/composables/usePostView'
 
 // ── Settings & date format ──────────────────────────────────────────────────
 const settings = useSiteSettings()
-const dfmt = settings.value.defaultDateFormat
-const { format } = useDateFormat(
-  dfmt === 'numeric' || dfmt === 'lunar' ? dfmt : undefined,
-)
+const { format } = useSiteDateFormat()
 
 // ── Page title & Open Graph ──────────────────────────────────────────────────
 useHead({ title: settings.value.siteName || 'PureBlog' })

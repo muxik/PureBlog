@@ -109,6 +109,9 @@ importers:
       lxgw-wenkai-screen-webfont:
         specifier: ^1.7.0
         version: 1.7.0
+      solarlunar:
+        specifier: ^3.1.0
+        version: 3.1.0
 
 packages:
 
@@ -3336,6 +3339,9 @@ packages:
   smob@1.6.2:
     resolution: {integrity: sha512-RQsvleCbF8cVHEv+xuDGaA4pOizFqJ0GgjtMSRo6oP8pnN7WsigHgVGey6aILRBKv4W2YOMHLqbKdnB6hpB9fw==}
     engines: {node: '>=20.0.0'}
+
+  solarlunar@3.1.0:
+    resolution: {integrity: sha512-PCJsIeSaMyQVK6TZk+tlPNaoAlk02+2UxhI/DS+K0zdLkwTihMp4px6S+Jv6HPPC0p7QsUM18WSs2/HEC1o0wQ==}
 
   source-map-js@1.2.1:
     resolution: {integrity: sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==}
@@ -7451,6 +7457,8 @@ snapshots:
   slash@5.1.0: {}
 
   smob@1.6.2: {}
+
+  solarlunar@3.1.0: {}
 
   source-map-js@1.2.1: {}
 

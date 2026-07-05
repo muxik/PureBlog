@@ -16,6 +16,7 @@
     "@fontsource-variable/newsreader": "^5.2.10",
     "@fontsource/jetbrains-mono": "^5.2.8",
     "@fontsource/noto-serif-sc": "^5.2.8",
-    "lxgw-wenkai-screen-webfont": "^1.7.0"
+    "lxgw-wenkai-screen-webfont": "^1.7.0",
+    "solarlunar": "^3.1.0"
   }
 }

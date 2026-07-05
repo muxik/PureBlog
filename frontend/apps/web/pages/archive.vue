@@ -7,8 +7,7 @@ const { data } = await useFetch<PostListResponse>(`${useApiBase()}/posts`, {
 })
 
 const settings = useSiteSettings()
-const dfmt = settings.value.defaultDateFormat === 'lunar' ? 'lunar' : 'numeric'
-const { format } = useDateFormat(dfmt)
+const { format } = useSiteDateFormat()
 
 const yearGroups = computed(() => {
   const posts = data.value?.items ?? []

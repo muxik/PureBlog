@@ -16,9 +16,7 @@ const searchQ = ref<string>(initialQ)
 const inputText = ref<string>(initialQ)
 
 const settings = useSiteSettings()
-const { format } = useDateFormat(
-  (settings.value.defaultDateFormat as 'numeric' | 'lunar') ?? 'numeric',
-)
+const { format } = useSiteDateFormat()
 
 // Nuxt watches reactive refs in the query object and re-fetches when they change.
 // On SSR the initial value of `searchQ` is used, giving server-rendered results

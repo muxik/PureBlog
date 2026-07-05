@@ -7,9 +7,7 @@ const slug = route.params.slug as string
 const apiBase = useApiBase()
 
 const settings = useSiteSettings()
-const { format } = useDateFormat(
-  (settings.value.defaultDateFormat as 'numeric' | 'lunar') ?? 'numeric',
-)
+const { format } = useSiteDateFormat()
 
 // Fetch tags (to resolve the display name) and tag-filtered posts in parallel.
 const [{ data: tagsData }, { data: postsData }] = await Promise.all([
