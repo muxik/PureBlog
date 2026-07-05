@@ -13,10 +13,11 @@ import MarkdownEditor from '../components/MarkdownEditor.vue'
 
 const route = useRoute()
 const router = useRouter()
-const id = route.params.id ? Number(route.params.id) : null
+const postId = ref(route.params.id ? Number(route.params.id) : null)
 type ViewMode = 'split' | 'source' | 'preview'
 const PREVIEW_TYPING_DELAY_MS = 900
 const PREVIEW_SETTLE_DELAY_MS = 220
+const AUTOSAVE_DELAY_MS = 1800
 
 /* ── Core editor state ───────────────────────────────────────────── */
 const title = ref('')
@@ -28,8 +29,12 @@ const previousMode = ref<ViewMode>('split')
 const previewHtml = ref('')
 const previewState = ref<'idle' | 'loading' | 'ready' | 'error'>('idle')
 const drawerOpen = ref(false)
+const saveError = ref('')
+const autosaveState = ref<'idle' | 'waiting-title' | 'saving' | 'saved' | 'error'>('idle')
+const autosaveMessage = ref('')
 const showSourcePane = computed(() => viewMode.value !== 'preview')
 const showPreviewPane = computed(() => viewMode.value !== 'source')
+const canSave = computed(() => title.value.trim().length > 0)
 
 function isSourceView() {
   return viewMode.value === 'source'
@@ -44,13 +49,19 @@ const tagChips = ref<string[]>([])  // parsed chips shown below the input
 
 /* ── DOM refs ─────────────────────────────────────────────────────── */
 const editorEl = ref<InstanceType<typeof MarkdownEditor> | null>(null)
+const previewBlockEl = ref<HTMLDivElement | null>(null)
 const fileInputEl = ref<HTMLInputElement | null>(null)
 const uploading = ref(false)
 let previewTimer: ReturnType<typeof setTimeout> | null = null
+let autosaveTimer: ReturnType<typeof setTimeout> | null = null
 let previewSeq = 0
+let autosaveSeq = 0
 let previewRendering = false
 let previewPending = false
 let lastPreviewMarkdown = ''
+let lastSavedSnapshot = ''
+let manualSaving = false
+let syncingPreviewScroll = false
 
 /* ── Publish date ─────────────────────────────────────────────────── */
 function pad2(n: number): string {
@@ -100,9 +111,62 @@ async function ensureEditorVisible() {
 
 function syncBodyFromEditor() {
   const value = editorEl.value?.getValue()
-  if (value !== undefined && value !== body.value) {
-    body.value = value
+  if (value !== undefined) {
+    inferTitleFromMarkdown(value)
+    if (value !== body.value) {
+      body.value = value
+    }
   }
+}
+
+function extractLeadingH1Title(markdown: string): string {
+  const match = markdown.match(/^(\ufeff?)(?:[ \t]*\r?\n)*[ \t]{0,3}#\s+(.+?)[ \t#]*(?:\r?\n|$)/)
+  const heading = match?.[2]?.trim()
+  return heading ?? ''
+}
+
+function inferTitleFromMarkdown(value: string) {
+  if (title.value.trim()) return
+
+  const heading = extractLeadingH1Title(value)
+  if (!heading) return
+  title.value = heading
+  if (saveError.value === '请先填写标题。') {
+    saveError.value = ''
+  }
+}
+
+function currentSnapshot(): string {
+  return JSON.stringify({
+    title: title.value,
+    body: body.value,
+    summary: summary.value,
+    coverUrl: coverUrl.value,
+    status: postStatus.value,
+    pinned: pinned.value,
+    tagChips: tagChips.value,
+    publishDateTime: publishDateTime.value,
+  })
+}
+
+function requireTitle(): boolean {
+  if (canSave.value) {
+    return true
+  }
+
+  saveError.value = '请先填写标题。'
+  autosaveState.value = 'waiting-title'
+  autosaveMessage.value = '填写标题后自动保存'
+  return false
+}
+
+function clearAutosaveTimer() {
+  if (!autosaveTimer) {
+    return
+  }
+
+  clearTimeout(autosaveTimer)
+  autosaveTimer = null
 }
 
 /* ── Toolbar helpers ──────────────────────────────────────────────── */
@@ -275,6 +339,29 @@ async function setViewMode(mode: ViewMode) {
   }
 }
 
+function scrollPreviewToRatio(ratio: number) {
+  const el = previewBlockEl.value
+  if (!el || viewMode.value !== 'split') return
+  const max = el.scrollHeight - el.clientHeight
+  syncingPreviewScroll = true
+  el.scrollTop = max > 0 ? max * ratio : 0
+  requestAnimationFrame(() => {
+    syncingPreviewScroll = false
+  })
+}
+
+function onEditorScrollRatio(ratio: number) {
+  scrollPreviewToRatio(ratio)
+}
+
+function onPreviewScroll() {
+  if (syncingPreviewScroll || viewMode.value !== 'split') return
+  const el = previewBlockEl.value
+  if (!el) return
+  const max = el.scrollHeight - el.clientHeight
+  editorEl.value?.setScrollRatio(max > 0 ? el.scrollTop / max : 0)
+}
+
 async function toggleSourceMode() {
   syncBodyFromEditor()
   if (viewMode.value === 'source') {
@@ -311,7 +398,7 @@ function closeDrawer() { drawerOpen.value = false }
 onMounted(async () => {
   window.addEventListener('keydown', onWriteKeydown)
 
-  const postData = id ? await api<Post>(`/admin/posts/${id}`) : null
+  const postData = postId.value ? await api<Post>(`/admin/posts/${postId.value}`) : null
 
   let initialBody = ''
   if (postData) {
@@ -337,6 +424,7 @@ onMounted(async () => {
 
   body.value = initialBody
   updateWordCount(initialBody)
+  lastSavedSnapshot = currentSnapshot()
 
   await nextTick()
   if (showPreviewPane.value) refreshPreview()
@@ -371,7 +459,7 @@ async function resolveTagIds(): Promise<number[]> {
 }
 
 /* ── Save / publish ───────────────────────────────────────────────── */
-async function save(status: 'draft' | 'published') {
+async function buildSaveRequest(status: 'draft' | 'published'): Promise<SavePostRequest> {
   syncBodyFromEditor()
 
   let resolvedTagIds: number[] = []
@@ -381,8 +469,8 @@ async function save(status: 'draft' | 'published') {
     // Non-fatal: save without tag IDs rather than blocking the user
   }
 
-  const req: SavePostRequest = {
-    title: title.value,
+  return {
+    title: title.value.trim(),
     summary: summary.value,
     contentMd: body.value,
     coverUrl: coverUrl.value,
@@ -391,28 +479,133 @@ async function save(status: 'draft' | 'published') {
     tagIds: resolvedTagIds,
     publishedAt: publishedAtPayload(),
   }
+}
 
-  if (id) {
-    await api(`/admin/posts/${id}`, { method: 'PUT', body: req })
-  } else {
-    await api('/admin/posts', { method: 'POST', body: req })
+async function persist(status: 'draft' | 'published'): Promise<Post> {
+  const req = await buildSaveRequest(status)
+
+  if (postId.value) {
+    return await api<Post>(`/admin/posts/${postId.value}`, { method: 'PUT', body: req })
   }
 
-  router.push('/manage')
+  const created = await api<Post>('/admin/posts', { method: 'POST', body: req })
+  if (created.id != null) {
+    postId.value = Number(created.id)
+    await router.replace(`/write/${created.id}`)
+  }
+  return created
+}
+
+async function save(status: 'draft' | 'published') {
+  clearAutosaveTimer()
+  syncBodyFromEditor()
+  if (!requireTitle()) return
+
+  manualSaving = true
+  saveError.value = ''
+  autosaveState.value = 'saving'
+  autosaveMessage.value = status === 'published' ? '发布中' : '保存中'
+
+  try {
+    const saved = await persist(status)
+    postStatus.value = (saved.status as 'draft' | 'published') ?? status
+    lastSavedSnapshot = currentSnapshot()
+    autosaveState.value = 'saved'
+    autosaveMessage.value = status === 'published' ? '已发布' : '已保存'
+    router.push('/manage')
+  } catch (err) {
+    saveError.value = err instanceof Error ? err.message : '保存失败，请重试。'
+    autosaveState.value = 'error'
+    autosaveMessage.value = '保存失败'
+  } finally {
+    manualSaving = false
+  }
+}
+
+function queueAutosave() {
+  clearAutosaveTimer()
+  if (manualSaving) return
+
+  if (currentSnapshot() === lastSavedSnapshot) {
+    autosaveState.value = 'saved'
+    autosaveMessage.value = lastSavedSnapshot ? '已保存' : ''
+    return
+  }
+
+  if (!canSave.value) {
+    autosaveState.value = 'waiting-title'
+    autosaveMessage.value = '填写标题后自动保存'
+    return
+  }
+
+  autosaveState.value = 'idle'
+  autosaveMessage.value = '等待自动保存'
+  const seq = ++autosaveSeq
+  autosaveTimer = setTimeout(() => {
+    autosaveTimer = null
+    void autosave(seq)
+  }, AUTOSAVE_DELAY_MS)
+}
+
+async function autosave(seq: number) {
+  if (seq !== autosaveSeq || manualSaving || !canSave.value) return
+
+  syncBodyFromEditor()
+  const snapshot = currentSnapshot()
+  if (snapshot === lastSavedSnapshot) {
+    autosaveState.value = 'saved'
+    autosaveMessage.value = '已保存'
+    return
+  }
+
+  autosaveState.value = 'saving'
+  autosaveMessage.value = '自动保存中'
+  saveError.value = ''
+
+  try {
+    const autosaveStatus = postId.value ? postStatus.value : 'draft'
+    const saved = await persist(autosaveStatus)
+    if (seq !== autosaveSeq) return
+    postStatus.value = (saved.status as 'draft' | 'published') ?? 'draft'
+    lastSavedSnapshot = currentSnapshot()
+    autosaveState.value = 'saved'
+    autosaveMessage.value = '已自动保存'
+  } catch (err) {
+    if (seq !== autosaveSeq) return
+    saveError.value = err instanceof Error ? err.message : '自动保存失败，请重试。'
+    autosaveState.value = 'error'
+    autosaveMessage.value = '自动保存失败'
+  }
 }
 
 async function drawerSave(status: 'draft' | 'published') {
-  drawerOpen.value = false
-  await save(status)
+  if (!canSave.value) {
+    drawerOpen.value = false
+    requireTitle()
+    return
+  } else {
+    drawerOpen.value = false
+    await save(status)
+  }
 }
 
 watch(body, (value) => {
+  inferTitleFromMarkdown(value)
   updateWordCount(value)
   queuePreview()
+  queueAutosave()
+})
+
+watch([title, summary, coverUrl, pinned, tagInput, publishDateTime], () => {
+  if (saveError.value === '请先填写标题。' && canSave.value) {
+    saveError.value = ''
+  }
+  queueAutosave()
 })
 
 onBeforeUnmount(() => {
   clearPreviewTimer()
+  clearAutosaveTimer()
   window.removeEventListener('keydown', onWriteKeydown)
 })
 </script>
@@ -484,12 +677,13 @@ onBeforeUnmount(() => {
           placeholder="开始写。Markdown 可用。慢一点，长一点。可粘贴图片。"
           :source-mode="viewMode === 'source'"
           @mod-slash="toggleSourceMode"
+          @scroll-ratio="onEditorScrollRatio"
           @paste.capture="onPaste"
         />
       </section>
 
       <section v-if="showPreviewPane" class="editor__pane editor__pane--preview">
-        <div class="preview-block">
+        <div ref="previewBlockEl" class="preview-block" @scroll="onPreviewScroll">
           <div class="preview-label">
             {{ previewState === 'loading' ? '预览更新中' : '预览' }}
           </div>
@@ -506,6 +700,12 @@ onBeforeUnmount(() => {
   <div class="editbar">
     <div class="editbar-inner">
       <button class="linkbtn" @click="openDrawer">发布设置 ›</button>
+      <span v-if="saveError" class="save-status save-status--error">{{ saveError }}</span>
+      <span
+        v-else-if="autosaveMessage"
+        class="save-status"
+        :class="{ 'save-status--error': autosaveState === 'error' }"
+      >{{ autosaveMessage }}</span>
       <span class="toolbar-spacer"></span>
       <button class="btn-ghost" @click="save('draft')">存草稿</button>
       <button class="btn-solid btn-solid--sm" @click="save('published')">

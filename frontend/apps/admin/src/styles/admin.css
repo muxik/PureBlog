@@ -233,6 +233,10 @@ html, body { margin: 0; background: var(--bg); min-height: 100%; }
   min-height: 0;
   overflow: hidden;
 }
+.editor--split .editor__pane--source {
+  display: flex;
+  flex-direction: column;
+}
 .editor--split .editor__pane--preview {
   border-left: 1px solid var(--line);
   padding-left: 30px;
@@ -247,6 +251,7 @@ html, body { margin: 0; background: var(--bg); min-height: 100%; }
 }
 .editor__title {
   width: 100%;
+  flex: none;
   box-sizing: border-box;
   font-family: var(--font-kai);
   font-size: 37px;
@@ -261,6 +266,7 @@ html, body { margin: 0; background: var(--bg); min-height: 100%; }
 }
 .editor__meta {
   display: flex;
+  flex: none;
   align-items: center;
   gap: 12px;
   margin-bottom: 28px;
@@ -336,8 +342,15 @@ html, body { margin: 0; background: var(--bg); min-height: 100%; }
 .editor--split .markdown-editor,
 .editor--split .markdown-editor__host,
 .editor--split .cm-editor {
-  height: 100%;
   min-height: 0;
+}
+.editor--split .markdown-editor {
+  flex: 1 1 auto;
+  height: auto;
+}
+.editor--split .markdown-editor__host,
+.editor--split .cm-editor {
+  height: 100%;
 }
 .editor--split .markdown-editor__host .cm-scroller {
   height: 100%;
@@ -407,6 +420,16 @@ html, body { margin: 0; background: var(--bg); min-height: 100%; }
   align-items: center;
   gap: 12px;
   box-sizing: border-box;
+}
+.save-status {
+  min-width: 0;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--text-faint);
+  line-height: 1.5;
+}
+.save-status--error {
+  color: var(--accent);
 }
 .linkbtn {
   font-family: var(--font-body);
@@ -814,6 +837,9 @@ html, body { margin: 0; background: var(--bg); min-height: 100%; }
     height: auto;
     min-height: 0;
     overflow: visible;
+  }
+  .editor--split .editor__pane--source {
+    display: block;
   }
   .editor--split .editor__pane--preview {
     display: none;

@@ -28,6 +28,7 @@ const props = withDefaults(
 const emit = defineEmits<{
   (event: 'update:modelValue', value: string): void
   (event: 'modSlash'): void
+  (event: 'scrollRatio', value: number): void
 }>()
 
 const host = ref<HTMLDivElement | null>(null)
@@ -49,6 +50,7 @@ const editorTheme = EditorView.theme({
 
 let editorView: EditorView | null = null
 let syncingFromModel = false
+let syncingScroll = false
 
 function createPlaceholderExtension(value: string): Extension {
   return value ? codeMirrorPlaceholder(value) : []
@@ -83,6 +85,24 @@ function focus(): void {
 
 function getValue(): string {
   return getEditorDoc()
+}
+
+function getScrollRatio(): number {
+  const el = editorView?.scrollDOM
+  if (!el) return 0
+  const max = el.scrollHeight - el.clientHeight
+  return max > 0 ? el.scrollTop / max : 0
+}
+
+function setScrollRatio(ratio: number): void {
+  const el = editorView?.scrollDOM
+  if (!el) return
+  const max = el.scrollHeight - el.clientHeight
+  syncingScroll = true
+  el.scrollTop = max > 0 ? max * ratio : 0
+  requestAnimationFrame(() => {
+    syncingScroll = false
+  })
 }
 
 function setValue(value: string): void {
@@ -191,6 +211,13 @@ onMounted(() => {
           ]),
         ),
         keymap.of([...defaultKeymap, ...historyKeymap]),
+        EditorView.domEventHandlers({
+          scroll: () => {
+            if (!syncingScroll) {
+              emit('scrollRatio', getScrollRatio())
+            }
+          },
+        }),
         EditorView.updateListener.of((update) => {
           if (!update.docChanged || syncingFromModel) {
             return
@@ -243,6 +270,8 @@ onBeforeUnmount(() => {
 defineExpose({
   focus,
   getValue,
+  getScrollRatio,
+  setScrollRatio,
   setValue,
   insertMarkdown,
   wrapSelection,

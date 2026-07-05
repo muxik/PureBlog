@@ -37,7 +37,7 @@ func Load() Config {
 		RefreshTokenTTL: envDuration("REFRESH_TOKEN_TTL", 7*24*time.Hour),
 		AdminUsername:   env("ADMIN_USERNAME", "muxi"),
 		AdminPassword:   env("ADMIN_PASSWORD", "muxi-change-me"),
-		CORSOrigins:     splitAndTrim(env("CORS_ORIGINS", "http://localhost:3000,http://localhost:5173")),
+		CORSOrigins:     splitAndTrim(env("CORS_ORIGINS", "http://localhost:*,http://127.0.0.1:*")),
 		UploadDir:       env("UPLOAD_DIR", "./uploads"),
 		PublicBaseURL:   strings.TrimRight(env("PUBLIC_ORIGIN", "http://localhost:8080"), "/"),
 	}

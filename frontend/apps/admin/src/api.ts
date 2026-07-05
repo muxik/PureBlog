@@ -30,7 +30,16 @@ export async function api<T>(path: string, opts: Options = {}): Promise<T> {
     body: opts.body !== undefined ? JSON.stringify(opts.body) : undefined,
   })
   handleUnauthorized(res, authRequired)
-  if (!res.ok) throw new Error(`API ${res.status}`)
+  if (!res.ok) {
+    let message = `API ${res.status}`
+    try {
+      const data = (await res.json()) as { error?: string }
+      if (data.error) message = data.error
+    } catch {
+      /* keep status fallback */
+    }
+    throw new Error(message)
+  }
   if (res.status === 204) return undefined as T
   return (await res.json()) as T
 }
